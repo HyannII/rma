@@ -11,6 +11,11 @@ export const getAllProductsApi = async () => {
   return res.data;
 };
 
+export const getProductByIDApi = async (id: number) => {
+  const res = await api.get<IProductResponse>(`/product/${id}`);
+  return res.data;
+};
+
 export const createProductApi = async (body: ICreateProductBody) => {
   const res = await api.post<IProductResponse>("/product", body);
   return res.data;

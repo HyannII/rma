@@ -1,44 +1,50 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ICreateProductBody } from "../../../interfaces/product.interface";
-import { createProductApi } from "../../../api/product.api";
-import { useState, ChangeEvent, useEffect } from "react";
+import { ChangeEvent, useState } from "react";
+import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
+import {
+  IProductResponse,
+  IUpdateProductBody,
+} from "../../../interfaces/product.interface";
+import { updateProductApi } from "../../../api/product.api";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
 
-interface CreateProductProps {
-  onProductCreated: () => void;
-  shouldResetForm: boolean; // Prop to trigger form reset
-  setShouldResetForm: (value: boolean) => void; // Reset trigger callback
-}
-
-export default function CreateProduct({
-  onProductCreated,
-  shouldResetForm,
-  setShouldResetForm,
-}: CreateProductProps) {
-  const [productData, setProductData] = useState<ICreateProductBody>({
-    name: "",
-    image_url: "",
-    color: "",
-    quantity: "",
-    category: "",
-    weight: "",
-    unit: "",
-    total_price: "",
-    customer_price: "",
-    description: "",
+export default function EditProduct({
+  product,
+  onCloseEditProduct,
+}: {
+  product: IProductResponse;
+  onCloseEditProduct: () => void;
+}) {
+  const [updatedProduct, setUpdatedProduct] = useState<IUpdateProductBody>({
+    name: product.name,
+    image_url: product.image_url,
+    color: product.color,
+    quantity: product.quantity,
+    category: product.category,
+    weight: product.weight,
+    unit: product.unit,
+    total_price: product.total_price,
+    customer_price: product.customer_price,
+    description: product.description,
   });
 
+  const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const createProductMutation = useMutation({
-    mutationFn: (body: ICreateProductBody) => createProductApi(body),
+  const updateProductMutation = useMutation({
+    mutationFn: (body: IUpdateProductBody) =>
+      updateProductApi({ id: product.products_id, body }),
     onSuccess: (data) => {
-      console.log("Create product success", data);
-      queryClient.invalidateQueries(["products"]);
-      onProductCreated();
-      // Trigger callback on success
+      console.log("Product updated successfully!", data);
+      setIsSuccessDialogOpen(true);
     },
     onError: (error) => {
-      console.log("Error creating product:", error);
+      console.log("Error updating product", error);
     },
   });
 
@@ -46,43 +52,32 @@ export default function CreateProduct({
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setProductData({
-      ...productData,
+    setUpdatedProduct((prev) => ({
+      ...prev,
       [name]: value,
-    });
+    }));
   };
 
-  const handleCreateProduct = () => {
-    createProductMutation.mutate(productData);
+  const handleUpdateProduct = () => {
+    updateProductMutation.mutate(updatedProduct);
   };
-  useEffect(() => {
-    if (shouldResetForm) {
-      setProductData({
-        name: "",
-        image_url: "",
-        color: "",
-        quantity: "",
-        category: "",
-        weight: "",
-        unit: "",
-        total_price: "",
-        customer_price: "",
-        description: "",
-      });
-      setShouldResetForm(false); // Reset the trigger flag
-    }
-  }, [shouldResetForm, setShouldResetForm]);
+
+  const handleCloseSuccessDialog = () => {
+    setIsSuccessDialogOpen(false);
+    onCloseEditProduct();
+    queryClient.invalidateQueries(["products"]);  // Close the edit modal
+  };
+
   const labelCssStyles = "block text-sm font-medium text-gray-700";
   const inputCssStyles =
     "block w-full mb-2 p-2 border-gray-500 border-2 rounded-md";
-
   return (
     <div className="max-w-lg mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Create New Product</h1>
+      <h1 className="text-2xl font-bold mb-4">Edit Product</h1>
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          handleCreateProduct();
+          handleUpdateProduct();
         }}
       >
         <div className="mb-4">
@@ -93,12 +88,11 @@ export default function CreateProduct({
             type="text"
             id="name"
             name="name"
-            value={productData.name}
+            value={updatedProduct.name}
             onChange={handleInputChange}
             className={inputCssStyles}
           />
         </div>
-
         <div className="mb-4">
           <label className={labelCssStyles} htmlFor="image_url">
             Image URL
@@ -107,12 +101,11 @@ export default function CreateProduct({
             type="text"
             id="image_url"
             name="image_url"
-            value={productData.image_url}
+            value={updatedProduct.image_url}
             onChange={handleInputChange}
             className={inputCssStyles}
           />
         </div>
-
         <div className="mb-4">
           <label className={labelCssStyles} htmlFor="color">
             Color
@@ -121,12 +114,11 @@ export default function CreateProduct({
             type="text"
             id="color"
             name="color"
-            value={productData.color}
+            value={updatedProduct.color}
             onChange={handleInputChange}
             className={inputCssStyles}
           />
         </div>
-
         <div className="mb-4">
           <label className={labelCssStyles} htmlFor="quantity">
             Quantity
@@ -135,12 +127,11 @@ export default function CreateProduct({
             type="text"
             id="quantity"
             name="quantity"
-            value={productData.quantity}
+            value={updatedProduct.quantity}
             onChange={handleInputChange}
             className={inputCssStyles}
           />
         </div>
-
         <div className="mb-4">
           <label className={labelCssStyles} htmlFor="category">
             Category
@@ -149,12 +140,11 @@ export default function CreateProduct({
             type="text"
             id="category"
             name="category"
-            value={productData.category}
+            value={updatedProduct.category}
             onChange={handleInputChange}
             className={inputCssStyles}
           />
         </div>
-
         <div className="mb-4">
           <label className={labelCssStyles} htmlFor="weight">
             Weight
@@ -163,12 +153,11 @@ export default function CreateProduct({
             type="text"
             id="weight"
             name="weight"
-            value={productData.weight}
+            value={updatedProduct.weight}
             onChange={handleInputChange}
             className={inputCssStyles}
           />
         </div>
-
         <div className="mb-4">
           <label className={labelCssStyles} htmlFor="unit">
             Unit
@@ -177,12 +166,11 @@ export default function CreateProduct({
             type="text"
             id="unit"
             name="unit"
-            value={productData.unit}
+            value={updatedProduct.unit}
             onChange={handleInputChange}
             className={inputCssStyles}
           />
         </div>
-
         <div className="mb-4">
           <label className={labelCssStyles} htmlFor="total_price">
             Total Price
@@ -191,12 +179,11 @@ export default function CreateProduct({
             type="text"
             id="total_price"
             name="total_price"
-            value={productData.total_price}
+            value={updatedProduct.total_price}
             onChange={handleInputChange}
             className={inputCssStyles}
           />
         </div>
-
         <div className="mb-4">
           <label className={labelCssStyles} htmlFor="customer_price">
             Customer Price
@@ -205,12 +192,11 @@ export default function CreateProduct({
             type="text"
             id="customer_price"
             name="customer_price"
-            value={productData.customer_price}
+            value={updatedProduct.customer_price}
             onChange={handleInputChange}
             className={inputCssStyles}
           />
         </div>
-
         <div className="mb-4">
           <label className={labelCssStyles} htmlFor="description">
             Description
@@ -218,20 +204,30 @@ export default function CreateProduct({
           <textarea
             id="description"
             name="description"
-            value={productData.description}
+            value={updatedProduct.description}
             onChange={handleInputChange}
             className={inputCssStyles}
           />
         </div>
-
+        {/* Add other form fields similarly */}
         <button
           type="submit"
-          disabled={createProductMutation.isPending}
-          className="bg-blue-500 text-white py-2 px-4 rounded"
+          className="bg-green-500 text-white py-2 px-4 rounded"
         >
-          {createProductMutation.isPending ? "Creating..." : "Create Product"}
+          Update Product
         </button>
       </form>
+      <Dialog open={isSuccessDialogOpen}>
+        <DialogTitle>Edit Successful</DialogTitle>
+        <DialogContent>
+          <p>The selected products have been successfully edited.</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseSuccessDialog} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
