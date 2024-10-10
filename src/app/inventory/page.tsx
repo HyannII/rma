@@ -3,8 +3,19 @@
 import { IProductResponse } from "../../../interfaces/product.interface";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { deleteProductApi, getAllProductsApi, getProductByNameApi } from "../../../api/product.api";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import {
+  deleteProductApi,
+  getAllProductsApi,
+  getProductByNameApi,
+} from "../../../api/product.api";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
 import CreateProduct from "./createProduct";
 import { useState } from "react";
 import EditProduct from "./editProduct";
@@ -62,7 +73,7 @@ export default function Inventory() {
 
   const handleConfirmDelete = () => {
     setIsDeleteConfirmDialogOpen(true);
-  }
+  };
 
   const handleConfirmedDelete = () => {
     selectedProductIds.forEach((id) => {
@@ -106,7 +117,7 @@ export default function Inventory() {
   const handleUndoSearch = () => {
     setSearchTerm("");
     setFilteredProducts([]);
-  }
+  };
 
   //mutation
   const deleteProductMutation = useMutation({
@@ -122,8 +133,10 @@ export default function Inventory() {
 
   // Filter selected products to show their names in confirmation dialog
   const selectedProductNames = products
-    ? products.filter((product) => selectedProductIds.includes(product.products_id))
-    .map((product) => product.name): [];
+    ? products
+        .filter((product) => selectedProductIds.includes(product.products_id))
+        .map((product) => product.name)
+    : [];
 
   //datagrid columns
   const columns: GridColDef[] = [
@@ -131,7 +144,47 @@ export default function Inventory() {
       field: "name",
       headerName: "Tên mặt hàng",
       minWidth: 200,
-      editable: true,
+      editable: false,
+      flex: 3,
+      headerAlign: "center",
+      renderCell: (params) => (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+          }}
+        >
+          {params.value}
+        </Box>
+      ),
+    },
+    {
+      field: "image_url",
+      headerName: "Link ảnh",
+      minWidth: 200,
+      editable: false,
+      flex: 3,
+      headerAlign: "center",
+      renderCell: (params) => (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+          }}
+        >
+          {params.value}
+        </Box>
+      ),
+    },
+    {
+      field: "color",
+      headerName: "Màu sắc",
+      minWidth: 200,
+      editable: false,
       flex: 3,
       headerAlign: "center",
       renderCell: (params) => (
@@ -152,7 +205,7 @@ export default function Inventory() {
       headerName: "Số lượng",
       minWidth: 80,
       type: "number",
-      editable: true,
+      editable: false,
       flex: 2,
       headerAlign: "center",
       renderCell: (params) => (
@@ -170,12 +223,34 @@ export default function Inventory() {
       valueGetter: (value, row) => `${row.quantity}`,
     },
     {
+      field: "weight",
+      headerName: "Cân nặng",
+      minWidth: 80,
+      type: "number",
+      editable: false,
+      flex: 2,
+      headerAlign: "center",
+      renderCell: (params) => (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+          }}
+        >
+          {params.value}
+        </Box>
+      ),
+      valueGetter: (value, row) => `${row.weight}`,
+    },
+    {
       field: "unit",
       headerName: "Đơn vị tính",
       minWidth: 100,
       flex: 2,
       headerAlign: "center",
-      editable: true,
+      editable: false,
       renderCell: (params) => (
         <Box
           sx={{
@@ -195,7 +270,7 @@ export default function Inventory() {
       minWidth: 90,
       flex: 2,
       headerAlign: "center",
-      editable: true,
+      editable: false,
       renderCell: (params) => (
         <Box
           sx={{
@@ -216,7 +291,7 @@ export default function Inventory() {
       type: "number",
       flex: 2,
       headerAlign: "center",
-      editable: true,
+      editable: false,
       renderCell: (params) => (
         <Box
           sx={{
@@ -238,7 +313,7 @@ export default function Inventory() {
       type: "number",
       flex: 2,
       headerAlign: "center",
-      editable: true,
+      editable: false,
       renderCell: (params) => (
         <Box
           sx={{
@@ -252,6 +327,26 @@ export default function Inventory() {
         </Box>
       ),
       valueGetter: (value, row) => `${row.customer_price} VND`,
+    },
+    {
+      field: "description",
+      headerName: "Mô tả",
+      minWidth: 90,
+      flex: 2,
+      headerAlign: "center",
+      editable: false,
+      renderCell: (params) => (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+          }}
+        >
+          {params.value}
+        </Box>
+      ),
     },
   ];
   if (isFetching) {
@@ -268,10 +363,10 @@ export default function Inventory() {
     <div className="flex flex-col">
       {/* SEARCH BAR */}
       <div className="mb-6">
-        <div className="flex items-center border-2 border-gray-200 rounded">
+        <div className="flex items-center border-8 sm:mx-24 md:mx-32 lg:mx-48 xl:mx-72 border-gray-200 bg-gray-200 rounded">
           <SearchIcon className="w-5 h-5 text-gray-500 m-2" />
           <input
-            className="w-full py-2 px-4 rounded bg-white focus: outline-none"
+            className="w-full py-2 px-4 focus:outline-none rounded"
             placeholder="Tìm kiếm..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -356,10 +451,10 @@ export default function Inventory() {
           <p>Do you want to create another product?</p>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCreateMore} color="primary">
+          <Button onClick={handleCreateMore} >
             Create More
           </Button>
-          <Button onClick={handleCancel} color="primary">
+          <Button onClick={handleCancel} >
             Cancel
           </Button>
         </DialogActions>
@@ -391,7 +486,7 @@ export default function Inventory() {
           <p>The selected products have been successfully edited.</p>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseEditSuccessDialog} color="primary">
+          <Button onClick={handleCloseEditSuccessDialog} >
             Close
           </Button>
         </DialogActions>
@@ -406,7 +501,7 @@ export default function Inventory() {
           <p>The selected products have been successfully deleted.</p>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDeleteSuccessDialog} color="primary">
+          <Button onClick={handleCloseDeleteSuccessDialog} >
             Close
           </Button>
         </DialogActions>
@@ -416,6 +511,7 @@ export default function Inventory() {
         <DialogTitle>Delete</DialogTitle>
         <DialogContent>
           <p>Do you want to delete these product?</p>
+          <br />
           <ul>
             {selectedProductNames.map((name, index) => (
               <li key={index}>{name}</li>
@@ -425,13 +521,11 @@ export default function Inventory() {
         <DialogActions>
           <Button
             onClick={handleConfirmedDelete}
-            className="flex items-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 ml-4 rounded"
           >
             Xác nhận
           </Button>
           <Button
             onClick={() => setIsDeleteConfirmDialogOpen(false)}
-            color="secondary"
           >
             Huỷ
           </Button>
