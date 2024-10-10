@@ -29,6 +29,7 @@ export default function CreateProduct({
 
   const queryClient = useQueryClient();
 
+  // mutation 
   const createProductMutation = useMutation({
     mutationFn: (body: ICreateProductBody) => createProductApi(body),
     onSuccess: (data) => {
@@ -42,6 +43,7 @@ export default function CreateProduct({
     },
   });
 
+  //handler
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -77,15 +79,16 @@ export default function CreateProduct({
     "block w-full mb-2 p-2 border-gray-500 border-2 rounded-md";
 
   return (
-    <div className="max-w-lg mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Create New Product</h1>
+    <div className="flex flex-wrap max-w-2xl mx-auto p-6">
+      <h1 className="text-4xl font-bold mb-4 w-full">Tạo sản phẩm mới</h1>
       <form
         onSubmit={(e) => {
           e.preventDefault();
           handleCreateProduct();
         }}
+        className="flex flex-wrap w-full"
       >
-        <div className="mb-4">
+        <div className="mb-4 w-2/3 px-2">
           <label className={labelCssStyles} htmlFor="name">
             Product Name
           </label>
@@ -96,10 +99,11 @@ export default function CreateProduct({
             value={productData.name}
             onChange={handleInputChange}
             className={inputCssStyles}
+            required
           />
         </div>
 
-        <div className="mb-4">
+        <div className="mb-4 w-1/3 px-2">
           <label className={labelCssStyles} htmlFor="image_url">
             Image URL
           </label>
@@ -113,7 +117,7 @@ export default function CreateProduct({
           />
         </div>
 
-        <div className="mb-4">
+        <div className="mb-4 w-1/2 px-2">
           <label className={labelCssStyles} htmlFor="color">
             Color
           </label>
@@ -127,7 +131,7 @@ export default function CreateProduct({
           />
         </div>
 
-        <div className="mb-4">
+        <div className="mb-4 w-1/2 px-2">
           <label className={labelCssStyles} htmlFor="quantity">
             Quantity
           </label>
@@ -138,10 +142,11 @@ export default function CreateProduct({
             value={productData.quantity}
             onChange={handleInputChange}
             className={inputCssStyles}
+            required
           />
         </div>
 
-        <div className="mb-4">
+        <div className="mb-4 w-full px-2">
           <label className={labelCssStyles} htmlFor="category">
             Category
           </label>
@@ -152,10 +157,11 @@ export default function CreateProduct({
             value={productData.category}
             onChange={handleInputChange}
             className={inputCssStyles}
+            required
           />
         </div>
 
-        <div className="mb-4">
+        <div className="mb-4 w-1/2 px-2">
           <label className={labelCssStyles} htmlFor="weight">
             Weight
           </label>
@@ -169,7 +175,7 @@ export default function CreateProduct({
           />
         </div>
 
-        <div className="mb-4">
+        <div className="mb-4 w-1/2 px-2">
           <label className={labelCssStyles} htmlFor="unit">
             Unit
           </label>
@@ -183,7 +189,7 @@ export default function CreateProduct({
           />
         </div>
 
-        <div className="mb-4">
+        <div className="mb-4 w-1/2 px-2">
           <label className={labelCssStyles} htmlFor="total_price">
             Total Price
           </label>
@@ -197,7 +203,7 @@ export default function CreateProduct({
           />
         </div>
 
-        <div className="mb-4">
+        <div className="mb-4 w-1/2 px-2">
           <label className={labelCssStyles} htmlFor="customer_price">
             Customer Price
           </label>
@@ -211,7 +217,7 @@ export default function CreateProduct({
           />
         </div>
 
-        <div className="mb-4">
+        <div className="mb-4 w-full px-2">
           <label className={labelCssStyles} htmlFor="description">
             Description
           </label>
@@ -226,10 +232,9 @@ export default function CreateProduct({
 
         <button
           type="submit"
-          disabled={createProductMutation.isPending}
-          className="bg-blue-500 text-white py-2 px-4 rounded"
+          className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
         >
-          {createProductMutation.isPending ? "Creating..." : "Create Product"}
+          Create Product
         </button>
       </form>
     </div>

@@ -67,6 +67,9 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      boxShadow: {
+        "4xl": "0px 22px 70px 4px rgba(0, 0, 0, 0.56)",
+      },
     },
   },
   plugins: [createThemes(themes)],

@@ -3,12 +3,12 @@
 import { IProductResponse } from "../../../interfaces/product.interface";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { deleteProductApi, getAllProductsApi } from "../../../api/product.api";
+import { deleteProductApi, getAllProductsApi, getProductByNameApi } from "../../../api/product.api";
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import CreateProduct from "./createProduct";
 import { useState } from "react";
 import EditProduct from "./editProduct";
-import { PlusCircleIcon, SearchIcon, Trash2 } from "lucide-react";
+import { CircleX, PlusCircleIcon, SearchIcon, Trash2, X } from "lucide-react";
 import Header from "../(components)/Header";
 
 export default function Inventory() {
@@ -26,23 +26,26 @@ export default function Inventory() {
   const [isCreateProductOpen, setIsCreateProductOpen] = useState(false);
   const [isEditProductOpen, setIsEditProductOpen] = useState(false);
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
+  const [isDeleteConfirmDialogOpen, setIsDeleteConfirmDialogOpen] =
+    useState(false);
   const [isDeleteSuccessDialogOpen, setIsDeleteSuccessDialogOpen] =
     useState(false);
-  const [isEditSuccessDialogOpen, setIsEditSuccessDialogOpen] =
-    useState(false);
+  const [isEditSuccessDialogOpen, setIsEditSuccessDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] =
     useState<IProductResponse | null>(null);
   const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [isFindFailed, setIsFindFailed] = useState(false);
 
-    //set const
+  //set const
   const openCreateProduct = () => setIsCreateProductOpen(true);
   const closeCreateProduct = () => setIsCreateProductOpen(false);
   const openEditProduct = () => setIsEditProductOpen(true);
   const closeEditProduct = () => setIsEditProductOpen(false);
   const [shouldResetForm, setShouldResetForm] = useState(false);
 
-    //handler
+  //handler
   const handleProductCreated = () => {
     setIsSuccessDialogOpen(true); // Open success dialog after product creation
   };
@@ -56,11 +59,16 @@ export default function Inventory() {
     setIsSuccessDialogOpen(false); // Close both dialog and modal
     setIsCreateProductOpen(false);
   };
-  
-  const handleDeleteProducts = () => {
+
+  const handleConfirmDelete = () => {
+    setIsDeleteConfirmDialogOpen(true);
+  }
+
+  const handleConfirmedDelete = () => {
     selectedProductIds.forEach((id) => {
       deleteProductMutation.mutate(id);
     });
+    setIsDeleteConfirmDialogOpen(false); // Close confirmation dialog after deletion
   };
 
   const handleEditProduct = () => {
@@ -85,6 +93,22 @@ export default function Inventory() {
     queryClient.invalidateQueries(["products"]); // Refetch product data
   };
 
+  const handleSearch = async () => {
+    try {
+      const result = await getProductByNameApi(searchTerm); // Call the API with searchTerm
+      setFilteredProducts(result); // Update the filteredProducts with API result
+    } catch (error) {
+      console.error("Error fetching product by name:", error);
+      setIsFindFailed(true);
+    }
+  };
+
+  const handleUndoSearch = () => {
+    setSearchTerm("");
+    setFilteredProducts([]);
+  }
+
+  //mutation
   const deleteProductMutation = useMutation({
     mutationFn: (id: number) => deleteProductApi(id),
     onSuccess: () => {
@@ -96,6 +120,12 @@ export default function Inventory() {
     },
   });
 
+  // Filter selected products to show their names in confirmation dialog
+  const selectedProductNames = products
+    ? products.filter((product) => selectedProductIds.includes(product.products_id))
+    .map((product) => product.name): [];
+
+  //datagrid columns
   const columns: GridColDef[] = [
     {
       field: "name",
@@ -241,15 +271,30 @@ export default function Inventory() {
         <div className="flex items-center border-2 border-gray-200 rounded">
           <SearchIcon className="w-5 h-5 text-gray-500 m-2" />
           <input
-            className="w-full py-2 px-4 rounded bg-white"
+            className="w-full py-2 px-4 rounded bg-white focus: outline-none"
             placeholder="Tìm kiếm..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSearch();
+            }}
           />
+          {searchTerm !== "" && (
+            <button onClick={handleUndoSearch}>
+              <CircleX></CircleX>
+            </button>
+          )}
+          <button
+            onClick={handleSearch}
+            className="mx-2 text-gray-700 hover:text-gray-950"
+          >
+            Search
+          </button>
         </div>
       </div>
       <div className="flex justify-between items-center mb-4">
         <Header name="Kho hàng" />
+        {/* buttons */}
         <div className="flex justify-between items-center">
           <button
             onClick={openCreateProduct}
@@ -259,7 +304,7 @@ export default function Inventory() {
           </button>
           {selectedProductIds.length > 0 && (
             <button
-              onClick={handleDeleteProducts}
+              onClick={handleConfirmDelete}
               className="flex items-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 ml-4 rounded"
             >
               <Trash2 className="w-5 h-5 mr-2 !text-gray-100" /> Xoá đã chọn
@@ -275,8 +320,9 @@ export default function Inventory() {
           )}
         </div>
       </div>
+      {/* datagrid */}
       <DataGrid
-        rows={products}
+        rows={filteredProducts.length > 0 ? filteredProducts : products}
         columns={columns}
         getRowId={(row) => row.products_id}
         checkboxSelection
@@ -285,30 +331,15 @@ export default function Inventory() {
         }}
         className="shadow rounded-lg border border-gray-200 mt-5 text-gray-900"
       />
-      {isEditProductOpen && selectedProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg max-w-md w-full relative">
-            <button
-              onClick={closeEditProduct}
-              className="absolute top-2 right-2 w-10 h-7 rounded bg-gray-200 text-red-600"
-            >
-              X
-            </button>
-            <EditProduct
-              product={selectedProduct}
-              onCloseEditProduct={closeEditProduct}
-            />
-          </div>
-        </div>
-      )}
+      {/* create product modal */}
       {isCreateProductOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg max-w-md w-full relative">
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-4xl max-w-2xl w-full relative">
             <button
               onClick={closeCreateProduct}
-              className="absolute top-2 right-2 text-red-600"
+              className="flex absolute top-2 right-2 w-7 h-7 rounded bg-gray-400 hover:bg-red-600 text-gray-100 font-bold justify-center items-center"
             >
-              X {/* Close button */}
+              <X></X>
             </button>
             <CreateProduct
               onProductCreated={handleProductCreated}
@@ -318,6 +349,7 @@ export default function Inventory() {
           </div>
         </div>
       )}
+      {/* create product success dialog */}
       <Dialog open={isSuccessDialogOpen}>
         <DialogTitle>Product Created Successfully!</DialogTitle>
         <DialogContent>
@@ -332,6 +364,39 @@ export default function Inventory() {
           </Button>
         </DialogActions>
       </Dialog>
+      {/* edit product modal */}
+      {isEditProductOpen && selectedProduct && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-4xl max-w-2xl w-full relative">
+            <button
+              onClick={closeEditProduct}
+              className="flex absolute top-2 right-2 w-7 h-7 rounded bg-gray-400 hover:bg-red-600 text-gray-100 font-bold justify-center items-center"
+            >
+              <X></X>
+            </button>
+            <EditProduct
+              product={selectedProduct}
+              onCloseEditProduct={closeEditProduct}
+            />
+          </div>
+        </div>
+      )}
+      {/* edit product success dialog */}
+      <Dialog
+        open={isEditSuccessDialogOpen}
+        onClose={handleCloseEditSuccessDialog}
+      >
+        <DialogTitle>Edit Successful</DialogTitle>
+        <DialogContent>
+          <p>The selected products have been successfully edited.</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseEditSuccessDialog} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+      {/* delete product success dialog */}
       <Dialog
         open={isDeleteSuccessDialogOpen}
         onClose={handleCloseDeleteSuccessDialog}
@@ -346,18 +411,39 @@ export default function Inventory() {
           </Button>
         </DialogActions>
       </Dialog>
-      <Dialog
-        open={isEditSuccessDialogOpen}
-        onClose={handleCloseEditSuccessDialog}
-      >
-        <DialogTitle>Edit Successful</DialogTitle>
+      {/* delete confirm dialog */}
+      <Dialog open={isDeleteConfirmDialogOpen}>
+        <DialogTitle>Delete</DialogTitle>
         <DialogContent>
-          <p>The selected products have been successfully edited.</p>
+          <p>Do you want to delete these product?</p>
+          <ul>
+            {selectedProductNames.map((name, index) => (
+              <li key={index}>{name}</li>
+            ))}
+          </ul>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseEditSuccessDialog} color="primary">
-            Close
+          <Button
+            onClick={handleConfirmedDelete}
+            className="flex items-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 ml-4 rounded"
+          >
+            Xác nhận
           </Button>
+          <Button
+            onClick={() => setIsDeleteConfirmDialogOpen(false)}
+            color="secondary"
+          >
+            Huỷ
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={isFindFailed}>
+        <DialogTitle>No Matching Product</DialogTitle>
+        <DialogContent>
+          <p>No product matched your search request</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsFindFailed(false)}>Close</Button>
         </DialogActions>
       </Dialog>
     </div>
