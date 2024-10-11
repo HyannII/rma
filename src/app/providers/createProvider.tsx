@@ -17,13 +17,12 @@ export default function CreateProvider({
 }: CreateProviderProps) {
   const [providerData, setProviderData] = useState<ICreateProviderBody>({
     name: "",
-    image_url: "",
+    image: null,
     address: "",
     phone: "",
     email: "",
     description: "",
   });
-  const [imageFile, setImageFile] = useState();
 
   const fileInputRef = useRef(null);
 
@@ -48,15 +47,16 @@ export default function CreateProvider({
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setProviderData({
-      ...providerData,
-      [name]: value,
-    });
-  };
-
-  const handleImageInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.length) {
-      setImageFile(e.target.files[0]);
+    if ((e as ChangeEvent<HTMLInputElement>).target.files && name === "image") {
+      setProviderData({
+        ...providerData,
+        image: (e as ChangeEvent<HTMLInputElement>).target.files[0],
+      });
+    } else {
+      setProviderData({
+        ...providerData,
+        [name]: value,
+      });
     }
   };
 
@@ -67,7 +67,7 @@ export default function CreateProvider({
     if (shouldResetForm) {
       setProviderData({
         name: "",
-        image_url: "",
+        image: null,
         address: "",
         phone: "",
         email: "",
@@ -136,9 +136,9 @@ export default function CreateProvider({
         </div>
 
         <div className="block w-1/3 p-1 border-2 border-gray-500 rounded">
-          {imageFile && (
+          {providerData.image && (
             <Image
-              src={URL.createObjectURL(imageFile)}
+              src={URL.createObjectURL(providerData.image)}
               alt=""
               layout="responsive"
               objectFit="contain"
@@ -169,9 +169,9 @@ export default function CreateProvider({
           </label>
           <input
             type="file"
-            id="image_url"
-            name="image_url"
-            onChange={handleImageInputChange}
+            id="image"
+            name="image"
+            onChange={handleInputChange}
             className={"hidden"}
             ref={fileInputRef}
           />
@@ -201,7 +201,7 @@ export default function CreateProvider({
           type="submit"
           className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
         >
-          Create Provider
+          {createProviderMutation.isPending ? "Creating" : "Create provider"}
         </button>
       </form>
     </div>

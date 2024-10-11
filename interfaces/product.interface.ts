@@ -16,7 +16,7 @@ export interface IProductResponse {
 
 export interface ICreateProductBody {
   name: string;
-  image_url: string;
+  image: File | null;
   color: string;
   quantity: string;
   category: string;

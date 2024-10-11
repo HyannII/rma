@@ -17,12 +17,25 @@ export const getProductByIDApi = async (id: number) => {
 };
 
 export const getProductByNameApi = async (name: string) => {
-  const res = await api.get<IProductResponse[]>(`/product/getall`, { params: { name } });
+  const res = await api.get<IProductResponse[]>(`/product/getall`, {
+    params: { name },
+  });
   return res.data;
-}
+};
 
 export const createProductApi = async (body: ICreateProductBody) => {
-  const res = await api.post<IProductResponse>("/product", body);
+  const formData = new FormData();
+  for (const [k, val] of Object.entries(body)) {
+    formData.append(k, val);
+  }
+
+  console.log(formData);
+
+  const res = await api.post<IProductResponse>("/product", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return res.data;
 };
 
@@ -38,6 +51,19 @@ export const updateProductApi = async ({
   id: number;
   body: IUpdateProductBody;
 }) => {
-  const res = await api.patch<IProductResponse>(`/product/${id}`, body);
+  const formData = new FormData();
+  for (const [k, val] of Object.entries(body)) {
+    if (val !== null && val !== undefined) {
+      formData.append(k, val as any);
+    }
+  }
+
+  console.log(id, formData);
+
+  const res = await api.patch<IProductResponse>(`/product/${id}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return res.data;
 };

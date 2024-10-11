@@ -23,7 +23,7 @@ export default function EditProduct({
 }) {
   const [updatedProduct, setUpdatedProduct] = useState<IUpdateProductBody>({
     name: product.name,
-    image_url: product.image_url,
+    image: null,
     color: product.color,
     quantity: product.quantity,
     category: product.category,
@@ -37,7 +37,6 @@ export default function EditProduct({
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
   const queryClient = useQueryClient();
   const fileInputRef = useRef(null);
-  const [imageFile, setImageFile] = useState();
 
   const updateProductMutation = useMutation({
     mutationFn: (body: IUpdateProductBody) =>
@@ -55,15 +54,16 @@ export default function EditProduct({
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setUpdatedProduct((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleImageInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.length) {
-      setImageFile(e.target.files[0]);
+    if ((e as ChangeEvent<HTMLInputElement>).target.files && name === "image") {
+      setUpdatedProduct({
+        ...updatedProduct,
+        image: (e as ChangeEvent<HTMLInputElement>).target.files[0],
+      });
+    } else {
+      setUpdatedProduct({
+        ...updatedProduct,
+        [name]: value,
+      });
     }
   };
 
@@ -102,7 +102,6 @@ export default function EditProduct({
               value={updatedProduct.name}
               onChange={handleInputChange}
               className={inputCssStyles}
-              required
             />
           </div>
 
@@ -130,22 +129,19 @@ export default function EditProduct({
               value={updatedProduct.quantity}
               onChange={handleInputChange}
               className={inputCssStyles}
-              required
             />
           </div>
         </div>
 
         <div className="block w-1/3 p-1 border-2 border-gray-500 rounded">
-          {imageFile && (
-            <Image
-              src={URL.createObjectURL(imageFile)}
-              alt=""
-              layout="responsive"
-              objectFit="contain"
-              width={1}
-              height={1}
-            />
-          )}
+          <img
+            src={
+              updatedProduct.image
+                ? URL.createObjectURL(updatedProduct.image)
+                : product.image_url
+            }
+            alt=""
+          />
         </div>
 
         <div className="mb-4 w-2/3 px-2">
@@ -159,7 +155,6 @@ export default function EditProduct({
             value={updatedProduct.category}
             onChange={handleInputChange}
             className={inputCssStyles}
-            required
           />
         </div>
 
@@ -169,9 +164,9 @@ export default function EditProduct({
           </label>
           <input
             type="file"
-            id="image_url"
-            name="image_url"
-            onChange={handleImageInputChange}
+            id="image"
+            name="image"
+            onChange={handleInputChange}
             className={"hidden"}
             ref={fileInputRef}
           />
@@ -257,7 +252,7 @@ export default function EditProduct({
           type="submit"
           className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
         >
-          Create Product
+          {updateProductMutation.isPending ? "Changing..." : "Confirm Change"}
         </button>
       </form>
       <Dialog open={isSuccessDialogOpen}>

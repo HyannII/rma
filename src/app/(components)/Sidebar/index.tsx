@@ -105,12 +105,6 @@ const Sidebar = () => {
           isCollapsed={isSidebarCollapsed}
         ></SidebarLink>
         <SidebarLink
-          href="/products"
-          icon={Package}
-          label="Hàng hoá"
-          isCollapsed={isSidebarCollapsed}
-        ></SidebarLink>
-        <SidebarLink
           href="/inventory"
           icon={Warehouse}
           label="Kho"

@@ -17,7 +17,7 @@ export default function CreateProduct({
 }: CreateProductProps) {
   const [productData, setProductData] = useState<ICreateProductBody>({
     name: "",
-    image_url: "",
+    image: null,
     color: "",
     quantity: "",
     category: "",
@@ -27,7 +27,6 @@ export default function CreateProduct({
     customer_price: "",
     description: "",
   });
-  const [imageFile, setImageFile] = useState();
 
   const fileInputRef = useRef(null);
 
@@ -52,15 +51,16 @@ export default function CreateProduct({
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setProductData({
-      ...productData,
-      [name]: value,
-    });
-  };
-
-  const handleImageInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.length) {
-      setImageFile(e.target.files[0]);
+    if ((e as ChangeEvent<HTMLInputElement>).target.files && name === "image") {
+      setProductData({
+        ...productData,
+        image: (e as ChangeEvent<HTMLInputElement>).target.files[0],
+      });
+    } else {
+      setProductData({
+        ...productData,
+        [name]: value,
+      });
     }
   };
 
@@ -71,7 +71,7 @@ export default function CreateProduct({
     if (shouldResetForm) {
       setProductData({
         name: "",
-        image_url: "",
+        image: null,
         color: "",
         quantity: "",
         category: "",
@@ -144,9 +144,9 @@ export default function CreateProduct({
         </div>
 
         <div className="block w-1/3 p-1 border-2 border-gray-500 rounded">
-          {imageFile && (
+          {productData.image && (
             <Image
-              src={URL.createObjectURL(imageFile)}
+              src={URL.createObjectURL(productData.image)}
               alt=""
               layout="responsive"
               objectFit="contain"
@@ -177,9 +177,9 @@ export default function CreateProduct({
           </label>
           <input
             type="file"
-            id="image_url"
-            name="image_url"
-            onChange={handleImageInputChange}
+            id="image"
+            name="image"
+            onChange={handleInputChange}
             className={"hidden"}
             ref={fileInputRef}
           />
@@ -265,7 +265,7 @@ export default function CreateProduct({
           type="submit"
           className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
         >
-          Create Product
+          {createProductMutation.isPending ? "Creating" : "Create Product"}
         </button>
       </form>
     </div>

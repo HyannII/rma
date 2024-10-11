@@ -24,7 +24,18 @@ export const getProviderByNameApi = async (name: string) => {
 };
 
 export const createProviderApi = async (body: ICreateProviderBody) => {
-  const res = await api.post<IProviderResponse>("/provider", body);
+  const formData = new FormData();
+  for (const [k, val] of Object.entries(body)) {
+    formData.append(k, val);
+  }
+
+  console.log(formData);
+
+  const res = await api.post<IProviderResponse>("/provider", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return res.data;
 };
 
@@ -40,6 +51,19 @@ export const updateProviderApi = async ({
   id: number;
   body: IUpdateProviderBody;
 }) => {
-  const res = await api.patch<IProviderResponse>(`/provider/${id}`, body);
+  const formData = new FormData();
+  for (const [k, val] of Object.entries(body)) {
+    if (val !== null && val !== undefined) {
+      formData.append(k, val as any);
+    }
+  }
+
+  console.log(id, formData);
+
+  const res = await api.patch<IProviderResponse>(`/provider/${id}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return res.data;
 };

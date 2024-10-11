@@ -12,7 +12,7 @@ export interface IProviderResponse {
 
 export interface ICreateProviderBody {
   name: string;
-  image_url: string;
+  image: File | null;
   address: string;
   phone: string;
   email: string;
