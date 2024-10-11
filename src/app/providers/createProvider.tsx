@@ -1,30 +1,26 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ICreateProductBody } from "../../../interfaces/product.interface";
-import { createProductApi } from "../../../api/product.api";
+import { ICreateProviderBody } from "../../../interfaces/provider.interface";
+import { createProviderApi } from "../../../api/provider.api";
 import { useState, ChangeEvent, useEffect, useRef } from "react";
 import Image from "next/legacy/image";
 
-interface CreateProductProps {
-  onProductCreated: () => void;
+interface CreateProviderProps {
+  onProviderCreated: () => void;
   shouldResetForm: boolean; // Prop to trigger form reset
   setShouldResetForm: (value: boolean) => void; // Reset trigger callback
 }
 
-export default function CreateProduct({
-  onProductCreated,
+export default function CreateProvider({
+  onProviderCreated,
   shouldResetForm,
   setShouldResetForm,
-}: CreateProductProps) {
-  const [productData, setProductData] = useState<ICreateProductBody>({
+}: CreateProviderProps) {
+  const [providerData, setProviderData] = useState<ICreateProviderBody>({
     name: "",
     image_url: "",
-    color: "",
-    quantity: "",
-    category: "",
-    weight: "",
-    unit: "",
-    total_price: "",
-    customer_price: "",
+    address: "",
+    phone: "",
+    email: "",
     description: "",
   });
   const [imageFile, setImageFile] = useState();
@@ -34,16 +30,16 @@ export default function CreateProduct({
   const queryClient = useQueryClient();
 
   // mutation
-  const createProductMutation = useMutation({
-    mutationFn: (body: ICreateProductBody) => createProductApi(body),
+  const createProviderMutation = useMutation({
+    mutationFn: (body: ICreateProviderBody) => createProviderApi(body),
     onSuccess: (data) => {
-      console.log("Create product success", data);
-      queryClient.invalidateQueries(["products"]);
-      onProductCreated();
+      console.log("Create provider success", data);
+      queryClient.invalidateQueries(["providers"]);
+      onProviderCreated();
       // Trigger callback on success
     },
     onError: (error) => {
-      console.log("Error creating product:", error);
+      console.log("Error creating provider:", error);
     },
   });
 
@@ -52,8 +48,8 @@ export default function CreateProduct({
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setProductData({
-      ...productData,
+    setProviderData({
+      ...providerData,
       [name]: value,
     });
   };
@@ -64,21 +60,17 @@ export default function CreateProduct({
     }
   };
 
-  const handleCreateProduct = () => {
-    createProductMutation.mutate(productData);
+  const handleCreateProvider = () => {
+    createProviderMutation.mutate(providerData);
   };
   useEffect(() => {
     if (shouldResetForm) {
-      setProductData({
+      setProviderData({
         name: "",
         image_url: "",
-        color: "",
-        quantity: "",
-        category: "",
-        weight: "",
-        unit: "",
-        total_price: "",
-        customer_price: "",
+        address: "",
+        phone: "",
+        email: "",
         description: "",
       });
       setShouldResetForm(false); // Reset the trigger flag
@@ -94,20 +86,20 @@ export default function CreateProduct({
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          handleCreateProduct();
+          handleCreateProvider();
         }}
         className="flex flex-wrap w-full"
       >
         <div className="flex flex-wrap w-2/3">
           <div className="mb-4 w-full px-2">
             <label className={labelCssStyles} htmlFor="name">
-              Product Name
+              Provider Name
             </label>
             <input
               type="text"
               id="name"
               name="name"
-              value={productData.name}
+              value={providerData.name}
               onChange={handleInputChange}
               className={inputCssStyles}
               required
@@ -116,26 +108,26 @@ export default function CreateProduct({
 
           <div className="mb-4 w-1/2 px-2">
             <label className={labelCssStyles} htmlFor="color">
-              Color
+              Address
             </label>
             <input
               type="text"
-              id="color"
-              name="color"
-              value={productData.color}
+              id="address"
+              name="address"
+              value={providerData.address}
               onChange={handleInputChange}
               className={inputCssStyles}
             />
           </div>
           <div className="mb-4 w-1/2 px-2">
             <label className={labelCssStyles} htmlFor="quantity">
-              Quantity
+              Phone
             </label>
             <input
               type="text"
-              id="quantity"
-              name="quantity"
-              value={productData.quantity}
+              id="phone"
+              name="phone"
+              value={providerData.phone}
               onChange={handleInputChange}
               className={inputCssStyles}
               required
@@ -158,13 +150,13 @@ export default function CreateProduct({
 
         <div className="mb-4 w-2/3 px-2">
           <label className={labelCssStyles} htmlFor="category">
-            Category
+            Email
           </label>
           <input
             type="text"
-            id="category"
-            name="category"
-            value={productData.category}
+            id="email"
+            name="email"
+            value={providerData.email}
             onChange={handleInputChange}
             className={inputCssStyles}
             required
@@ -192,62 +184,6 @@ export default function CreateProduct({
           </button>
         </div>
 
-        <div className="mb-4 w-1/2 px-2">
-          <label className={labelCssStyles} htmlFor="weight">
-            Weight
-          </label>
-          <input
-            type="text"
-            id="weight"
-            name="weight"
-            value={productData.weight}
-            onChange={handleInputChange}
-            className={inputCssStyles}
-          />
-        </div>
-
-        <div className="mb-4 w-1/2 px-2">
-          <label className={labelCssStyles} htmlFor="unit">
-            Unit
-          </label>
-          <input
-            type="text"
-            id="unit"
-            name="unit"
-            value={productData.unit}
-            onChange={handleInputChange}
-            className={inputCssStyles}
-          />
-        </div>
-
-        <div className="mb-4 w-1/2 px-2">
-          <label className={labelCssStyles} htmlFor="total_price">
-            Total Price
-          </label>
-          <input
-            type="text"
-            id="total_price"
-            name="total_price"
-            value={productData.total_price}
-            onChange={handleInputChange}
-            className={inputCssStyles}
-          />
-        </div>
-
-        <div className="mb-4 w-1/2 px-2">
-          <label className={labelCssStyles} htmlFor="customer_price">
-            Customer Price
-          </label>
-          <input
-            type="text"
-            id="customer_price"
-            name="customer_price"
-            value={productData.customer_price}
-            onChange={handleInputChange}
-            className={inputCssStyles}
-          />
-        </div>
-
         <div className="mb-4 w-full px-2">
           <label className={labelCssStyles} htmlFor="description">
             Description
@@ -255,7 +191,7 @@ export default function CreateProduct({
           <textarea
             id="description"
             name="description"
-            value={productData.description}
+            value={providerData.description}
             onChange={handleInputChange}
             className={inputCssStyles}
           />
@@ -265,7 +201,7 @@ export default function CreateProduct({
           type="submit"
           className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
         >
-          Create Product
+          Create Provider
         </button>
       </form>
     </div>

@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { getAllProductsApi } from "../../../api/product.api";
-import Image from "next/image";
+import Image from "next/legacy/image";
 
 export default function Products() {
   const {

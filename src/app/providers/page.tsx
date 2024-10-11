@@ -1,13 +1,13 @@
 "use client";
 
-import { IProductResponse } from "../../../interfaces/product.interface";
+import { IProviderResponse } from "../../../interfaces/provider.interface";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import {
-  deleteProductApi,
-  getAllProductsApi,
-  getProductByNameApi,
-} from "../../../api/product.api";
+  deleteProviderApi,
+  getAllProvidersApi,
+  getProviderByNameApi,
+} from "../../../api/provider.api";
 import {
   Box,
   Button,
@@ -16,9 +16,9 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import CreateProduct from "./createProduct";
+import CreateProvider from "./createProvider";
 import { useState } from "react";
-import EditProduct from "./editProduct";
+import EditProvider from "./editProvider";
 import { CircleX, PlusCircleIcon, SearchIcon, Trash2, X } from "lucide-react";
 import Header from "../(components)/Header";
 import { RenderCellExpand } from "@/utils/renderCellExpand";
@@ -26,41 +26,41 @@ import { RenderCellExpand } from "@/utils/renderCellExpand";
 export default function Inventory() {
   const queryClient = useQueryClient();
   const {
-    data: products,
+    data: providers,
     isFetching,
     isError,
   } = useQuery({
-    queryKey: ["products"],
-    queryFn: getAllProductsApi,
+    queryKey: ["providers"],
+    queryFn: getAllProvidersApi,
     refetchOnWindowFocus: false,
   });
 
   //bool const
-  const [isCreateProductOpen, setIsCreateProductOpen] = useState(false);
-  const [isEditProductOpen, setIsEditProductOpen] = useState(false);
+  const [isCreateProviderOpen, setIsCreateProviderOpen] = useState(false);
+  const [isEditProviderOpen, setIsEditProviderOpen] = useState(false);
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
   const [isDeleteConfirmDialogOpen, setIsDeleteConfirmDialogOpen] =
     useState(false);
   const [isDeleteSuccessDialogOpen, setIsDeleteSuccessDialogOpen] =
     useState(false);
   const [isEditSuccessDialogOpen, setIsEditSuccessDialogOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] =
-    useState<IProductResponse | null>(null);
-  const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
+  const [selectedProvider, setSelectedProvider] =
+    useState<IProviderResponse | null>(null);
+  const [selectedProviderIds, setSelectedProviderIds] = useState<number[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [filteredProviders, setFilteredProviders] = useState([]);
   const [isFindFailed, setIsFindFailed] = useState(false);
 
   //set const
-  const openCreateProduct = () => setIsCreateProductOpen(true);
-  const closeCreateProduct = () => setIsCreateProductOpen(false);
-  const openEditProduct = () => setIsEditProductOpen(true);
-  const closeEditProduct = () => setIsEditProductOpen(false);
+  const openCreateProvider = () => setIsCreateProviderOpen(true);
+  const closeCreateProvider = () => setIsCreateProviderOpen(false);
+  const openEditProvider = () => setIsEditProviderOpen(true);
+  const closeEditProvider = () => setIsEditProviderOpen(false);
   const [shouldResetForm, setShouldResetForm] = useState(false);
 
   //handler
-  const handleProductCreated = () => {
-    setIsSuccessDialogOpen(true); // Open success dialog after product creation
+  const handleProviderCreated = () => {
+    setIsSuccessDialogOpen(true); // Open success dialog after provider creation
   };
 
   const handleCreateMore = () => {
@@ -70,7 +70,7 @@ export default function Inventory() {
 
   const handleCancel = () => {
     setIsSuccessDialogOpen(false); // Close both dialog and modal
-    setIsCreateProductOpen(false);
+    setIsCreateProviderOpen(false);
   };
 
   const handleConfirmDelete = () => {
@@ -78,73 +78,73 @@ export default function Inventory() {
   };
 
   const handleConfirmedDelete = () => {
-    selectedProductIds.forEach((id) => {
-      deleteProductMutation.mutate(id);
+    selectedProviderIds.forEach((id) => {
+      deleteProviderMutation.mutate(id);
     });
     setIsDeleteConfirmDialogOpen(false); // Close confirmation dialog after deletion
   };
 
-  const handleEditProduct = () => {
-    if (selectedProductIds.length === 1) {
-      const productToEdit = products.find(
-        (product) => product.products_id === selectedProductIds[0]
+  const handleEditProvider = () => {
+    if (selectedProviderIds.length === 1) {
+      const providerToEdit = providers.find(
+        (provider) => provider.providers_id === selectedProviderIds[0]
       );
-      if (productToEdit) {
-        setSelectedProduct(productToEdit);
-        openEditProduct();
+      if (providerToEdit) {
+        setSelectedProvider(providerToEdit);
+        openEditProvider();
       }
     }
   };
 
   const handleCloseDeleteSuccessDialog = () => {
     setIsDeleteSuccessDialogOpen(false);
-    queryClient.invalidateQueries(["products"]); // Refetch product data
+    queryClient.invalidateQueries(["providers"]); // Refetch provider data
   };
 
   const handleCloseEditSuccessDialog = () => {
     setIsEditSuccessDialogOpen(false);
-    queryClient.invalidateQueries(["products"]); // Refetch product data
+    queryClient.invalidateQueries(["providers"]); // Refetch provider data
   };
 
   const handleSearch = async () => {
     try {
-      const result = await getProductByNameApi(searchTerm); // Call the API with searchTerm
-      setFilteredProducts(result); // Update the filteredProducts with API result
+      const result = await getProviderByNameApi(searchTerm); // Call the API with searchTerm
+      setFilteredProviders(result); // Update the filteredProviders with API result
     } catch (error) {
-      console.error("Error fetching product by name:", error);
+      console.error("Error fetching provider by name:", error);
       setIsFindFailed(true);
     }
   };
 
   const handleUndoSearch = () => {
     setSearchTerm("");
-    setFilteredProducts([]);
+    setFilteredProviders([]);
   };
 
   //mutation
-  const deleteProductMutation = useMutation({
-    mutationFn: (id: number) => deleteProductApi(id),
+  const deleteProviderMutation = useMutation({
+    mutationFn: (id: number) => deleteProviderApi(id),
     onSuccess: () => {
       setIsDeleteSuccessDialogOpen(true);
-      setSelectedProductIds([]); // Clear the selected products
+      setSelectedProviderIds([]); // Clear the selected providers
     },
     onError: (error) => {
-      console.error("Error deleting product", error);
+      console.error("Error deleting provider", error);
     },
   });
 
-  // Filter selected products to show their names in confirmation dialog
-  const selectedProductNames = products
-    ? products
-        .filter((product) => selectedProductIds.includes(product.products_id))
-        .map((product) => product.name)
+  // Filter selected providers to show their names in confirmation dialog
+  const selectedProviderNames = providers
+    ? providers
+        .filter((provider) => selectedProviderIds.includes(provider.providers_id))
+        .map((provider) => provider.name)
     : [];
 
   //datagrid columns
   const columns: GridColDef[] = [
     {
       field: "name",
-      headerName: "Tên mặt hàng",
+      headerName: "Tên nhà cung cấp",
       minWidth: 200,
       editable: false,
       flex: 3,
@@ -164,8 +164,8 @@ export default function Inventory() {
       // renderCell: RenderCellExpand,
     },
     {
-      field: "color",
-      headerName: "Màu sắc",
+      field: "address",
+      headerName: "Địa chỉ",
       minWidth: 100,
       editable: false,
       flex: 1,
@@ -184,56 +184,12 @@ export default function Inventory() {
       ),
     },
     {
-      field: "quantity",
-      headerName: "Số lượng",
+      field: "phone",
+      headerName: "Số điện thoại",
       minWidth: 100,
-      type: "number",
       editable: false,
-      flex: 2,
+      flex: 1,
       headerAlign: "center",
-      renderCell: (params) => (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
-          }}
-        >
-          {params.value}
-        </Box>
-      ),
-      valueGetter: (value, row) => `${row.quantity}`,
-    },
-    {
-      field: "weight",
-      headerName: "Cân nặng",
-      minWidth: 100,
-      type: "number",
-      editable: false,
-      flex: 2,
-      headerAlign: "center",
-      renderCell: (params) => (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
-          }}
-        >
-          {params.value}
-        </Box>
-      ),
-      valueGetter: (value, row) => `${row.weight}`,
-    },
-    {
-      field: "unit",
-      headerName: "Đơn vị tính",
-      minWidth: 100,
-      flex: 2,
-      headerAlign: "center",
-      editable: false,
       renderCell: (params) => (
         <Box
           sx={{
@@ -248,12 +204,12 @@ export default function Inventory() {
       ),
     },
     {
-      field: "category",
-      headerName: "Danh mục",
+      field: "email",
+      headerName: "Email",
       minWidth: 100,
-      flex: 2,
-      headerAlign: "center",
       editable: false,
+      flex: 1,
+      headerAlign: "center",
       renderCell: (params) => (
         <Box
           sx={{
@@ -266,54 +222,10 @@ export default function Inventory() {
           {params.value}
         </Box>
       ),
-    },
-    {
-      field: "total_price",
-      headerName: "Giá nhập trung bình",
-      minWidth: 100,
-      type: "number",
-      flex: 2,
-      headerAlign: "center",
-      editable: false,
-      renderCell: (params) => (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
-          }}
-        >
-          {params.value}
-        </Box>
-      ),
-      valueGetter: (value, row) => `${row.total_price} VND`,
-    },
-    {
-      field: "customer_price",
-      headerName: "Giá bán",
-      minWidth: 100,
-      type: "number",
-      flex: 2,
-      headerAlign: "center",
-      editable: false,
-      renderCell: (params) => (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
-          }}
-        >
-          {params.value}
-        </Box>
-      ),
-      valueGetter: (value, row) => `${row.customer_price} VND`,
     },
     {
       field: "description",
-      headerName: "Mô tả",
+      headerName: "Ghi chú",
       minWidth: 200,
       flex: 2,
       headerAlign: "center",
@@ -336,7 +248,7 @@ export default function Inventory() {
   if (isFetching) {
     return <div className="py-4">Đang tải...</div>;
   }
-  if (isError || !products) {
+  if (isError || !providers) {
     return (
       <div className="text-center text-red-500 py-4">
         Lấy danh sách hàng không thành công
@@ -345,7 +257,7 @@ export default function Inventory() {
   }
   return (
     <div className="flex flex-col">
-      <Header name="Kho hàng" />
+      <Header name="Nhà cung cấp" />
       {/* SEARCH BAR */}
       <div className="mb-6">
         <div className="flex items-center mt-8 border-8 sm:mx-24 md:mx-32 lg:mx-48 xl:mx-72 border-gray-200 bg-gray-200 rounded">
@@ -376,12 +288,12 @@ export default function Inventory() {
         {/* buttons */}
         <div className="flex justify-between items-center">
           <button
-            onClick={openCreateProduct}
+            onClick={openCreateProvider}
             className="flex items-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded"
           >
             <PlusCircleIcon className="w-5 h-5 mr-2 !text-gray-100" /> Thêm mới
           </button>
-          {selectedProductIds.length > 0 && (
+          {selectedProviderIds.length > 0 && (
             <button
               onClick={handleConfirmDelete}
               className="flex items-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 ml-4 rounded"
@@ -389,9 +301,9 @@ export default function Inventory() {
               <Trash2 className="w-5 h-5 mr-2 !text-gray-100" /> Xoá đã chọn
             </button>
           )}
-          {selectedProductIds.length === 1 && (
+          {selectedProviderIds.length === 1 && (
             <button
-              onClick={handleEditProduct}
+              onClick={handleEditProvider}
               className="flex items-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 ml-4 rounded"
             >
               <Trash2 className="w-5 h-5 mr-2 !text-gray-100" /> Sửa thông tin
@@ -401,82 +313,82 @@ export default function Inventory() {
       </div>
       {/* datagrid */}
       <DataGrid
-        rows={filteredProducts.length > 0 ? filteredProducts : products}
+        rows={filteredProviders.length > 0 ? filteredProviders : providers}
         columns={columns}
-        getRowId={(row) => row.products_id}
+        getRowId={(row) => row.providers_id}
         checkboxSelection
         onRowSelectionModelChange={(newSelection) => {
-          setSelectedProductIds(newSelection as number[]);
+          setSelectedProviderIds(newSelection as number[]);
         }}
         className="shadow rounded-lg border border-gray-200 mt-5 text-gray-900"
       />
-      {/* create product modal */}
-      {isCreateProductOpen && (
+      {/* create provider modal */}
+      {isCreateProviderOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-4xl max-w-2xl w-full relative">
             <button
-              onClick={closeCreateProduct}
+              onClick={closeCreateProvider}
               className="flex absolute top-2 right-2 w-7 h-7 rounded bg-gray-400 hover:bg-red-600 text-gray-100 font-bold justify-center items-center"
             >
               <X></X>
             </button>
-            <CreateProduct
-              onProductCreated={handleProductCreated}
+            <CreateProvider
+              onProviderCreated={handleProviderCreated}
               shouldResetForm={shouldResetForm}
               setShouldResetForm={setShouldResetForm} // Reset after form creation
             />
           </div>
         </div>
       )}
-      {/* create product success dialog */}
+      {/* create provider success dialog */}
       <Dialog open={isSuccessDialogOpen}>
-        <DialogTitle>Product Created Successfully!</DialogTitle>
+        <DialogTitle>Provider Created Successfully!</DialogTitle>
         <DialogContent>
-          <p>Do you want to create another product?</p>
+          <p>Do you want to create another provider?</p>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCreateMore}>Create More</Button>
           <Button onClick={handleCancel}>Cancel</Button>
         </DialogActions>
       </Dialog>
-      {/* edit product modal */}
-      {isEditProductOpen && selectedProduct && (
+      {/* edit provider modal */}
+      {isEditProviderOpen && selectedProvider && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-4xl max-w-2xl w-full relative">
             <button
-              onClick={closeEditProduct}
+              onClick={closeEditProvider}
               className="flex absolute top-2 right-2 w-7 h-7 rounded bg-gray-400 hover:bg-red-600 text-gray-100 font-bold justify-center items-center"
             >
               <X></X>
             </button>
-            <EditProduct
-              product={selectedProduct}
-              onCloseEditProduct={closeEditProduct}
+            <EditProvider
+              provider={selectedProvider}
+              onCloseEditProvider={closeEditProvider}
             />
           </div>
         </div>
       )}
-      {/* edit product success dialog */}
+      {/* edit provider success dialog */}
       <Dialog
         open={isEditSuccessDialogOpen}
         onClose={handleCloseEditSuccessDialog}
       >
         <DialogTitle>Edit Successful</DialogTitle>
         <DialogContent>
-          <p>The selected products have been successfully edited.</p>
+          <p>The selected providers have been successfully edited.</p>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseEditSuccessDialog}>Close</Button>
         </DialogActions>
       </Dialog>
-      {/* delete product success dialog */}
+      {/* delete provider success dialog */}
       <Dialog
         open={isDeleteSuccessDialogOpen}
         onClose={handleCloseDeleteSuccessDialog}
       >
         <DialogTitle>Delete Successful</DialogTitle>
         <DialogContent>
-          <p>The selected products have been successfully deleted.</p>
+          <p>The selected providers have been successfully deleted.</p>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDeleteSuccessDialog}>Close</Button>
@@ -486,10 +398,10 @@ export default function Inventory() {
       <Dialog open={isDeleteConfirmDialogOpen}>
         <DialogTitle>Delete</DialogTitle>
         <DialogContent>
-          <p>Do you want to delete these product?</p>
+          <p>Do you want to delete these provider?</p>
           <br />
           <ul>
-            {selectedProductNames.map((name, index) => (
+            {selectedProviderNames.map((name, index) => (
               <li key={index}>{name}</li>
             ))}
           </ul>
@@ -502,9 +414,9 @@ export default function Inventory() {
         </DialogActions>
       </Dialog>
       <Dialog open={isFindFailed}>
-        <DialogTitle>No Matching Product</DialogTitle>
+        <DialogTitle>No Matching Provider</DialogTitle>
         <DialogContent>
-          <p>No product matched your search request</p>
+          <p>No provider matched your search request</p>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setIsFindFailed(false)}>Close</Button>

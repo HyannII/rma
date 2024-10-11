@@ -1,10 +1,10 @@
 import { ChangeEvent, useRef, useState } from "react";
 import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import {
-  IProductResponse,
-  IUpdateProductBody,
-} from "../../../interfaces/product.interface";
-import { updateProductApi } from "../../../api/product.api";
+  IProviderResponse,
+  IUpdateProviderBody,
+} from "../../../interfaces/provider.interface";
+import { updateProviderApi } from "../../../api/provider.api";
 import {
   Button,
   Dialog,
@@ -14,24 +14,20 @@ import {
 } from "@mui/material";
 import Image from "next/legacy/image";
 
-export default function EditProduct({
-  product,
-  onCloseEditProduct,
+export default function EditProvider({
+  provider,
+  onCloseEditProvider,
 }: {
-  product: IProductResponse;
-  onCloseEditProduct: () => void;
+  provider: IProviderResponse;
+  onCloseEditProvider: () => void;
 }) {
-  const [updatedProduct, setUpdatedProduct] = useState<IUpdateProductBody>({
-    name: product.name,
-    image_url: product.image_url,
-    color: product.color,
-    quantity: product.quantity,
-    category: product.category,
-    weight: product.weight,
-    unit: product.unit,
-    total_price: product.total_price,
-    customer_price: product.customer_price,
-    description: product.description,
+  const [updatedProvider, setUpdatedProvider] = useState<IUpdateProviderBody>({
+    name: provider.name,
+    image_url: provider.image_url,
+    address: provider.address,
+    phone: provider.phone,
+    email: provider.email,
+    description: provider.description,
   });
 
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
@@ -39,15 +35,15 @@ export default function EditProduct({
   const fileInputRef = useRef(null);
   const [imageFile, setImageFile] = useState();
 
-  const updateProductMutation = useMutation({
-    mutationFn: (body: IUpdateProductBody) =>
-      updateProductApi({ id: product.products_id, body }),
+  const updateProviderMutation = useMutation({
+    mutationFn: (body: IUpdateProviderBody) =>
+      updateProviderApi({ id: provider.providers_id, body }),
     onSuccess: (data) => {
-      console.log("Product updated successfully!", data);
+      console.log("Provider updated successfully!", data);
       setIsSuccessDialogOpen(true);
     },
     onError: (error) => {
-      console.log("Error updating product", error);
+      console.log("Error updating provider", error);
     },
   });
 
@@ -55,7 +51,7 @@ export default function EditProduct({
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setUpdatedProduct((prev) => ({
+    setUpdatedProvider((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -67,14 +63,14 @@ export default function EditProduct({
     }
   };
 
-  const handleUpdateProduct = () => {
-    updateProductMutation.mutate(updatedProduct);
+  const handleUpdateProvider = () => {
+    updateProviderMutation.mutate(updatedProvider);
   };
 
   const handleCloseSuccessDialog = () => {
     setIsSuccessDialogOpen(false);
-    onCloseEditProduct();
-    queryClient.invalidateQueries(["products"]);
+    onCloseEditProvider();
+    queryClient.invalidateQueries(["providers"]); // Close the edit modal
   };
 
   const labelCssStyles = "block text-sm font-medium text-gray-700";
@@ -86,20 +82,20 @@ export default function EditProduct({
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          handleUpdateProduct();
+          handleUpdateProvider();
         }}
         className="flex flex-wrap w-full"
       >
         <div className="flex flex-wrap w-2/3">
           <div className="mb-4 w-full px-2">
             <label className={labelCssStyles} htmlFor="name">
-              Product Name
+              Provider Name
             </label>
             <input
               type="text"
               id="name"
               name="name"
-              value={updatedProduct.name}
+              value={updatedProvider.name}
               onChange={handleInputChange}
               className={inputCssStyles}
               required
@@ -112,9 +108,9 @@ export default function EditProduct({
             </label>
             <input
               type="text"
-              id="color"
-              name="color"
-              value={updatedProduct.color}
+              id="address"
+              name="address"
+              value={updatedProvider.address}
               onChange={handleInputChange}
               className={inputCssStyles}
             />
@@ -125,9 +121,9 @@ export default function EditProduct({
             </label>
             <input
               type="text"
-              id="quantity"
-              name="quantity"
-              value={updatedProduct.quantity}
+              id="phone"
+              name="phone"
+              value={updatedProvider.phone}
               onChange={handleInputChange}
               className={inputCssStyles}
               required
@@ -154,9 +150,9 @@ export default function EditProduct({
           </label>
           <input
             type="text"
-            id="category"
-            name="category"
-            value={updatedProduct.category}
+            id="email"
+            name="email"
+            value={updatedProvider.email}
             onChange={handleInputChange}
             className={inputCssStyles}
             required
@@ -184,62 +180,6 @@ export default function EditProduct({
           </button>
         </div>
 
-        <div className="mb-4 w-1/2 px-2">
-          <label className={labelCssStyles} htmlFor="weight">
-            Weight
-          </label>
-          <input
-            type="text"
-            id="weight"
-            name="weight"
-            value={updatedProduct.weight}
-            onChange={handleInputChange}
-            className={inputCssStyles}
-          />
-        </div>
-
-        <div className="mb-4 w-1/2 px-2">
-          <label className={labelCssStyles} htmlFor="unit">
-            Unit
-          </label>
-          <input
-            type="text"
-            id="unit"
-            name="unit"
-            value={updatedProduct.unit}
-            onChange={handleInputChange}
-            className={inputCssStyles}
-          />
-        </div>
-
-        <div className="mb-4 w-1/2 px-2">
-          <label className={labelCssStyles} htmlFor="total_price">
-            Total Price
-          </label>
-          <input
-            type="text"
-            id="total_price"
-            name="total_price"
-            value={updatedProduct.total_price}
-            onChange={handleInputChange}
-            className={inputCssStyles}
-          />
-        </div>
-
-        <div className="mb-4 w-1/2 px-2">
-          <label className={labelCssStyles} htmlFor="customer_price">
-            Customer Price
-          </label>
-          <input
-            type="text"
-            id="customer_price"
-            name="customer_price"
-            value={updatedProduct.customer_price}
-            onChange={handleInputChange}
-            className={inputCssStyles}
-          />
-        </div>
-
         <div className="mb-4 w-full px-2">
           <label className={labelCssStyles} htmlFor="description">
             Description
@@ -247,7 +187,7 @@ export default function EditProduct({
           <textarea
             id="description"
             name="description"
-            value={updatedProduct.description}
+            value={updatedProvider.description}
             onChange={handleInputChange}
             className={inputCssStyles}
           />
@@ -257,13 +197,13 @@ export default function EditProduct({
           type="submit"
           className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
         >
-          Create Product
+          Create Provider
         </button>
       </form>
       <Dialog open={isSuccessDialogOpen}>
         <DialogTitle>Edit Successful</DialogTitle>
         <DialogContent>
-          <p>The selected products have been successfully edited.</p>
+          <p>The selected providers have been successfully edited.</p>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseSuccessDialog} color="primary">
