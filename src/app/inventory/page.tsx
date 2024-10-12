@@ -486,7 +486,7 @@ export default function Inventory() {
       <Dialog open={isDeleteConfirmDialogOpen}>
         <DialogTitle>Delete</DialogTitle>
         <DialogContent>
-          <p>Do you want to delete these product?</p>
+          <p>Do you want to delete these products?</p>
           <br />
           <ul>
             {selectedProductNames.map((name, index) => (

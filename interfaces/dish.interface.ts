@@ -7,3 +7,18 @@ export interface IDishResponse {
   category: string;
   price: string;
 }
+
+export interface ICreateDishBody {
+  name: string;
+  image: File | null;
+  quantity: number;
+  unit: string;
+  category: string;
+  price: string;
+}
+
+export interface IDeleteDishResponse {
+  mesage: string;
+}
+
+export interface IUpdateDishBody extends Partial<ICreateDishBody> {}
