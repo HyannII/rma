@@ -1,6 +1,11 @@
 "use client";
 
-import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  QueryClient,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   deleteDishApi,
   getAllDishesApi,
@@ -20,6 +25,8 @@ import {
   CircleCheckBigIcon,
   Square,
   SquareCheck,
+  Pencil,
+  Edit,
 } from "lucide-react"; // Import CheckIcon
 import { useState } from "react";
 import {
@@ -56,7 +63,7 @@ export default function Dishes() {
   const [isDeleteSuccessDialogOpen, setIsDeleteSuccessDialogOpen] =
     useState(false);
   const [isEditSuccessDialogOpen, setIsEditSuccessDialogOpen] = useState(false);
-
+  const [sortCriteria, setSortCriteria] = useState("a-z"); // State for sort criteria
   const [isCreateDishOpen, setIsCreateDishOpen] = useState(false);
   const [isEditDishOpen, setIsEditDishOpen] = useState(false);
   const [shouldResetForm, setShouldResetForm] = useState(false);
@@ -151,7 +158,7 @@ export default function Dishes() {
     setIsDeleteSuccessDialogOpen(false);
     queryClient.invalidateQueries(["dishes"]); // Refetch product data
   };
- 
+
   const handleCloseEditSuccessDialog = () => {
     setIsEditSuccessDialogOpen(false);
     queryClient.invalidateQueries(["dishes"]); // Refetch product data
@@ -160,6 +167,7 @@ export default function Dishes() {
   const handleCancel = () => {
     setIsSuccessDialogOpen(false); // Close both dialog and modal
     setIsCreateDishOpen(false);
+    queryClient.invalidateQueries(["dishes"]);
   };
 
   // Filter selected dishes to show their names in confirmation dialog
@@ -183,21 +191,39 @@ export default function Dishes() {
     filteredDishs.length > 0 ? filteredDishs.length : dishes.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
-  const displayedDishes = (
+  // Function to handle sorting logic
+  const sortDishes = (dishesToSort) => {
+    return dishesToSort.slice().sort((a, b) => {
+      if (sortCriteria === "a-z") {
+        return a.name.localeCompare(b.name);
+      } else if (sortCriteria === "z-a") {
+        return b.name.localeCompare(a.name);
+      } else if (sortCriteria === "price-asc") {
+        return a.price - b.price;
+      } else if (sortCriteria === "price-desc") {
+        return b.price - a.price;
+      }
+    });
+  };
+
+  const displayedDishes = sortDishes(
     filteredDishs.length > 0 ? filteredDishs : dishes
   ).slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
+  // Dropdown for selecting sorting criteria
+  const handleSortChange = (event) => {
+    setSortCriteria(event.target.value);
+  };
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-5 gap-10 justify-between">
+    <div className="grid grid-cols-1 sm:grid-cols-5 gap-7 justify-between">
       <div className="col-span-5">
         <Header name="Món ăn"></Header>
-
         {/* SEARCH BAR */}
         <div className="mb-6">
           <div className="flex items-center mt-8 border-8 sm:mx-24 md:mx-32 lg:mx-48 xl:mx-72 border-gray-200 bg-gray-200 rounded">
-            <SearchIcon className="w-5 h-5 text-gray-500 m-2" />
             <input
-              className="w-full py-2 px-4 focus:outline-none rounded"
+              className="w-full py-2 px-4 focus:outline-none rounded bg-gray-200 text-gray-900"
               placeholder="Tìm kiếm..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -207,48 +233,102 @@ export default function Dishes() {
             />
             {searchTerm !== "" && (
               <button onClick={handleUndoSearch}>
-                <CircleX></CircleX>
+                <CircleX className="w-5 h-5 text-gray-500 mx-2"></CircleX>
               </button>
             )}
+            {searchTerm !== "" && <p className="text-gray-500 text-2xl">|</p>}
             <button
               onClick={handleSearch}
               className="mx-2 text-gray-700 hover:text-gray-950"
             >
-              Search
+              <SearchIcon className="w-5 h-5 text-gray-500" />
             </button>
+          </div>
+
+          <div className="flex items-center justify-between mt-8">
+            <div className="flex items-center">
+              <button
+                onClick={openCreateDish}
+                className="flex items-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded"
+              >
+                <PlusCircleIcon className="w-5 h-5 mr-2 !text-gray-100" /> Tạo
+                mới
+              </button>
+              {selectedDishIds.length > 0 && (
+                <button
+                  onClick={handleConfirmDelete}
+                  className="flex items-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 ml-4 rounded"
+                >
+                  <Trash2 className="w-5 h-5 mr-2 !text-gray-100" /> Xoá
+                </button>
+              )}
+              {selectedDishIds.length === 1 && (
+                <button
+                  onClick={handleEditDish}
+                  className="flex items-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 ml-4 rounded"
+                >
+                  <Edit className="w-5 h-5 mr-2 !text-gray-100" /> Sửa thông tin
+                </button>
+              )}
+              {selectedDishIds.length > 0 ? (
+                <button
+                  onClick={() => setSelectedDishIds([])}
+                  className="flex items-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 ml-4 rounded"
+                >
+                  <CircleX className="w-5 h-5 mr-2 !text-gray-100" /> Huỷ chọn
+                </button>
+              ) : (
+                <button
+                  onClick={() => setSelectedDishIds([])}
+                  className="flex items-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 ml-4 rounded invisible"
+                >
+                  <CircleX className="w-5 h-5 mr-2 !text-gray-100" /> Huỷ chọn
+                </button>
+              )}
+            </div>
           </div>
         </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <button
-              onClick={openCreateDish}
-              className="flex items-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded"
-            >
-              <PlusCircleIcon className="w-5 h-5 mr-2 !text-gray-100" /> Thêm
-              mới
-            </button>
-            {selectedDishIds.length > 0 && (
-              <button
-                onClick={handleConfirmDelete}
-                className="flex items-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 ml-4 rounded"
-              >
-                <Trash2 className="w-5 h-5 mr-2 !text-gray-100" /> Xoá đã chọn
-              </button>
-            )}
-            {selectedDishIds.length === 1 && (
-              <button
-                onClick={handleEditDish}
-                className="flex items-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 ml-4 rounded"
-              >
-                <Trash2 className="w-5 h-5 mr-2 !text-gray-100" /> Sửa thông tin
-              </button>
-            )}
+      </div>
+      <div className="col-span-4">
+        {selectedDishNames.length > 0 ? (
+          <div className="text-gray-800 flex items-center h-full">
+            <p className="font-bold text-lg">
+              Những món đã chọn: {selectedDishNames.join(", ")}
+            </p>
           </div>
-          {selectedDishNames.length > 0 && (
-            <div className="text-gray-800 flex justify-end items-center">
-              <p>Selected Dishes: {selectedDishNames.join(", ")}</p>
-            </div>
-          )}
+        ) : (
+          <div className="text-gray-800 flex items-center h-full">
+            <p className="invisible text-lg">Những món đã chọn: </p>
+          </div>
+        )}
+      </div>
+      <div className="col-span-1">
+        {/* SORT DROPDOWN */}
+        <div className="flex items-center justify-end">
+          <div>
+            <label htmlFor="sort" className="mr-2 text-gray-700 font-bold">
+              Sắp xếp theo:
+            </label>
+            <select
+              id="sort"
+              value={sortCriteria}
+              onChange={handleSortChange}
+              className="p-2 rounded-md bg-gray-200"
+            >
+              <option value="a-z" className="text-gray-700">
+                Tên (A-Z)
+              </option>
+              <option value="z-a" className="text-gray-700">
+                Tên (Z-A)
+              </option>
+              <option value="price-asc" className="text-gray-700">
+                Giá (Tăng dần)
+              </option>
+              <option value="price-desc" className="text-gray-700">
+                Giá (Giảm dần)
+              </option>
+            </select>
+          </div>
         </div>
       </div>
       {isFetching ? (
@@ -269,9 +349,6 @@ export default function Dishes() {
             ) : (
               <Square className="absolute top-2 right-2 w-6 h-6 text-gray-600" />
             )}
-            {/* {selectedDishIds.includes(dish.items_id) && (
-              <CircleCheckBigIcon className="absolute top-2 right-2 w-6 h-6 text-green-500" />
-            )} */}
             <div className="h-36 w-36">
               <img src={dish.image_url ? dish.image_url : ""} alt={dish.name} />
             </div>

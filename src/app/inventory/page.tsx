@@ -19,7 +19,7 @@ import {
 import CreateProduct from "./createProduct";
 import { useState } from "react";
 import EditProduct from "./editProduct";
-import { CircleX, PlusCircleIcon, SearchIcon, Trash2, X } from "lucide-react";
+import { CircleX, Edit, PlusCircleIcon, SearchIcon, Tally1, Trash2, X } from "lucide-react";
 import Header from "../(components)/Header";
 import { RenderCellExpand } from "@/utils/renderCellExpand";
 
@@ -349,9 +349,8 @@ export default function Inventory() {
       {/* SEARCH BAR */}
       <div className="mb-6">
         <div className="flex items-center mt-8 border-8 sm:mx-24 md:mx-32 lg:mx-48 xl:mx-72 border-gray-200 bg-gray-200 rounded">
-          <SearchIcon className="w-5 h-5 text-gray-500 m-2" />
           <input
-            className="w-full py-2 px-4 focus:outline-none rounded"
+            className="w-full py-2 px-4 focus:outline-none rounded bg-gray-200 text-gray-900"
             placeholder="Tìm kiếm..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -361,14 +360,15 @@ export default function Inventory() {
           />
           {searchTerm !== "" && (
             <button onClick={handleUndoSearch}>
-              <CircleX></CircleX>
+              <CircleX className="w-5 h-5 text-gray-500 mx-2"></CircleX>
             </button>
           )}
+          {searchTerm !== "" && <p className="text-gray-500 text-2xl">|</p>}
           <button
             onClick={handleSearch}
             className="mx-2 text-gray-700 hover:text-gray-950"
           >
-            Search
+            <SearchIcon className="w-5 h-5 text-gray-500" />
           </button>
         </div>
       </div>
@@ -377,24 +377,24 @@ export default function Inventory() {
         <div className="flex justify-between items-center">
           <button
             onClick={openCreateProduct}
-            className="flex items-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded"
+            className="flex items-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded"
           >
-            <PlusCircleIcon className="w-5 h-5 mr-2 !text-gray-100" /> Thêm mới
+            <PlusCircleIcon className="w-5 h-5 mr-2 !text-gray-100" /> Tạo mới
           </button>
           {selectedProductIds.length > 0 && (
             <button
               onClick={handleConfirmDelete}
-              className="flex items-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 ml-4 rounded"
+              className="flex items-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 ml-4 rounded"
             >
-              <Trash2 className="w-5 h-5 mr-2 !text-gray-100" /> Xoá đã chọn
+              <Trash2 className="w-5 h-5 mr-2 !text-gray-100" /> Xoá
             </button>
           )}
           {selectedProductIds.length === 1 && (
             <button
               onClick={handleEditProduct}
-              className="flex items-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 ml-4 rounded"
+              className="flex items-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 ml-4 rounded"
             >
-              <Trash2 className="w-5 h-5 mr-2 !text-gray-100" /> Sửa thông tin
+              <Edit className="w-5 h-5 mr-2 !text-gray-100" /> Sửa thông tin
             </button>
           )}
         </div>
@@ -408,7 +408,7 @@ export default function Inventory() {
         onRowSelectionModelChange={(newSelection) => {
           setSelectedProductIds(newSelection as number[]);
         }}
-        className="shadow rounded-lg border border-gray-200 mt-5 text-gray-900"
+        className="shadow rounded-lg bg-zinc-100"
       />
       {/* create product modal */}
       {isCreateProductOpen && (
