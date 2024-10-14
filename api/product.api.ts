@@ -16,10 +16,18 @@ export const getProductByIDApi = async (id: number) => {
   return res.data;
 };
 
-export const getProductByNameApi = async (name: string) => {
-  const res = await api.get<IProductResponse[]>(`/product/getall`, {
-    params: { name },
+export const getProductByFieldApi = async (
+  field: string, // Thay đổi tên tham số từ name thành field
+  value: string
+) => {
+  const params = new URLSearchParams({
+    [field]: encodeURIComponent(value), // Sử dụng field làm khóa
   });
+
+  const urlWithParams = `/product/getall?${params.toString()}`; // Kết hợp URL với tham số
+
+  const res = await api.get<IProductResponse[]>(urlWithParams); // Gọi API với URL đã tạo
+
   return res.data;
 };
 

@@ -6,7 +6,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import {
   deleteProductApi,
   getAllProductsApi,
-  getProductByNameApi,
+  getProductByFieldApi,
 } from "../../../api/product.api";
 import {
   Box,
@@ -19,7 +19,15 @@ import {
 import CreateProduct from "./createProduct";
 import { useState } from "react";
 import EditProduct from "./editProduct";
-import { CircleX, Edit, PlusCircleIcon, SearchIcon, Tally1, Trash2, X } from "lucide-react";
+import {
+  CircleX,
+  Edit,
+  PlusCircleIcon,
+  SearchIcon,
+  Tally1,
+  Trash2,
+  X,
+} from "lucide-react";
 import Header from "../(components)/Header";
 import { RenderCellExpand } from "@/utils/renderCellExpand";
 
@@ -50,6 +58,18 @@ export default function Inventory() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [isFindFailed, setIsFindFailed] = useState(false);
+  // Define the available search criteria
+  const searchParams = [
+    { label: "Name", value: "name" },
+    { label: "Category", value: "category" },
+    { label: "Color", value: "color" },
+    // Add more search criteria as needed
+  ];
+  const [selectedParam, setSelectedParam] = useState(searchParams[0].value);
+
+  const handleParamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedParam(e.target.value);
+  };
 
   //set const
   const openCreateProduct = () => setIsCreateProductOpen(true);
@@ -108,7 +128,8 @@ export default function Inventory() {
 
   const handleSearch = async () => {
     try {
-      const result = await getProductByNameApi(searchTerm); // Call the API with searchTerm
+      // const result = await getProductByNameApi(searchTerm, selectedParam); // Call the API with searchTerm
+      const result = await getProductByFieldApi(selectedParam, searchTerm);
       setFilteredProducts(result); // Update the filteredProducts with API result
     } catch (error) {
       console.error("Error fetching product by name:", error);
@@ -364,6 +385,23 @@ export default function Inventory() {
             </button>
           )}
           {searchTerm !== "" && <p className="text-gray-500 text-2xl">|</p>}
+          {/* Dropdown for Search Criteria */}
+          <select
+            id="searchParam"
+            value={selectedParam}
+            onChange={handleParamChange}
+            className="ml-4 p-2 bg-gray-200 text-gray-700"
+          >
+            {searchParams.map((param) => (
+              <option
+                key={param.value}
+                value={param.value}
+                className="bg-gray-200 text-gray-700"
+              >
+                {param.label}
+              </option>
+            ))}
+          </select>
           <button
             onClick={handleSearch}
             className="mx-2 text-gray-700 hover:text-gray-950"

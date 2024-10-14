@@ -6,7 +6,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import {
   deleteProviderApi,
   getAllProvidersApi,
-  getProviderByNameApi,
+  getProviderByFieldApi,
 } from "../../../api/provider.api";
 import {
   Box,
@@ -50,6 +50,19 @@ export default function Inventory() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredProviders, setFilteredProviders] = useState([]);
   const [isFindFailed, setIsFindFailed] = useState(false);
+  // Define the available search criteria
+  const searchParams = [
+    { label: "Name", value: "name" },
+    { label: "Phone number", value: "phone" },
+    { label: "Email", value: "email" },
+    { label: "Address", value: "address" },
+    // Add more search criteria as needed
+  ];
+  const [selectedParam, setSelectedParam] = useState(searchParams[0].value);
+
+  const handleParamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedParam(e.target.value);
+  };
 
   //set const
   const openCreateProvider = () => setIsCreateProviderOpen(true);
@@ -108,7 +121,7 @@ export default function Inventory() {
 
   const handleSearch = async () => {
     try {
-      const result = await getProviderByNameApi(searchTerm); // Call the API with searchTerm
+      const result = await getProviderByFieldApi(selectedParam,searchTerm); // Call the API with searchTerm
       setFilteredProviders(result); // Update the filteredProviders with API result
     } catch (error) {
       console.error("Error fetching provider by name:", error);
@@ -136,7 +149,9 @@ export default function Inventory() {
   // Filter selected providers to show their names in confirmation dialog
   const selectedProviderNames = providers
     ? providers
-        .filter((provider) => selectedProviderIds.includes(provider.providers_id))
+        .filter((provider) =>
+          selectedProviderIds.includes(provider.providers_id)
+        )
         .map((provider) => provider.name)
     : [];
 
@@ -276,6 +291,23 @@ export default function Inventory() {
             </button>
           )}
           {searchTerm !== "" && <p className="text-gray-500 text-2xl">|</p>}
+          {/* Dropdown for Search Criteria */}
+          <select
+            id="searchParam"
+            value={selectedParam}
+            onChange={handleParamChange}
+            className="ml-4 p-2 bg-gray-200 text-gray-700"
+          >
+            {searchParams.map((param) => (
+              <option
+                key={param.value}
+                value={param.value}
+                className="bg-gray-200 text-gray-700"
+              >
+                {param.label}
+              </option>
+            ))}
+          </select>
           <button
             onClick={handleSearch}
             className="mx-2 text-gray-700 hover:text-gray-950"

@@ -16,10 +16,18 @@ export const getProviderByIDApi = async (id: number) => {
   return res.data;
 };
 
-export const getProviderByNameApi = async (name: string) => {
-  const res = await api.get<IProviderResponse[]>(`/provider/getall`, {
-    params: { name },
+export const getProviderByFieldApi = async (
+  field: string, // Thay đổi tên tham số từ name thành field
+  value: string
+) => {
+  const params = new URLSearchParams({
+    [field]: encodeURIComponent(value), // Sử dụng field làm khóa
   });
+
+  const urlWithParams = `/provider/getall?${params.toString()}`; // Kết hợp URL với tham số
+
+  const res = await api.get<IProviderResponse[]>(urlWithParams); // Gọi API với URL đã tạo
+
   return res.data;
 };
 
