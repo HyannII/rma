@@ -1,3 +1,5 @@
+import { Product } from "@/types/product.types";
+
 export interface IDishResponse {
   items_id: number;
   name: string;
@@ -6,6 +8,7 @@ export interface IDishResponse {
   unit: string;
   category: string;
   price: string;
+  products: Product[];
 }
 
 export interface ICreateDishBody {
@@ -15,10 +18,11 @@ export interface ICreateDishBody {
   unit: string;
   category: string;
   price: string;
+  products: Product[];
 }
 
 export interface IDeleteDishResponse {
-  mesage: string;
+  message: string;
 }
 
 export interface IUpdateDishBody extends Partial<ICreateDishBody> {}

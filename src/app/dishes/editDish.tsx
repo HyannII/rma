@@ -75,7 +75,7 @@ export default function EditDish({
 
   const labelCssStyles = "block text-sm font-medium text-gray-700";
   const inputCssStyles =
-    "block w-full mb-2 p-2 border-gray-500 border-2 rounded-md";
+    "block w-full mb-2 p-2 border-gray-500 border-2 rounded-md text-gray-200";
   return (
     <div className="flex flex-wrap max-w-2xl mx-auto p-6">
       <h1 className="text-4xl font-bold mb-4 w-full">Chỉnh sửa thông tin</h1>
@@ -102,13 +102,13 @@ export default function EditDish({
           </div>
           <div className="mb-4 w-full px-2">
             <label className={labelCssStyles} htmlFor="quantity">
-              Quantity
+              Category
             </label>
             <input
               type="text"
               id="quantity"
               name="quantity"
-              value={updatedDish.quantity}
+              value={updatedDish.category}
               onChange={handleInputChange}
               className={inputCssStyles}
             />
@@ -128,13 +128,13 @@ export default function EditDish({
 
         <div className="mb-4 w-2/3 px-2">
           <label className={labelCssStyles} htmlFor="category">
-            Category
+            Unit
           </label>
           <input
             type="text"
             id="category"
             name="category"
-            value={updatedDish.category}
+            value={updatedDish.unit}
             onChange={handleInputChange}
             className={inputCssStyles}
           />
@@ -161,23 +161,23 @@ export default function EditDish({
           </button>
         </div>
 
-        <div className="mb-4 w-1/2 px-2">
+        <div className="mb-4 w-full px-2">
           <label className={labelCssStyles} htmlFor="unit">
-            Unit
+            Price
           </label>
           <input
             type="text"
             id="unit"
             name="unit"
-            value={updatedDish.unit}
+            value={updatedDish.price}
             onChange={handleInputChange}
             className={inputCssStyles}
           />
         </div>
 
-        <div className="mb-4 w-1/2 px-2">
+        {/* <div className="mb-4 w-full px-2">
           <label className={labelCssStyles} htmlFor="customer_price">
-            Customer Price
+            Ingredients
           </label>
           <input
             type="text"
@@ -187,7 +187,7 @@ export default function EditDish({
             onChange={handleInputChange}
             className={inputCssStyles}
           />
-        </div>
+        </div> */}
 
         <button
           type="submit"

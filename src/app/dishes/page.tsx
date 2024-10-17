@@ -28,7 +28,7 @@ import {
   Pencil,
   Edit,
 } from "lucide-react"; // Import CheckIcon
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import {
   Button,
   Dialog,
@@ -69,7 +69,7 @@ export default function Dishes() {
   const [shouldResetForm, setShouldResetForm] = useState(false);
 
   const [page, setPage] = useState(1); // State for current page
-  const itemsPerPage = 15; // Items per page
+  const itemsPerPage = 10; // Items per page
 
   const openCreateDish = () => setIsCreateDishOpen(true);
   const closeCreateDish = () => setIsCreateDishOpen(false);
@@ -114,7 +114,7 @@ export default function Dishes() {
     if (page < totalPages) setPage(page + 1);
   };
 
-  const toggleSelectDish = (dishId) => {
+  const toggleSelectDish = (dishId: number) => {
     if (selectedDishIds.includes(dishId)) {
       setSelectedDishIds(selectedDishIds.filter((id) => id !== dishId)); // Deselect if already selected
     } else {
@@ -192,7 +192,7 @@ export default function Dishes() {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   // Function to handle sorting logic
-  const sortDishes = (dishesToSort) => {
+  const sortDishes = (dishesToSort: any[]) => {
     return dishesToSort.slice().sort((a, b) => {
       if (sortCriteria === "a-z") {
         return a.name.localeCompare(b.name);
@@ -211,13 +211,13 @@ export default function Dishes() {
   ).slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
   // Dropdown for selecting sorting criteria
-  const handleSortChange = (event) => {
+  const handleSortChange = (event: { target: { value: SetStateAction<string>; }; }) => {
     setSortCriteria(event.target.value);
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-5 gap-7 justify-between">
-      <div className="col-span-5">
+    <div className="grid grid-cols-4 gap-7 lg:gap-12 justify-between">
+      <div className="col-span-4">
         <Header name="Món ăn"></Header>
         {/* SEARCH BAR */}
         <div className="mb-6">
@@ -289,7 +289,7 @@ export default function Dishes() {
           </div>
         </div>
       </div>
-      <div className="col-span-4">
+      <div className="col-span-3">
         {selectedDishNames.length > 0 ? (
           <div className="text-gray-800 flex items-center h-full">
             <p className="font-bold text-lg">
@@ -345,23 +345,27 @@ export default function Dishes() {
             onClick={() => toggleSelectDish(dish.items_id)}
           >
             {selectedDishIds.includes(dish.items_id) ? (
-              <SquareCheck className="absolute top-2 right-2 w-6 h-6 text-gray-800" />
+              <SquareCheck className="absolute top-1 right-1 w-6 h-6 text-gray-800" />
             ) : (
-              <Square className="absolute top-2 right-2 w-6 h-6 text-gray-600" />
+              <Square className="absolute top-1 right-1 w-6 h-6 text-gray-600" />
             )}
-            <div className="h-36 w-36">
-              <img src={dish.image_url ? dish.image_url : ""} alt={dish.name} />
+            <div className="h-36 w-36 p-2">
+              <img
+                src={dish.image_url ? dish.image_url : ""}
+                alt={dish.name}
+                className="h-full w-full"
+              />
             </div>
             <h3 className="text-lg text-gray-900 font-semibold">{dish.name}</h3>
             <p className="text-gray-800">{dish.price} VND</p>
             <div className="text-sm text-gray-600 mt-1">
-              Stock: {dish.quantity}
+              Category: {dish.category}
             </div>
           </div>
         ))
       )}
       {/* Pagination controls */}
-      <div className="col-span-5 flex justify-center mt-6">
+      <div className="col-span-4 flex justify-center mt-6">
         <button
           className={`px-4 py-2 border rounded ${
             page === 1 ? "text-gray-400 cursor-not-allowed" : "text-gray-800"

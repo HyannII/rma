@@ -13,6 +13,11 @@ export const getDishByNameApi = async (name: string) => {
   return res.data;
 };
 
+export const getProductByIDApi = async (id: number) => {
+  const res = await api.get<IDishResponse>(`/item/${id}`);
+  return res.data;
+};
+
 export const createDishApi = async (body: ICreateDishBody) => {
   const formData = new FormData();
   for (const [k, val] of Object.entries(body)) {

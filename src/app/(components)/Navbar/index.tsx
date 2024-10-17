@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/app/redux";
 import { setIsDarkMode, setIsSidebarCollapsed } from "../../../state";
 
+
+
 const Navbar = () => {
   const dispatch = useAppDispatch();
   const isSidebarCollapsed = useAppSelector(
@@ -30,21 +32,21 @@ const Navbar = () => {
         </button>
       </div>
 
+      
+
       {/* RIGHT SIDE */}
       <div className="flex justify-between items-center gap-5">
-        <div className="hidden md:flex justify-between items-center gap-5">
-          <div className="flex">
-            <button onClick={toggleDarkMode} className="px-3">
-              {!isDarkMode ? (
-                <Sun className="cursor-pointer text-gray-500" size={24}></Sun>
-              ) : (
-                <Moon className="cursor-pointer text-gray-500" size={24}></Moon>
-              )}
-            </button>
-            <Link href="/" className="px-3">
-              <Settings className="cursor-pointer text-gray-500" size={24} />
-            </Link>
-          </div>
+        <div className="flex">
+          <button onClick={toggleDarkMode} className="px-3">
+            {!isDarkMode ? (
+              <Sun className="cursor-pointer text-gray-500" size={24}></Sun>
+            ) : (
+              <Moon className="cursor-pointer text-gray-500" size={24}></Moon>
+            )}
+          </button>
+          <Link href="/" className="px-3">
+            <Settings className="cursor-pointer text-gray-500" size={24} />
+          </Link>
         </div>
       </div>
     </div>

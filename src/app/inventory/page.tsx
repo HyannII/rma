@@ -2,7 +2,13 @@
 
 import { IProductResponse } from "../../../interfaces/product.interface";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import {
+  DataGridPro,
+  GridColDef,
+  GridToolbar,
+  GridToolbarContainer,
+  GridToolbarExport,
+} from "@mui/x-data-grid-pro";
 import {
   deleteProductApi,
   getAllProductsApi,
@@ -30,6 +36,8 @@ import {
 } from "lucide-react";
 import Header from "../(components)/Header";
 import { RenderCellExpand } from "@/utils/renderCellExpand";
+import CustomToolbar from "@/utils/customToolbarDataGrid";
+import CustomPaginationDataGrid from "@/utils/customPaginationDataGrid";
 
 export default function Inventory() {
   const queryClient = useQueryClient();
@@ -60,9 +68,9 @@ export default function Inventory() {
   const [isFindFailed, setIsFindFailed] = useState(false);
   // Define the available search criteria
   const searchParams = [
-    { label: "Name", value: "name" },
-    { label: "Category", value: "category" },
-    { label: "Color", value: "color" },
+    { label: "Tên mặt hàng", value: "name" },
+    { label: "Danh mục", value: "category" },
+    { label: "Màu sắc", value: "color" },
     // Add more search criteria as needed
   ];
   const [selectedParam, setSelectedParam] = useState(searchParams[0].value);
@@ -168,7 +176,7 @@ export default function Inventory() {
       headerName: "Tên mặt hàng",
       minWidth: 200,
       editable: false,
-      flex: 3,
+      flex: 2,
       headerAlign: "center",
       renderCell: (params) => (
         <Box
@@ -210,7 +218,7 @@ export default function Inventory() {
       minWidth: 100,
       type: "number",
       editable: false,
-      flex: 2,
+      flex: 1,
       headerAlign: "center",
       renderCell: (params) => (
         <Box
@@ -227,32 +235,10 @@ export default function Inventory() {
       valueGetter: (value, row) => `${row.quantity}`,
     },
     {
-      field: "weight",
-      headerName: "Cân nặng",
-      minWidth: 100,
-      type: "number",
-      editable: false,
-      flex: 2,
-      headerAlign: "center",
-      renderCell: (params) => (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
-          }}
-        >
-          {params.value}
-        </Box>
-      ),
-      valueGetter: (value, row) => `${row.weight}`,
-    },
-    {
       field: "unit",
       headerName: "Đơn vị tính",
       minWidth: 100,
-      flex: 2,
+      flex: 1,
       headerAlign: "center",
       editable: false,
       renderCell: (params) => (
@@ -289,33 +275,11 @@ export default function Inventory() {
       ),
     },
     {
-      field: "total_price",
-      headerName: "Giá nhập trung bình",
-      minWidth: 100,
-      type: "number",
-      flex: 2,
-      headerAlign: "center",
-      editable: false,
-      renderCell: (params) => (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
-          }}
-        >
-          {params.value}
-        </Box>
-      ),
-      valueGetter: (value, row) => `${row.total_price} VND`,
-    },
-    {
       field: "customer_price",
       headerName: "Giá bán",
       minWidth: 100,
       type: "number",
-      flex: 2,
+      flex: 1,
       headerAlign: "center",
       editable: false,
       renderCell: (params) => (
@@ -336,7 +300,7 @@ export default function Inventory() {
       field: "description",
       headerName: "Mô tả",
       minWidth: 200,
-      flex: 2,
+      flex: 3,
       headerAlign: "center",
       editable: false,
       renderCell: (params) => (
@@ -438,11 +402,19 @@ export default function Inventory() {
         </div>
       </div>
       {/* datagrid */}
-      <DataGrid
+      <DataGridPro
         rows={filteredProducts.length > 0 ? filteredProducts : products}
         columns={columns}
         getRowId={(row) => row.products_id}
         checkboxSelection
+        pagination
+        slots={{
+          toolbar: CustomToolbar,
+          pagination: CustomPaginationDataGrid,
+        }}
+        initialState={{
+          pagination: { paginationModel: { pageSize: 25 } },
+        }}
         onRowSelectionModelChange={(newSelection) => {
           setSelectedProductIds(newSelection as number[]);
         }}

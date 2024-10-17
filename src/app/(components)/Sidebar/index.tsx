@@ -4,8 +4,11 @@ import { useAppDispatch, useAppSelector } from "@/app/redux";
 import { setIsSidebarCollapsed } from "../../../state";
 import {
   Archive,
+  ChartLine,
   CircleDollarSign,
+  ClipboardPenLine,
   Contact,
+  ContactRound,
   CookingPot,
   Icon,
   Layout,
@@ -87,7 +90,7 @@ const Sidebar = () => {
             isSidebarCollapsed ? "hidden" : "block"
           } font-extrabold text-2xl`}
         >
-          RMA_FE
+          RMA
         </h1>
         <button
           className="md:hidden px-3 py-3 bg-gray-100 rounded-full hover:bg-blue-100"
@@ -117,9 +120,15 @@ const Sidebar = () => {
           isCollapsed={isSidebarCollapsed}
         ></SidebarLink>
         <SidebarLink
-          href="/receipts"
+          href="/transactions"
+          icon={PackagePlus}
+          label="Hoá đơn nhập"
+          isCollapsed={isSidebarCollapsed}
+        ></SidebarLink>
+        <SidebarLink
+          href="/bills"
           icon={Receipt}
-          label="Hoá đơn"
+          label="Hoá đơn bán hàng"
           isCollapsed={isSidebarCollapsed}
         ></SidebarLink>
         <SidebarLink
@@ -130,13 +139,13 @@ const Sidebar = () => {
         ></SidebarLink>
         <SidebarLink
           href="/staffs"
-          icon={Contact}
+          icon={ContactRound}
           label="Nhân viên"
           isCollapsed={isSidebarCollapsed}
         ></SidebarLink>
         <SidebarLink
           href="/reports"
-          icon={CircleDollarSign}
+          icon={ChartLine}
           label="Báo cáo"
           isCollapsed={isSidebarCollapsed}
         ></SidebarLink>

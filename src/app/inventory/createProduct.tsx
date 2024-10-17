@@ -86,7 +86,7 @@ export default function CreateProduct({
   }, [shouldResetForm, setShouldResetForm]);
   const labelCssStyles = "block text-sm font-medium text-gray-700";
   const inputCssStyles =
-    "block w-full mb-2 p-2 border-gray-500 border-2 rounded-md";
+    "block w-full mb-2 p-2 border-gray-500 border-2 rounded-md text-gray-200";
 
   return (
     <div className="flex flex-wrap max-w-3xl mx-auto p-6">

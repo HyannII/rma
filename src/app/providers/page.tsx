@@ -2,7 +2,6 @@
 
 import { IProviderResponse } from "../../../interfaces/provider.interface";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import {
   deleteProviderApi,
   getAllProvidersApi,
@@ -22,8 +21,11 @@ import EditProvider from "./editProvider";
 import { CircleX, PlusCircleIcon, SearchIcon, Trash2, X } from "lucide-react";
 import Header from "../(components)/Header";
 import { RenderCellExpand } from "@/utils/renderCellExpand";
+import CustomToolbar from "@/utils/customToolbarDataGrid";
+import { DataGridPro, GridColDef } from "@mui/x-data-grid-pro";
+import CustomPaginationDataGrid from "@/utils/customPaginationDataGrid";
 
-export default function Inventory() {
+export default function Providers() {
   const queryClient = useQueryClient();
   const {
     data: providers,
@@ -52,10 +54,10 @@ export default function Inventory() {
   const [isFindFailed, setIsFindFailed] = useState(false);
   // Define the available search criteria
   const searchParams = [
-    { label: "Name", value: "name" },
-    { label: "Phone number", value: "phone" },
+    { label: "Tên nhà cung cấp", value: "name" },
+    { label: "Số điện thoại", value: "phone" },
     { label: "Email", value: "email" },
-    { label: "Address", value: "address" },
+    { label: "Địa chỉ", value: "address" },
     // Add more search criteria as needed
   ];
   const [selectedParam, setSelectedParam] = useState(searchParams[0].value);
@@ -162,7 +164,7 @@ export default function Inventory() {
       headerName: "Tên nhà cung cấp",
       minWidth: 200,
       editable: false,
-      flex: 3,
+      flex: 2,
       headerAlign: "center",
       renderCell: (params) => (
         <Box
@@ -183,7 +185,7 @@ export default function Inventory() {
       headerName: "Địa chỉ",
       minWidth: 100,
       editable: false,
-      flex: 1,
+      flex: 2,
       headerAlign: "center",
       renderCell: (params) => (
         <Box
@@ -344,11 +346,19 @@ export default function Inventory() {
         </div>
       </div>
       {/* datagrid */}
-      <DataGrid
+      <DataGridPro
         rows={filteredProviders.length > 0 ? filteredProviders : providers}
         columns={columns}
         getRowId={(row) => row.providers_id}
         checkboxSelection
+        pagination
+        slots={{
+          toolbar: CustomToolbar,
+          pagination: CustomPaginationDataGrid,
+        }}
+        initialState={{
+          pagination: { paginationModel: { pageSize: 25 } },
+        }}
         onRowSelectionModelChange={(newSelection) => {
           setSelectedProviderIds(newSelection as number[]);
         }}
