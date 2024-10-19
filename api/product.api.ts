@@ -16,6 +16,13 @@ export const getProductByIDApi = async (id: number) => {
   return res.data;
 };
 
+export const getProductByCategoryApi = async (category: string) => {
+  const res = await api.get<IProductResponse[]>(`/product/getall`, {
+    params: { category },
+  });
+  return res.data;
+};
+
 export const getProductByFieldApi = async (
   field: string, // Thay đổi tên tham số từ name thành field
   value: string

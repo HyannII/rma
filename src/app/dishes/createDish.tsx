@@ -1,8 +1,9 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ICreateDishBody } from "../../../interfaces/dish.interface";
 import { createDishApi } from "../../../api/dish.api";
 import { useState, ChangeEvent, useEffect, useRef } from "react";
 import Image from "next/legacy/image";
+import { getProductByCategoryApi } from "../../../api/product.api";
 
 interface CreateDishProps {
   onDishCreated: () => void;
@@ -18,11 +19,17 @@ export default function CreateDish({
   const [dishData, setDishData] = useState<ICreateDishBody>({
     name: "",
     image: null,
-      quantity: 0,
+    quantity: 0,
     unit: "",
     category: "",
     price: "",
+    products: [],
   });
+  const { data: ings, isSuccess } = useQuery({
+    queryKey: ["all-ingredients"],
+    queryFn: () => getProductByCategoryApi("Nguyên liệu"),
+  });
+  console.log("Ingredients: ", ings);
 
   const fileInputRef = useRef(null);
 
@@ -72,13 +79,14 @@ export default function CreateDish({
         unit: "",
         category: "",
         price: "",
+        products: [],
       });
       setShouldResetForm(false); // Reset the trigger flag
     }
   }, [shouldResetForm, setShouldResetForm]);
   const labelCssStyles = "block text-sm font-medium text-gray-700";
   const inputCssStyles =
-    "block w-full mb-2 p-2 border-gray-500 border-2 rounded-md text-gray-200";
+    "block w-full mb-2 p-2 border-gray-500 border-2 rounded-md text-zinc-800";
 
   return (
     <div className="flex flex-wrap max-w-3xl mx-auto p-6">
@@ -198,7 +206,34 @@ export default function CreateDish({
             className={inputCssStyles}
           />
         </div>
-
+        <div className="mb-4 w-full px-2">
+          <label className={labelCssStyles} htmlFor="price">
+            Ingredients
+          </label>
+          {isSuccess && (
+            <div>
+              {/* search bar */}
+              <div className="w-full flex space-x-2">
+                <p className="w-2/3">Tên nguyên liệu</p>
+                <p className="w-1/3">Số lượng</p>
+              </div>
+              <div className="w-full flex space-x-2">
+                <div className="w-2/3">
+                  <div>
+                    {ings.map((ing) => (
+                      <div key={ing.products_id}>{ing.name}</div>
+                    ))}
+                  </div>
+                </div>
+                <div className="w-1/3">
+                  {ings.map((ing) => (
+                    <div key={ing.products_id}>{ing.quantity}</div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
         <button
           type="submit"
           className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"

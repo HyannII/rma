@@ -51,7 +51,7 @@ export default function EditProduct({
   });
 
   const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     if ((e as ChangeEvent<HTMLInputElement>).target.files && name === "image") {
@@ -79,7 +79,7 @@ export default function EditProduct({
 
   const labelCssStyles = "block text-sm font-medium text-gray-700";
   const inputCssStyles =
-    "block w-full mb-2 p-2 border-gray-500 border-2 rounded-md text-gray-200";
+    "block w-full mb-2 p-2 border-gray-500 border-2 rounded-md text-zinc-800";
   return (
     <div className="flex flex-wrap max-w-2xl mx-auto p-6">
       <h1 className="text-4xl font-bold mb-4 w-full">Chỉnh sửa thông tin</h1>
@@ -148,14 +148,24 @@ export default function EditProduct({
           <label className={labelCssStyles} htmlFor="category">
             Category
           </label>
-          <input
-            type="text"
-            id="category"
+          <select
             name="category"
+            id="category"
             value={updatedProduct.category}
             onChange={handleInputChange}
             className={inputCssStyles}
-          />
+            required
+          >
+            <option value="" className="text-zinc-800 hidden">
+              Choose category
+            </option>
+            <option value="Nguyên liệu" className="text-zinc-800">
+              Nguyên liệu
+            </option>
+            <option value="Tài sản" className="text-zinc-800">
+              Tài sản
+            </option>
+          </select>
         </div>
 
         <div className="mb-4 w-1/3 px-2">
@@ -180,20 +190,6 @@ export default function EditProduct({
         </div>
 
         <div className="mb-4 w-1/2 px-2">
-          <label className={labelCssStyles} htmlFor="weight">
-            Weight
-          </label>
-          <input
-            type="text"
-            id="weight"
-            name="weight"
-            value={updatedProduct.weight}
-            onChange={handleInputChange}
-            className={inputCssStyles}
-          />
-        </div>
-
-        <div className="mb-4 w-1/2 px-2">
           <label className={labelCssStyles} htmlFor="unit">
             Unit
           </label>
@@ -202,20 +198,6 @@ export default function EditProduct({
             id="unit"
             name="unit"
             value={updatedProduct.unit}
-            onChange={handleInputChange}
-            className={inputCssStyles}
-          />
-        </div>
-
-        <div className="mb-4 w-1/2 px-2">
-          <label className={labelCssStyles} htmlFor="total_price">
-            Total Price
-          </label>
-          <input
-            type="text"
-            id="total_price"
-            name="total_price"
-            value={updatedProduct.total_price}
             onChange={handleInputChange}
             className={inputCssStyles}
           />

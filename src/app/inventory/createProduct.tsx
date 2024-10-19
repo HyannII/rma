@@ -1,7 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ICreateProductBody } from "../../../interfaces/product.interface";
 import { createProductApi } from "../../../api/product.api";
-import { useState, ChangeEvent, useEffect, useRef } from "react";
+import {
+  useState,
+  ChangeEvent,
+  useEffect,
+  useRef,
+  SetStateAction,
+} from "react";
 import Image from "next/legacy/image";
 
 interface CreateProductProps {
@@ -32,6 +38,8 @@ export default function CreateProduct({
 
   const queryClient = useQueryClient();
 
+  const [categoryValue, setCategoryValue] = useState<string>("");
+
   // mutation
   const createProductMutation = useMutation({
     mutationFn: (body: ICreateProductBody) => createProductApi(body),
@@ -48,7 +56,7 @@ export default function CreateProduct({
 
   //handler
   const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     if ((e as ChangeEvent<HTMLInputElement>).target.files && name === "image") {
@@ -62,6 +70,12 @@ export default function CreateProduct({
         [name]: value,
       });
     }
+  };
+
+  const handleCategoryChange = (event: {
+    target: { value: SetStateAction<string> };
+  }) => {
+    setCategoryValue(event.target.value);
   };
 
   const handleCreateProduct = () => {
@@ -86,7 +100,7 @@ export default function CreateProduct({
   }, [shouldResetForm, setShouldResetForm]);
   const labelCssStyles = "block text-sm font-medium text-gray-700";
   const inputCssStyles =
-    "block w-full mb-2 p-2 border-gray-500 border-2 rounded-md text-gray-200";
+    "block w-full mb-2 p-2 border-gray-500 border-2 rounded-md text-zinc-800";
 
   return (
     <div className="flex flex-wrap max-w-3xl mx-auto p-6">
@@ -160,15 +174,24 @@ export default function CreateProduct({
           <label className={labelCssStyles} htmlFor="category">
             Category
           </label>
-          <input
-            type="text"
-            id="category"
+          <select
             name="category"
+            id="category"
             value={productData.category}
             onChange={handleInputChange}
             className={inputCssStyles}
             required
-          />
+          >
+            <option value="" className="text-zinc-800 hidden">
+              Choose category
+            </option>
+            <option value="Nguyên liệu" className="text-zinc-800">
+              Nguyên liệu
+            </option>
+            <option value="Tài sản" className="text-zinc-800">
+              Tài sản
+            </option>
+          </select>
         </div>
 
         <div className="mb-4 w-1/3 px-2">
@@ -193,20 +216,6 @@ export default function CreateProduct({
         </div>
 
         <div className="mb-4 w-1/2 px-2">
-          <label className={labelCssStyles} htmlFor="weight">
-            Weight
-          </label>
-          <input
-            type="text"
-            id="weight"
-            name="weight"
-            value={productData.weight}
-            onChange={handleInputChange}
-            className={inputCssStyles}
-          />
-        </div>
-
-        <div className="mb-4 w-1/2 px-2">
           <label className={labelCssStyles} htmlFor="unit">
             Unit
           </label>
@@ -215,20 +224,6 @@ export default function CreateProduct({
             id="unit"
             name="unit"
             value={productData.unit}
-            onChange={handleInputChange}
-            className={inputCssStyles}
-          />
-        </div>
-
-        <div className="mb-4 w-1/2 px-2">
-          <label className={labelCssStyles} htmlFor="total_price">
-            Total Price
-          </label>
-          <input
-            type="text"
-            id="total_price"
-            name="total_price"
-            value={productData.total_price}
             onChange={handleInputChange}
             className={inputCssStyles}
           />

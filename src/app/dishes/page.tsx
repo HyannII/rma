@@ -69,7 +69,7 @@ export default function Dishes() {
   const [shouldResetForm, setShouldResetForm] = useState(false);
 
   const [page, setPage] = useState(1); // State for current page
-  const itemsPerPage = 10; // Items per page
+  const itemsPerPage = 12; // Items per page
 
   const openCreateDish = () => setIsCreateDishOpen(true);
   const closeCreateDish = () => setIsCreateDishOpen(false);
