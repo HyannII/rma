@@ -122,7 +122,7 @@ const Sidebar = () => {
         <SidebarLink
           href="/transactions"
           icon={PackagePlus}
-          label="Hoá đơn nhập"
+          label="Hoá đơn nhập kho"
           isCollapsed={isSidebarCollapsed}
         ></SidebarLink>
         <SidebarLink

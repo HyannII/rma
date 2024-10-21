@@ -1,6 +1,3 @@
-import { Product } from "./product.types";
-
-
 export interface Dish {
   items_id: number;
   name: string;
@@ -8,5 +5,4 @@ export interface Dish {
   unit: string;
   category: string;
   price: string;
-  products: Product[];
 }
