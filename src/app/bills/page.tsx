@@ -16,7 +16,6 @@ import { Search } from "lucide-react";
 import Header from "../(components)/Header";
 
 export default function Bills() {
-    const queryClient = useQueryClient();
     const {
         data: bills,
         isFetching,
@@ -39,7 +38,7 @@ export default function Bills() {
             headerName: "Mã hoá đơn",
             minWidth: 200,
             editable: false,
-            flex: 2,
+            flex: 1,
             headerAlign: "center",
             renderCell: (params: GridRenderCellParams) => (
                 <Box
@@ -59,7 +58,7 @@ export default function Bills() {
             headerName: "Nhân viên tạo",
             minWidth: 100,
             editable: false,
-            flex: 2,
+            flex: 3,
             headerAlign: "center",
             renderCell: (params: GridRenderCellParams) => (
                 <Box
@@ -79,7 +78,7 @@ export default function Bills() {
             headerName: "Tổng tiền",
             minWidth: 100,
             editable: false,
-            flex: 2,
+            flex: 3,
             headerAlign: "center",
             renderCell: (params: GridRenderCellParams) => (
                 <Box
@@ -105,7 +104,7 @@ export default function Bills() {
             headerName: "Thời gian tạo",
             minWidth: 100,
             editable: false,
-            flex: 2,
+            flex: 3,
             headerAlign: "center",
             renderCell: (params: GridRenderCellParams) => (
                 <Box
@@ -125,7 +124,7 @@ export default function Bills() {
 
     // Detail panel columns
     const detailColumns: GridColDef[] = [
-        { field: "name", headerName: "Tên sản phẩm", flex: 1 },
+        { field: "name", headerName: "Tên sản phẩm", flex: 2 },
         { field: "quantity", headerName: "Số lượng", flex: 1 },
         {
             field: "price",
@@ -257,6 +256,7 @@ export default function Bills() {
                 columns={columns}
                 getRowId={(row) => row.bill_id}
                 pagination
+                autoHeight
                 slots={{
                     toolbar: CustomToolbar,
                     pagination: CustomPaginationDataGrid,
@@ -268,7 +268,9 @@ export default function Bills() {
                 // Chi tiết bảng bên trong
                 getDetailPanelContent={(params) => (
                     <div className="p-6">
-                        <Typography variant="h6">Chi tiết hoá đơn # {params.id}</Typography>
+                        <Typography variant="h6">
+                            Chi tiết hoá đơn # {params.id}
+                        </Typography>
                         <DataGridPro
                             density="compact"
                             autoHeight
