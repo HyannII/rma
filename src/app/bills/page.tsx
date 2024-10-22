@@ -149,7 +149,6 @@ export default function Bills() {
             },
         },
     ];
-    
 
     // Data for detail rows
     const getDetailData = (row: any) => {

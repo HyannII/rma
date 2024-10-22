@@ -12,6 +12,7 @@ export interface IStaffResponse {
     username: string;
     password_hash: string;
     email: string;
+    created_at: string;
 }
 
 export interface ICreateStaffBody {

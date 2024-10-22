@@ -12,4 +12,5 @@ export interface Staff {
     username: string;
     password_hash: string;
     email: string;
+    created_at: string;
 }
