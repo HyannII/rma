@@ -7,7 +7,6 @@ export interface IProductResponse {
   category: string;
   weight: string;
   unit: string;
-  total_price: string;
   customer_price: string;
   description: string;
   created_at: string;
@@ -22,7 +21,6 @@ export interface ICreateProductBody {
   category: string;
   weight: string;
   unit: string;
-  total_price: string;
   customer_price: string;
   description: string;
 }

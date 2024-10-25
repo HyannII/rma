@@ -3,14 +3,10 @@ export interface IStaffResponse {
     name: string;
     gender: string;
     birthday: string;
-    image_url: File | null;
+    image_url: string;
     phone: string;
     citizen_id: string;
     role: string;
-    salary: string;
-    wage: string;
-    username: string;
-    password_hash: string;
     email: string;
     created_at: string;
 }
@@ -19,14 +15,10 @@ export interface ICreateStaffBody {
     name: string;
     gender: string;
     birthday: string;
-    image_url: File | null;
+    image: File | null;
     phone: string;
     citizen_id: string;
     role: string;
-    salary: string;
-    wage: string;
-    username: string;
-    password_hash: string;
     email: string;
 }
 

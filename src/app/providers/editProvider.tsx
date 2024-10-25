@@ -157,7 +157,6 @@ export default function EditProvider({
             required
           />
         </div>
-
         <div className="mb-4 w-1/3 px-2">
           <label className="block text-sm font-medium invisible">
             Something

@@ -1,20 +1,40 @@
-import { ICreateStaffBody, IDeleteStaffResponse, IStaffResponse, IUpdateStaffBody } from "../interfaces/staff.interface";
+import {
+    ICreateStaffBody,
+    IDeleteStaffResponse,
+    IStaffResponse,
+    IUpdateStaffBody,
+} from "../interfaces/staff.interface";
 import api from "./api";
 
 export const getAllStaffsApi = async () => {
     const res = await api.get<IStaffResponse[]>("/staff/getall");
     return res.data;
-}
+};
 
 export const getStaffByNameApi = async (name: string) => {
     const res = await api.get<IStaffResponse[]>(`/staff/getall`, {
         params: { name },
     });
     return res.data;
-}
+};
 
 export const getStaffByIDApi = async (id: number) => {
     const res = await api.get<IStaffResponse>(`/staff/${id}`);
+    return res.data;
+};
+
+export const getStaffByFieldApi = async (
+    field: string, // Thay đổi tên tham số từ name thành field
+    value: string
+) => {
+    const params = new URLSearchParams({
+        [field]: encodeURIComponent(value), // Sử dụng field làm khóa
+    });
+
+    const urlWithParams = `/staff/getall?${params.toString()}`; // Kết hợp URL với tham số
+
+    const res = await api.get<IStaffResponse[]>(urlWithParams); // Gọi API với URL đã tạo
+
     return res.data;
 };
 

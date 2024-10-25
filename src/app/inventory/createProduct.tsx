@@ -29,7 +29,6 @@ export default function CreateProduct({
     category: "",
     weight: "",
     unit: "",
-    total_price: "",
     customer_price: "",
     description: "",
   });
@@ -91,7 +90,6 @@ export default function CreateProduct({
         category: "",
         weight: "",
         unit: "",
-        total_price: "",
         customer_price: "",
         description: "",
       });
