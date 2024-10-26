@@ -215,6 +215,11 @@ export default function Dishes() {
     setSortCriteria(event.target.value);
   };
 
+  const handleFormatPrice = (value: any) => {
+    const formattedPrice = new Intl.NumberFormat("vi-VN").format(value);
+    return `${formattedPrice} VND`;
+  }
+
   return (
     <div className="grid grid-cols-4 gap-7 lg:gap-12 justify-between">
       <div className="col-span-4">
@@ -357,7 +362,7 @@ export default function Dishes() {
               />
             </div>
             <h3 className="text-lg text-gray-900 font-semibold">{dish.name}</h3>
-            <p className="text-gray-800">{dish.price} VND</p>
+            <p className="text-gray-800">{handleFormatPrice(dish.price)}</p>
             <div className="text-sm text-gray-600 mt-1">
               Category: {dish.category}
             </div>

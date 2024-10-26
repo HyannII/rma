@@ -96,7 +96,7 @@ export default function Bills() {
                 const formattedPrice = new Intl.NumberFormat("vi-VN").format(
                     row.total
                 );
-                return `${formattedPrice}.000 VND`;
+                return `${formattedPrice} VND`;
             },
         },
         {
@@ -134,7 +134,7 @@ export default function Bills() {
                 const formattedPrice = new Intl.NumberFormat("vi-VN").format(
                     row.price
                 );
-                return `${formattedPrice}.000 VND`;
+                return `${formattedPrice}VND`;
             },
         },
         {
@@ -145,7 +145,7 @@ export default function Bills() {
                 const formattedPrice = new Intl.NumberFormat("vi-VN").format(
                     row.price * row.quantity
                 );
-                return `${formattedPrice}.000 VND`;
+                return `${formattedPrice}VND`;
             },
         },
     ];
