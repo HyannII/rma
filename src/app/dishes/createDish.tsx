@@ -22,7 +22,6 @@ export default function CreateDish({
     const [dishData, setDishData] = useState<ICreateDishBody>({
         name: "",
         image: null,
-        quantity: 0,
         unit: "",
         category: "",
         price: "",
@@ -151,11 +150,9 @@ export default function CreateDish({
             setDishData({
                 name: "",
                 image: null,
-                quantity: 0,
                 unit: "",
                 category: "",
                 price: "",
-                products: [],
             });
             setShouldResetForm(false); // Reset the trigger flag
         }
@@ -187,24 +184,6 @@ export default function CreateDish({
                             id="name"
                             name="name"
                             value={dishData.name}
-                            onChange={handleInputChange}
-                            className={inputCssStyles}
-                            required
-                        />
-                    </div>
-
-                    <div className="mb-4 w-full px-2">
-                        <label
-                            className={labelCssStyles}
-                            htmlFor="quantity"
-                        >
-                            Quantity
-                        </label>
-                        <input
-                            type="text"
-                            id="quantity"
-                            name="quantity"
-                            value={dishData.quantity}
                             onChange={handleInputChange}
                             className={inputCssStyles}
                             required

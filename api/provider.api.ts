@@ -21,7 +21,7 @@ export const getProviderByFieldApi = async (
   value: string
 ) => {
   const params = new URLSearchParams({
-    [field]: encodeURIComponent(value), // Sử dụng field làm khóa
+    [field]: value, // Sử dụng field làm khóa
   });
 
   const urlWithParams = `/provider/getall?${params.toString()}`; // Kết hợp URL với tham số
