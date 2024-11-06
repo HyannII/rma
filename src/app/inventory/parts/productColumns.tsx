@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { GridColDef } from "@mui/x-data-grid-pro";
+import { GridColDef } from "@mui/x-data-grid-premium";
 
 export const productColumns: GridColDef[] = [
     {

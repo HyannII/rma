@@ -2,7 +2,7 @@
 
 import { IProductResponse } from "../../../interfaces/product.interface";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { DataGridPro, GridColDef } from "@mui/x-data-grid-pro";
+import { DataGridPremium, GridColDef } from "@mui/x-data-grid-premium";
 import {
     deleteProductApi,
     getAllProductsApi,
@@ -193,7 +193,7 @@ export default function Inventory() {
                 selectedIds={selectedProductIds}
             />
             {/* datagrid */}
-            <DataGridPro
+            <DataGridPremium
                 rows={filteredProducts.length > 0 ? filteredProducts : products}
                 columns={productColumns}
                 getRowId={(row) => row.products_id}

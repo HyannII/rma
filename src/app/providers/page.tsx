@@ -22,7 +22,7 @@ import { CircleX, PlusCircleIcon, SearchIcon, Trash2, X } from "lucide-react";
 import Header from "../(components)/Header";
 import { RenderCellExpand } from "@/utils/renderCellExpand";
 import CustomToolbar from "@/utils/customToolbarDataGrid";
-import { DataGridPro, GridColDef } from "@mui/x-data-grid-pro";
+import { DataGridPremium, GridColDef } from "@mui/x-data-grid-premium";
 import CustomPaginationDataGrid from "@/utils/customPaginationDataGrid";
 
 export default function Providers() {
@@ -357,7 +357,7 @@ export default function Providers() {
                 </div>
             </div>
             {/* datagrid */}
-            <DataGridPro
+            <DataGridPremium
                 rows={
                     filteredProviders.length > 0 ? filteredProviders : providers
                 }

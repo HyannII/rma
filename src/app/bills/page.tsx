@@ -4,10 +4,10 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { IBillResponse } from "../../../interfaces/bill.interface";
 import { getAllBillsApi } from "../../../api/bill.api";
 import {
-    DataGridPro,
+    DataGridPremium,
     GridColDef,
     GridRenderCellParams,
-} from "@mui/x-data-grid-pro";
+} from "@mui/x-data-grid-premium";
 import CustomToolbar from "@/utils/customToolbarDataGrid";
 import CustomPaginationDataGrid from "@/utils/customPaginationDataGrid";
 import { Box, Button, TextField, Typography } from "@mui/material";
@@ -101,7 +101,7 @@ export default function Bills() {
                     <CircleX className="w-5 h-5 mr-2 !text-gray-100" /> Huỷ
                 </button>
             </div>
-            <DataGridPro
+            <DataGridPremium
                 rows={filterBills()}
                 columns={billColumns}
                 getRowId={(row) => row.bill_id}
@@ -121,7 +121,7 @@ export default function Bills() {
                         <Typography variant="h6">
                             Chi tiết hoá đơn # {params.id}
                         </Typography>
-                        <DataGridPro
+                        <DataGridPremium
                             density="compact"
                             autoHeight
                             rows={getDetailData(params.row)} // Dữ liệu cho bảng chi tiết

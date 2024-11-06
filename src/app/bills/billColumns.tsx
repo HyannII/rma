@@ -1,4 +1,4 @@
-import { GridColDef, GridRenderCellParams } from "@mui/x-data-grid-pro";
+import { GridColDef, GridRenderCellParams } from "@mui/x-data-grid-premium";
 import { Box } from "@mui/material";
 
 export const billColumns: GridColDef[] = [
@@ -84,10 +84,13 @@ export const billColumns: GridColDef[] = [
                     height: "100%",
                 }}
             >
-                {new Date(params.value).toLocaleString()}{" "}
-                {/* Chuyển đổi thời gian thành định dạng dễ đọc */}
+                {params.value}
             </Box>
         ),
+        valueGetter: (value, row) => {
+            const formattedDate = new Date(row.created_at).toLocaleDateString();
+            return `${formattedDate}`;
+        }
     },
 ];
 
