@@ -12,9 +12,11 @@ import CustomToolbar from "@/utils/customToolbarDataGrid";
 import CustomPaginationDataGrid from "@/utils/customPaginationDataGrid";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useState } from "react";
-import { Search } from "lucide-react";
+import { Calendar, CircleX, Search } from "lucide-react";
 import Header from "../(components)/Header";
 import { billColumns, detailColumns } from "./billColumns";
+import dayjs, { Dayjs } from "dayjs";
+import { DateRangePicker } from "@mui/x-date-pickers-pro";
 
 export default function Bills() {
     const {
@@ -27,13 +29,16 @@ export default function Bills() {
         refetchOnWindowFocus: false,
     });
 
-    // State cho ngày, tháng, năm để tìm kiếm
-    const [day, setDay] = useState("");
-    const [month, setMonth] = useState("");
-    const [year, setYear] = useState("");
+    // State for the selected date range with Dayjs
+    const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null]>([
+        null,
+        null,
+    ]);
 
-    //datagrid columns
-    
+    // Function to reset date range
+    const resetDateRange = () => {
+        setDateRange([null, null]);
+    };
 
     // Data for detail rows
     const getDetailData = (row: any) => {
@@ -43,18 +48,18 @@ export default function Bills() {
     const filterBills = () => {
         if (!bills) return [];
 
+        const [startDayjs, endDayjs] = dateRange;
+
         return bills.filter((bill) => {
-            const createdAt = new Date(bill.created_at);
-            const matchDay = day
-                ? createdAt.getDate().toString() === day
+            const billDate = dayjs(bill.created_at);
+            const withinStartDate = startDayjs
+                ? billDate.isAfter(startDayjs.subtract(1, "day"))
                 : true;
-            const matchMonth = month
-                ? (createdAt.getMonth() + 1).toString() === month
+            const withinEndDate = endDayjs
+                ? billDate.isBefore(endDayjs.add(1, "day"))
                 : true;
-            const matchYear = year
-                ? createdAt.getFullYear().toString() === year
-                : true;
-            return matchDay && matchMonth && matchYear;
+
+            return withinStartDate && withinEndDate;
         });
     };
 
@@ -72,68 +77,28 @@ export default function Bills() {
     return (
         <div className="flex flex-col w-full">
             <Header name="Hoá đơn bán hàng"></Header>
-            {/* Các trường nhập liệu để tìm kiếm */}
-            <div className="flex flex-wrap w-full my-8 justify-end">
-                <div className="w-1/6 mr-2">
-                    <TextField
-                        variant="filled"
-                        label="Ngày"
-                        value={day}
-                        onChange={(e) => setDay(e.target.value)}
-                        placeholder="DD"
-                        type="number"
-                        slotProps={{
-                            htmlInput: {
-                                min: 1,
-                                max: 31,
-                            },
-                        }}
-                        size="small"
-                        className="w-full bg-zinc-100 rounded-md"
-                    />
-                </div>
-                <div className="w-1/6 mx-2">
-                    <TextField
-                        variant="filled"
-                        label="Tháng"
-                        value={month}
-                        onChange={(e) => setMonth(e.target.value)}
-                        placeholder="MM"
-                        type="number"
-                        slotProps={{
-                            htmlInput: {
-                                min: 1,
-                                max: 12,
-                            },
-                        }}
-                        size="small"
-                        className="w-full bg-zinc-100 rounded-md"
-                    />
-                </div>
-                <div className="w-1/6 mx-2">
-                    <TextField
-                        variant="filled"
-                        label="Năm"
-                        value={year}
-                        onChange={(e) => setYear(e.target.value)}
-                        placeholder="YYYY"
-                        type="number"
-                        slotProps={{
-                            htmlInput: {
-                                min: 1900,
-                                max: new Date().getFullYear(),
-                            },
-                        }}
-                        size="small"
-                        className="w-full bg-zinc-100 rounded-md"
-                    />
-                </div>
-
+            {/* Date range picker for filtering */}
+            <div className="flex w-full my-8">
+                <DateRangePicker
+                    value={dateRange}
+                    onChange={(newValue) => setDateRange(newValue)}
+                    slotProps={{
+                        field: {
+                            dateSeparator: "đến",
+                        },
+                        textField: {
+                            InputProps: { endAdornment: <Calendar /> },
+                            className: "w-full shadow rounded-lg bg-zinc-100",
+                        },
+                    }}
+                    formatDensity="spacious"
+                    className="w-5/6"
+                />
                 <button
-                    onClick={filterBills}
-                    className="flex items-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold mx-2 w-12 h-12 rounded-md"
+                    onClick={resetDateRange}
+                    className="flex items-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 ml-4 rounded"
                 >
-                    <Search className="w-5 h-5 m-auto !text-gray-100"></Search>
+                    <CircleX className="w-5 h-5 mr-2 !text-gray-100" /> Huỷ
                 </button>
             </div>
             <DataGridPro
