@@ -110,14 +110,28 @@ export default function Transactions() {
     const handleEditTransaction = () => {
         if (selectedTransactionIds.length === 1) {
             const transactionToEdit = transactions.find(
-                (transaction) => transaction.transactions_id === selectedTransactionIds[0]
+                (transaction) =>
+                    transaction.transactions_id === selectedTransactionIds[0]
             );
+
             if (transactionToEdit) {
-                setSelectedTransaction(transactionToEdit);
-                openEditTransaction();
+                // Kiểm tra status của transaction
+                if (transactionToEdit.status === "Đang chờ") {
+                    setSelectedTransaction(transactionToEdit);
+                    openEditTransaction();
+                } else {
+                    console.warn(
+                        "Only transactions with 'Đang chờ' status can be edited."
+                    );
+                    alert(
+                        "Chỉ các hoá đơn có trạng thái 'Đang chờ' mới có thể được chỉnh sửa."
+                    );
+                }
             }
         }
     };
+
+
 
     const handleCloseDeleteSuccessDialog = () => {
         setIsDeleteSuccessDialogOpen(false);
@@ -219,6 +233,9 @@ export default function Transactions() {
                         paginationModel: {
                             pageSize: 25,
                         },
+                    },
+                    sorting: {
+                        sortModel: [{ field: "created_at", sort: "desc" }],
                     },
                 }}
                 onRowSelectionModelChange={(newSelection) =>

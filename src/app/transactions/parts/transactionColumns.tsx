@@ -51,6 +51,26 @@ export const transactionColumns: GridColDef[] = [
         ),
     },
     {
+        field: "created_at",
+        headerName: "Thời gian tạo",
+        minWidth: 100,
+        editable: false,
+        flex: 3,
+        headerAlign: "center",
+        renderCell: (params: GridRenderCellParams) => (
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                }}
+            >
+                {new Date(params.value).toLocaleDateString()}
+            </Box>
+        ),
+    },
+    {
         field: "staff_id",
         headerName: "Nhân viên tạo",
         minWidth: 100,
@@ -106,7 +126,9 @@ export const transactionColumns: GridColDef[] = [
         flex: 3,
         headerAlign: "center",
         renderCell: (params: GridRenderCellParams) => {
-            const [providerName, setProviderName] = useState<string | null>(null);
+            const [providerName, setProviderName] = useState<string | null>(
+                null
+            );
 
             useEffect(() => {
                 const fetchProviderName = async () => {
@@ -116,7 +138,9 @@ export const transactionColumns: GridColDef[] = [
                             setProviderName(providerNameCache[providerId]);
                         } else {
                             try {
-                                const response = await getProviderByIDApi(providerId);
+                                const response = await getProviderByIDApi(
+                                    providerId
+                                );
                                 const name = response.name; // Lấy trường name từ response
                                 providerNameCache[providerId] = name;
                                 setProviderName(name);
@@ -164,7 +188,9 @@ export const transactionColumns: GridColDef[] = [
                             setProductName(productNameCache[productId]);
                         } else {
                             try {
-                                const response = await getProductByIDApi(productId);
+                                const response = await getProductByIDApi(
+                                    productId
+                                );
                                 const name = response.name; // Lấy trường name từ response
                                 productNameCache[productId] = name;
                                 setProductName(name);
