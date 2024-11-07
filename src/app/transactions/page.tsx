@@ -25,16 +25,31 @@ import Header from "../(components)/Header";
 import CustomToolbar from "@/utils/customToolbarDataGrid";
 import CustomPaginationDataGrid from "@/utils/customPaginationDataGrid";
 import { useRef, useState } from "react";
-import { CircleX, SearchIcon, PlusCircleIcon, Trash2, X } from "lucide-react";
+import {
+    CircleX,
+    SearchIcon,
+    PlusCircleIcon,
+    Trash2,
+    X,
+    Calendar,
+} from "lucide-react";
 import { ITransactionResponse } from "../../../interfaces/transaction.interface";
 import CreateTransaction from "./createTransaction";
 import EditTransaction from "./editTransaction";
 import SearchBar from "@/utils/searchBar";
 import Buttons from "@/utils/buttons";
-import { CreateTransactionSuccessDialog, EditTransactionSuccessDialog, DeleteTransactionSuccessDialog, DeleteConfirmDialog, NoMatchTransactionDialog } from "./parts/dialogs";
+import {
+    CreateTransactionSuccessDialog,
+    EditTransactionSuccessDialog,
+    DeleteTransactionSuccessDialog,
+    DeleteConfirmDialog,
+    NoMatchTransactionDialog,
+} from "./parts/dialogs";
 import TransactionModals from "./parts/modals";
 import { transactionColumns } from "./parts/transactionColumns";
 import TransactionDetailPanel from "./parts/transactionDetailPanel";
+import dayjs, { Dayjs } from "dayjs";
+import { DateRangePicker } from "@mui/x-date-pickers-pro";
 
 export default function Transactions() {
     const queryClient = useQueryClient();
@@ -48,25 +63,43 @@ export default function Transactions() {
         refetchOnWindowFocus: false,
     });
 
-    const searchParams = [
-        { label: "Tên nhân viên", value: "name" },
-        { label: "Vai trò", value: "role" },
-        { label: "Số điện thoại", value: "phone" },
-        { label: "Email", value: "email" },
-        // Add more search criteria as needed
-    ];
+    // State for the selected date range with Dayjs
+    const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null]>([
+        null,
+        null,
+    ]);
 
-    const fileInputRef = useRef(null);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [filteredTransactions, setFilteredTransactions] = useState([]);
-    const [selectedParam, setSelectedParam] = useState(searchParams[0].value);
+    // Function to reset date range
+    const resetDateRange = () => {
+        setDateRange([null, null]);
+    };
+    const filterTransactions = () => {
+        if (!transactions) return [];
+
+        const [startDayjs, endDayjs] = dateRange;
+
+        return transactions.filter((transaction) => {
+            const billDate = dayjs(transaction.created_at);
+            const withinStartDate = startDayjs
+                ? billDate.isAfter(startDayjs.subtract(1, "day"))
+                : true;
+            const withinEndDate = endDayjs
+                ? billDate.isBefore(endDayjs.add(1, "day"))
+                : true;
+
+            return withinStartDate && withinEndDate;
+        });
+    };
+
     const [isFindFailed, setIsFindFailed] = useState(false);
-    const [selectedTransaction, setSelectedTransaction] = useState<ITransactionResponse | null>(
-        null
-    );
-    const [selectedTransactionIds, setSelectedTransactionIds] = useState<number[]>([]);
+    const [selectedTransaction, setSelectedTransaction] =
+        useState<ITransactionResponse | null>(null);
+    const [selectedTransactionIds, setSelectedTransactionIds] = useState<
+        number[]
+    >([]);
 
-    const [isCreateTransactionOpen, setIsCreateTransactionOpen] = useState(false);
+    const [isCreateTransactionOpen, setIsCreateTransactionOpen] =
+        useState(false);
     const [isEditTransactionOpen, setIsEditTransactionOpen] = useState(false);
     const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
     const [isDeleteConfirmDialogOpen, setIsDeleteConfirmDialogOpen] =
@@ -113,25 +146,12 @@ export default function Transactions() {
                 (transaction) =>
                     transaction.transactions_id === selectedTransactionIds[0]
             );
-
             if (transactionToEdit) {
-                // Kiểm tra status của transaction
-                if (transactionToEdit.status === "Đang chờ") {
-                    setSelectedTransaction(transactionToEdit);
-                    openEditTransaction();
-                } else {
-                    console.warn(
-                        "Only transactions with 'Đang chờ' status can be edited."
-                    );
-                    alert(
-                        "Chỉ các hoá đơn có trạng thái 'Đang chờ' mới có thể được chỉnh sửa."
-                    );
-                }
+                setSelectedTransaction(transactionToEdit);
+                openEditTransaction();
             }
         }
     };
-
-
 
     const handleCloseDeleteSuccessDialog = () => {
         setIsDeleteSuccessDialogOpen(false);
@@ -141,21 +161,6 @@ export default function Transactions() {
     const handleCloseEditSuccessDialog = () => {
         setIsEditSuccessDialogOpen(false);
         queryClient.invalidateQueries(["transactions"]); // Refetch transaction data
-    };
-
-    const handleSearch = async () => {
-        try {
-            const result = await getTransactionByFieldApi(selectedParam, searchTerm); // Call the API with searchTerm
-            setFilteredTransactions(result); // Update the filteredTransactions with API result
-        } catch (error) {
-            console.error("Error fetching transaction by name:", error);
-            setIsFindFailed(true);
-        }
-    };
-
-    const handleUndoSearch = () => {
-        setSearchTerm("");
-        setFilteredTransactions([]);
     };
 
     //mutation
@@ -173,13 +178,11 @@ export default function Transactions() {
     // Filter selected transactions to show their names in confirmation dialog
     const selectedTransactionNames = transactions
         ? transactions
-              .filter((transaction) => selectedTransactionIds.includes(transaction.transactions_id))
+              .filter((transaction) =>
+                  selectedTransactionIds.includes(transaction.transactions_id)
+              )
               .map((transaction) => transaction.name)
         : [];
-
-    const handleParamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedParam(e.target.value);
-    };
 
     if (isFetching) {
         return <div className="py-4">Đang tải...</div>;
@@ -195,17 +198,28 @@ export default function Transactions() {
     return (
         <div className="flex flex-col w-full">
             <Header name="Hoá đơn nhập hàng"></Header>
-            {/* SEARCH BAR */}
-            <div className="mb-6">
-                <SearchBar
-                    inputValue={searchTerm}
-                    setInputValue={setSearchTerm}
-                    onSearch={handleSearch}
-                    onClearInput={handleUndoSearch}
-                    selectedOption={selectedParam}
-                    handleOptionChange={handleParamChange}
-                    options={searchParams}
+            <div className="flex w-full my-8">
+                <DateRangePicker
+                    value={dateRange}
+                    onChange={(newValue) => setDateRange(newValue)}
+                    slotProps={{
+                        field: {
+                            dateSeparator: "đến",
+                        },
+                        textField: {
+                            InputProps: { endAdornment: <Calendar /> },
+                            className: "w-full shadow rounded-lg bg-zinc-100",
+                        },
+                    }}
+                    formatDensity="spacious"
+                    className="w-5/6"
                 />
+                <button
+                    onClick={resetDateRange}
+                    className="flex items-center justify-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 ml-4 rounded w-1/6"
+                >
+                    <CircleX className="w-5 h-5 mr-2 !text-gray-100" /> Huỷ
+                </button>
             </div>
             <Buttons
                 onAddNew={openCreateTransaction}
@@ -214,11 +228,7 @@ export default function Transactions() {
                 selectedIds={selectedTransactionIds}
             />
             <DataGridPremium
-                rows={
-                    filteredTransactions.length > 0
-                        ? filteredTransactions
-                        : transactions
-                }
+                rows={filterTransactions()}
                 columns={transactionColumns}
                 getRowId={(row) => row.transactions_id}
                 pagination

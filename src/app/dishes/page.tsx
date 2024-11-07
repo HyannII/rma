@@ -226,17 +226,22 @@ export default function Dishes() {
     // Function to handle sorting logic
     const sortDishes = (dishesToSort: any[]) => {
         return dishesToSort.slice().sort((a, b) => {
+            const aName = a.name || ""; // Default to empty string if undefined or null
+            const bName = b.name || ""; // Default to empty string if undefined or null
+
             if (sortCriteria === "a-z") {
-                return a.name.localeCompare(b.name);
+                return aName.localeCompare(bName);
             } else if (sortCriteria === "z-a") {
-                return b.name.localeCompare(a.name);
+                return bName.localeCompare(aName);
             } else if (sortCriteria === "price-asc") {
                 return a.price - b.price;
             } else if (sortCriteria === "price-desc") {
                 return b.price - a.price;
             }
+            return 0; // Default case if sortCriteria is not recognized
         });
     };
+
 
     const displayedDishes = sortDishes(
         filteredDishs.length > 0 ? filteredDishs : dishes

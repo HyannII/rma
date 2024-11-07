@@ -96,7 +96,7 @@ export default function Bills() {
                 />
                 <button
                     onClick={resetDateRange}
-                    className="flex items-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 ml-4 rounded"
+                    className="flex items-center justify-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 ml-4 rounded w-1/6"
                 >
                     <CircleX className="w-5 h-5 mr-2 !text-gray-100" /> Huỷ
                 </button>
@@ -113,6 +113,9 @@ export default function Bills() {
                 }}
                 initialState={{
                     pagination: { paginationModel: { pageSize: 25 } },
+                    sorting: {
+                        sortModel: [{ field: "created_at", sort: "desc" }],
+                    },
                 }}
                 className="shadow rounded-lg bg-zinc-100"
                 // Chi tiết bảng bên trong
