@@ -67,6 +67,7 @@ export default function Transactions() {
         queryKey: ["transactions"],
         queryFn: getAllTransactionsApi,
         refetchOnWindowFocus: false,
+        refetchInterval: 300000,
     });
 
     // State for the selected date range with Dayjs
@@ -240,16 +241,16 @@ export default function Transactions() {
     };
 
 
-    if (isFetching) {
-        return <div className="py-4">Đang tải...</div>;
-    }
-    if (isError || !transactions) {
-        return (
-            <div className="text-center text-red-500 py-4">
-                Lấy danh sách hàng không thành công
-            </div>
-        );
-    }
+    // if (isFetching) {
+    //     return <div className="py-4">Đang tải...</div>;
+    // }
+    // if (isError || !transactions) {
+    //     return (
+    //         <div className="text-center text-red-500 py-4">
+    //             Lấy danh sách hàng không thành công
+    //         </div>
+    //     );
+    // }
 
     return (
         <div className="flex flex-col w-full">
@@ -280,7 +281,8 @@ export default function Transactions() {
                     onClick={() => setIsSpreadsheetImporterOpen(true)}
                     className="flex items-center justify-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 ml-4 rounded w-1/6"
                 >
-                    <Book className="w-5 h-5 mr-2 !text-gray-100" /> Thêm hàng loạt
+                    <Book className="w-5 h-5 mr-2 !text-gray-100" /> Thêm hàng
+                    loạt
                 </button>
             </div>
             <Buttons
@@ -289,6 +291,12 @@ export default function Transactions() {
                 onEdit={handleEditTransaction}
                 selectedIds={selectedTransactionIds}
             />
+            {/* {isFetching && <div className="py-4">Đang tải...</div>}
+            {(isError || !transactions) && (
+                <div className="text-center text-red-500 py-4">
+                    Lấy danh sách hàng không thành công
+                </div>
+            )} */}
             <DataGridPremium
                 rows={filterTransactions()}
                 columns={transactionColumns}
@@ -322,6 +330,13 @@ export default function Transactions() {
                 onRowSelectionModelChange={(newSelection) =>
                     setSelectedTransactionIds(newSelection as number[])
                 }
+                loading={isFetching} // Shows the loading overlay while fetching
+                slotProps={{
+                    loadingOverlay: {
+                        variant: "skeleton",
+                        noRowsVariant: "skeleton",
+                    },
+                }}
                 className="shadow rounded-lg bg-zinc-100 mt-8"
                 getDetailPanelContent={(params: GridRowParams) => {
                     const selectedTransaction = transactions.find(

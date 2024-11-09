@@ -35,6 +35,7 @@ export default function Inventory() {
         queryKey: ["products"],
         queryFn: getAllProductsApi,
         refetchOnWindowFocus: false,
+        refetchInterval: 300000,
     });
 
     //bool const
@@ -161,16 +162,16 @@ export default function Inventory() {
               .map((product) => product.name)
         : [];
 
-    if (isFetching) {
-        return <div className="py-4">Đang tải...</div>;
-    }
-    if (isError || !products) {
-        return (
-            <div className="text-center text-red-500 py-4">
-                Lấy danh sách hàng không thành công
-            </div>
-        );
-    }
+    // if (isFetching) {
+    //     return <div className="py-4">Đang tải...</div>;
+    // }
+    // if (isError || !products) {
+    //     return (
+    //         <div className="text-center text-red-500 py-4">
+    //             Lấy danh sách hàng không thành công
+    //         </div>
+    //     );
+    // }
     return (
         <div className="flex flex-col">
             <Header name="Kho hàng" />
@@ -194,7 +195,7 @@ export default function Inventory() {
             />
             {/* datagrid */}
             <DataGridPremium
-                rows={filteredProducts.length > 0 ? filteredProducts : products}
+                rows={filteredProducts.length > 0 ? filteredProducts : (products ? products : [])}
                 columns={productColumns}
                 getRowId={(row) => row.products_id}
                 checkboxSelection
@@ -208,6 +209,13 @@ export default function Inventory() {
                 }}
                 onRowSelectionModelChange={(newSelection) => {
                     setSelectedProductIds(newSelection as number[]);
+                }}
+                loading={isFetching} // Shows the loading overlay while fetching
+                slotProps={{
+                    loadingOverlay: {
+                        variant: "skeleton",
+                        noRowsVariant: "skeleton",
+                    },
                 }}
                 className="shadow rounded-lg bg-zinc-100"
             />

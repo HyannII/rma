@@ -207,20 +207,20 @@ export default function Dishes() {
               .map((dish) => dish.name)
         : [];
 
-    if (isFetching) {
-        return <div className="py-4">Loading...</div>;
-    }
+    // if (isFetching) {
+    //     return <div className="py-4">Loading...</div>;
+    // }
 
-    if (isError || !dishes) {
-        return (
-            <div className="text-center text-red-500 py-4">
-                Failed to load dishes
-            </div>
-        );
-    }
+    // if (isError || !dishes) {
+    //     return (
+    //         <div className="text-center text-red-500 py-4">
+    //             Failed to load dishes
+    //         </div>
+    //     );
+    // }
 
     const totalItems =
-        filteredDishs.length > 0 ? filteredDishs.length : dishes.length;
+        filteredDishs.length > 0 ? filteredDishs.length : (dishes?.length ? dishes?.length : 12);
     const totalPages = Math.ceil(totalItems / itemsPerPage);
 
     // Function to handle sorting logic
@@ -244,7 +244,7 @@ export default function Dishes() {
 
 
     const displayedDishes = sortDishes(
-        filteredDishs.length > 0 ? filteredDishs : dishes
+        filteredDishs.length > 0 ? filteredDishs : (dishes ? dishes : [])
     ).slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
     // Dropdown for selecting sorting criteria
@@ -306,17 +306,23 @@ export default function Dishes() {
                 sortCriteria={sortCriteria}
                 handleSortChange={handleSortChange}
             />
-            {isFetching ? (
-                <div>Loading...</div>
-            ) : (
-                displayedDishes.map((dish) => (
+            {displayedDishes.map((dish) =>
+                isFetching ? (
+                    <div className="flex flex-col items-center border-2 rounded p-2 animate-pulse">
+                        <div className="absolute top-1 right-1 w-6 h-6 bg-gray-300 rounded"></div>
+                        <div className="h-36 w-36 bg-gray-300 rounded"></div>
+                        <div className="h-4 w-24 bg-gray-300 rounded mt-2"></div>
+                        <div className="h-4 w-16 bg-gray-300 rounded mt-1"></div>
+                        <div className="h-4 w-20 bg-gray-200 rounded mt-1"></div>
+                    </div>
+                ) : (
                     <DishCard
                         dish={dish}
                         selectedDishIds={selectedDishIds}
                         toggleSelectDish={toggleSelectDish}
                         handleFormatPrice={handleFormatPrice}
                     />
-                ))
+                )
             )}
             <Pagination
                 page={page}

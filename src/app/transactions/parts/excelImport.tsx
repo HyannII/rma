@@ -28,21 +28,22 @@ const csvTemplate = {
         {
             name: "Số lượng",
             key: "quantity",
-            data_type: "number",
             required: true,
         },
         {
             name: "Đơn vị tính",
             key: "unit",
+            required: true,
         },
         {
             name: "Đơn giá",
             key: "price",
-            data_type: "number",
+            required: true,
         },
         {
             name: "Nội dung chi tiết",
             key: "description",
+            required: true,
         },
     ],
 };

@@ -24,6 +24,11 @@ import { RenderCellExpand } from "@/utils/renderCellExpand";
 import CustomToolbar from "@/utils/customToolbarDataGrid";
 import { DataGridPremium, GridColDef } from "@mui/x-data-grid-premium";
 import CustomPaginationDataGrid from "@/utils/customPaginationDataGrid";
+import { providerColumns } from "./parts/providerColumns";
+import { CreateProviderSuccessDialog, EditProviderSuccessDialog, DeleteProviderSuccessDialog, DeleteConfirmDialog, NoMatchProviderDialog } from "./parts/dialogs";
+import ProviderModals from "./parts/modals";
+import Buttons from "@/utils/buttons";
+import SearchBar from "@/utils/searchBar";
 
 export default function Providers() {
     const queryClient = useQueryClient();
@@ -35,6 +40,7 @@ export default function Providers() {
         queryKey: ["providers"],
         queryFn: getAllProvidersApi,
         refetchOnWindowFocus: false,
+        refetchInterval: 300000,
     });
 
     //bool const
@@ -164,225 +170,44 @@ export default function Providers() {
         : [];
 
     //datagrid columns
-    const columns: GridColDef[] = [
-        {
-            field: "providers_id",
-            headerName: "Mã nhà cung cấp",
-            minWidth: 200,
-            editable: false,
-            flex: 1,
-            headerAlign: "center",
-            renderCell: (params) => (
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        height: "100%",
-                    }}
-                >
-                    {params.value}
-                </Box>
-            ),
-            // renderCell: RenderCellExpand,
-        },
-        {
-            field: "name",
-            headerName: "Tên nhà cung cấp",
-            minWidth: 200,
-            editable: false,
-            flex: 2,
-            headerAlign: "center",
-            renderCell: (params) => (
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        height: "100%",
-                    }}
-                >
-                    {params.value}
-                </Box>
-            ),
-            // renderCell: RenderCellExpand,
-        },
-        {
-            field: "address",
-            headerName: "Địa chỉ",
-            minWidth: 100,
-            editable: false,
-            flex: 2,
-            headerAlign: "center",
-            renderCell: (params) => (
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        height: "100%",
-                    }}
-                >
-                    {params.value}
-                </Box>
-            ),
-        },
-        {
-            field: "phone",
-            headerName: "Số điện thoại",
-            minWidth: 100,
-            editable: false,
-            flex: 1,
-            headerAlign: "center",
-            renderCell: (params) => (
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        height: "100%",
-                    }}
-                >
-                    {params.value}
-                </Box>
-            ),
-        },
-        {
-            field: "email",
-            headerName: "Email",
-            minWidth: 100,
-            editable: false,
-            flex: 1,
-            headerAlign: "center",
-            renderCell: (params) => (
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        height: "100%",
-                    }}
-                >
-                    {params.value}
-                </Box>
-            ),
-        },
-        {
-            field: "description",
-            headerName: "Ghi chú",
-            minWidth: 200,
-            flex: 2,
-            headerAlign: "center",
-            editable: false,
-            renderCell: (params) => (
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        height: "100%",
-                    }}
-                >
-                    {params.value}
-                </Box>
-            ),
-            // renderCell: RenderCellExpand,
-        },
-    ];
-    if (isFetching) {
-        return <div className="py-4">Đang tải...</div>;
-    }
-    if (isError || !providers) {
-        return (
-            <div className="text-center text-red-500 py-4">
-                Lấy danh sách hàng không thành công
-            </div>
-        );
-    }
+    
+    // if (isFetching) {
+    //     return <div className="py-4">Đang tải...</div>;
+    // }
+    // if (isError || !providers) {
+    //     return (
+    //         <div className="text-center text-red-500 py-4">
+    //             Lấy danh sách hàng không thành công
+    //         </div>
+    //     );
+    // }
     return (
         <div className="flex flex-col">
             <Header name="Nhà cung cấp" />
-            {/* SEARCH BAR */}
             <div className="mb-6">
-                <div className="flex items-center mt-8 border-8 sm:mx-24 md:mx-32 lg:mx-48 xl:mx-72 border-gray-200 bg-gray-200 rounded">
-                    <input
-                        className="w-full py-2 px-4 focus:outline-none rounded bg-gray-200 text-gray-900"
-                        placeholder="Tìm kiếm..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter") handleSearch();
-                        }}
-                    />
-                    {searchTerm !== "" && (
-                        <button onClick={handleUndoSearch}>
-                            <CircleX className="w-5 h-5 text-gray-500 mx-2"></CircleX>
-                        </button>
-                    )}
-                    {searchTerm !== "" && (
-                        <p className="text-gray-500 text-2xl">|</p>
-                    )}
-                    {/* Dropdown for Search Criteria */}
-                    <select
-                        id="searchParam"
-                        value={selectedParam}
-                        onChange={handleParamChange}
-                        className="ml-4 p-2 bg-gray-200 text-gray-700"
-                    >
-                        {searchParams.map((param) => (
-                            <option
-                                key={param.value}
-                                value={param.value}
-                                className="bg-gray-200 text-gray-700"
-                            >
-                                {param.label}
-                            </option>
-                        ))}
-                    </select>
-                    <button
-                        onClick={handleSearch}
-                        className="mx-2 text-gray-700 hover:text-gray-950"
-                    >
-                        <SearchIcon className="w-5 h-5 text-gray-500" />
-                    </button>
-                </div>
+                <SearchBar
+                    inputValue={searchTerm}
+                    setInputValue={setSearchTerm}
+                    onSearch={handleSearch}
+                    onClearInput={handleUndoSearch}
+                    selectedOption={selectedParam}
+                    handleOptionChange={handleParamChange}
+                    options={searchParams}
+                />
             </div>
-            <div className="flex justify-between items-center mb-4">
-                {/* buttons */}
-                <div className="flex justify-between items-center">
-                    <button
-                        onClick={openCreateProvider}
-                        className="flex items-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 rounded"
-                    >
-                        <PlusCircleIcon className="w-5 h-5 mr-2 !text-gray-100" />{" "}
-                        Tạo mới
-                    </button>
-                    {selectedProviderIds.length > 0 && (
-                        <button
-                            onClick={handleConfirmDelete}
-                            className="flex items-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 ml-4 rounded"
-                        >
-                            <Trash2 className="w-5 h-5 mr-2 !text-gray-100" />{" "}
-                            Xoá
-                        </button>
-                    )}
-                    {selectedProviderIds.length === 1 && (
-                        <button
-                            onClick={handleEditProvider}
-                            className="flex items-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 ml-4 rounded"
-                        >
-                            <Trash2 className="w-5 h-5 mr-2 !text-gray-100" />{" "}
-                            Sửa thông tin
-                        </button>
-                    )}
-                </div>
-            </div>
+
+            <Buttons
+                onAddNew={openCreateProvider}
+                onDelete={handleConfirmDelete}
+                onEdit={handleEditProvider}
+                selectedIds={selectedProviderIds}
+            />
             {/* datagrid */}
             <DataGridPremium
                 rows={
-                    filteredProviders.length > 0 ? filteredProviders : providers
+                    filteredProviders.length > 0 ? filteredProviders : (providers ? providers : [])
                 }
-                columns={columns}
+                columns={providerColumns}
                 getRowId={(row) => row.providers_id}
                 checkboxSelection
                 pagination
@@ -396,116 +221,52 @@ export default function Providers() {
                 onRowSelectionModelChange={(newSelection) => {
                     setSelectedProviderIds(newSelection as number[]);
                 }}
+                loading={isFetching} // Shows the loading overlay while fetching
+                slotProps={{
+                    loadingOverlay: {
+                        variant: "skeleton",
+                        noRowsVariant: "skeleton",
+                    },
+                }}
                 className="shadow rounded-lg bg-zinc-100"
             />
-            {/* create provider modal */}
-            {isCreateProviderOpen && (
-                <div className="fixed inset-0 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-4xl max-w-2xl w-full relative">
-                        <button
-                            onClick={closeCreateProvider}
-                            className="flex absolute top-2 right-2 w-7 h-7 rounded bg-gray-400 hover:bg-red-600 text-gray-100 font-bold justify-center items-center"
-                        >
-                            <X></X>
-                        </button>
-                        <CreateProvider
-                            onProviderCreated={handleProviderCreated}
-                            shouldResetForm={shouldResetForm}
-                            setShouldResetForm={setShouldResetForm} // Reset after form creation
-                        />
-                    </div>
-                </div>
-            )}
-            {/* create provider success dialog */}
-            <Dialog open={isSuccessDialogOpen}>
-                <DialogTitle>Provider Created Successfully!</DialogTitle>
-                <DialogContent>
-                    <p>Do you want to create another provider?</p>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCreateMore}>Create More</Button>
-                    <Button onClick={handleCancel}>Cancel</Button>
-                </DialogActions>
-            </Dialog>
-            {/* edit provider modal */}
-            {isEditProviderOpen && selectedProvider && (
-                <div className="fixed inset-0 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-4xl max-w-2xl w-full relative">
-                        <button
-                            onClick={closeEditProvider}
-                            className="flex absolute top-2 right-2 w-7 h-7 rounded bg-gray-400 hover:bg-red-600 text-gray-100 font-bold justify-center items-center"
-                        >
-                            <X></X>
-                        </button>
-                        <EditProvider
-                            provider={selectedProvider}
-                            onCloseEditProvider={closeEditProvider}
-                        />
-                    </div>
-                </div>
-            )}
-            {/* edit provider success dialog */}
-            <Dialog
+            <ProviderModals
+                isCreateProviderOpen={isCreateProviderOpen}
+                closeCreateProvider={closeCreateProvider}
+                handleProviderCreated={handleProviderCreated}
+                shouldResetForm={shouldResetForm}
+                setShouldResetForm={setShouldResetForm}
+                isEditProviderOpen={isEditProviderOpen}
+                selectedProvider={selectedProvider}
+                closeEditProvider={closeEditProvider}
+            />
+            <CreateProviderSuccessDialog
+                open={isSuccessDialogOpen}
+                onCreateMore={handleCreateMore}
+                onCancel={handleCancel}
+            />
+
+            <EditProviderSuccessDialog
                 open={isEditSuccessDialogOpen}
                 onClose={handleCloseEditSuccessDialog}
-            >
-                <DialogTitle>Edit Successful</DialogTitle>
-                <DialogContent>
-                    <p>The selected providers have been successfully edited.</p>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseEditSuccessDialog}>
-                        Close
-                    </Button>
-                </DialogActions>
-            </Dialog>
-            {/* delete provider success dialog */}
-            <Dialog
+            />
+
+            <DeleteProviderSuccessDialog
                 open={isDeleteSuccessDialogOpen}
                 onClose={handleCloseDeleteSuccessDialog}
-            >
-                <DialogTitle>Delete Successful</DialogTitle>
-                <DialogContent>
-                    <p>
-                        The selected providers have been successfully deleted.
-                    </p>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseDeleteSuccessDialog}>
-                        Close
-                    </Button>
-                </DialogActions>
-            </Dialog>
-            {/* delete confirm dialog */}
-            <Dialog open={isDeleteConfirmDialogOpen}>
-                <DialogTitle>Delete</DialogTitle>
-                <DialogContent>
-                    <p>Do you want to delete these provider?</p>
-                    <br />
-                    <ul>
-                        {selectedProviderNames.map((name, index) => (
-                            <li key={index}>{name}</li>
-                        ))}
-                    </ul>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleConfirmedDelete}>Xác nhận</Button>
-                    <Button onClick={() => setIsDeleteConfirmDialogOpen(false)}>
-                        Huỷ
-                    </Button>
-                </DialogActions>
-            </Dialog>
-            <Dialog open={isFindFailed}>
-                <DialogTitle>No Matching Provider</DialogTitle>
-                <DialogContent>
-                    <p>No provider matched your search request</p>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setIsFindFailed(false)}>
-                        Close
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            />
+
+            <DeleteConfirmDialog
+                open={isDeleteConfirmDialogOpen}
+                selectedProviderNames={selectedProviderNames}
+                onConfirmDelete={handleConfirmedDelete}
+                onCancel={() => setIsDeleteConfirmDialogOpen(false)}
+            />
+
+            <NoMatchProviderDialog
+                open={isFindFailed}
+                onClose={() => setIsFindFailed(false)}
+            />
         </div>
     );
 }

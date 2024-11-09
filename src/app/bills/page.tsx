@@ -27,6 +27,7 @@ export default function Bills() {
         queryKey: ["bills"],
         queryFn: getAllBillsApi,
         refetchOnWindowFocus: false,
+        refetchInterval: 300000,
     });
 
     // State for the selected date range with Dayjs
@@ -63,16 +64,16 @@ export default function Bills() {
         });
     };
 
-    if (isFetching) {
-        return <div className="py-4">Đang tải...</div>;
-    }
-    if (isError || !bills) {
-        return (
-            <div className="text-center text-red-500 py-4">
-                Lấy danh sách hàng không thành công
-            </div>
-        );
-    }
+    // if (isFetching) {
+    //     return <div className="py-4">Đang tải...</div>;
+    // }
+    // if (isError || !bills) {
+    //     return (
+    //         <div className="text-center text-red-500 py-4">
+    //             Lấy danh sách hàng không thành công
+    //         </div>
+    //     );
+    // }
 
     return (
         <div className="flex flex-col w-full">
@@ -115,6 +116,13 @@ export default function Bills() {
                     pagination: { paginationModel: { pageSize: 25 } },
                     sorting: {
                         sortModel: [{ field: "created_at", sort: "desc" }],
+                    },
+                }}
+                loading={isFetching} // Shows the loading overlay while fetching
+                slotProps={{
+                    loadingOverlay: {
+                        variant: "skeleton",
+                        noRowsVariant: "skeleton",
                     },
                 }}
                 className="shadow rounded-lg bg-zinc-100"
