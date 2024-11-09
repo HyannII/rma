@@ -9,7 +9,10 @@ export default function CustomToolbar() {
         <GridToolbarContainer>
             <Box sx={{ flexGrow: 1 }}></Box>
             <GridToolbarExport
-                slotsProp={{
+                excelOptions={{
+                    allColumns: true, // Xuất tất cả các cột, bao gồm cả cột ẩn
+                }}
+                slots={{
                     tooltip: { title: "Export data" },
                     button: { variant: "outlined" },
                 }}

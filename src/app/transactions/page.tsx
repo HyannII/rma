@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+    createTransactionApi,
     deleteTransactionApi,
     getAllTransactionsApi,
     getTransactionByFieldApi,
@@ -32,8 +33,9 @@ import {
     Trash2,
     X,
     Calendar,
+    Book,
 } from "lucide-react";
-import { ITransactionResponse } from "../../../interfaces/transaction.interface";
+import { ICreateTransactionBody, ITransactionResponse } from "../../../interfaces/transaction.interface";
 import CreateTransaction from "./createTransaction";
 import EditTransaction from "./editTransaction";
 import SearchBar from "@/utils/searchBar";
@@ -50,6 +52,10 @@ import { transactionColumns } from "./parts/transactionColumns";
 import TransactionDetailPanel from "./parts/transactionDetailPanel";
 import dayjs, { Dayjs } from "dayjs";
 import { DateRangePicker } from "@mui/x-date-pickers-pro";
+import { ReactSpreadsheetImport } from "react-spreadsheet-import";
+import { CSVImporter } from "csv-import-react";
+import importColumns from "./parts/excelImport";
+import csvTemplate from "./parts/excelImport";
 
 export default function Transactions() {
     const queryClient = useQueryClient();
@@ -113,6 +119,8 @@ export default function Transactions() {
     const openEditTransaction = () => setIsEditTransactionOpen(true);
     const closeEditTransaction = () => setIsEditTransactionOpen(false);
     const [shouldResetForm, setShouldResetForm] = useState(false);
+    const [isSpreadsheetImporterOpen, setIsSpreadsheetImporterOpen] =
+        useState(false);
 
     //handler
     const handleTransactionCreated = () => {
@@ -183,6 +191,54 @@ export default function Transactions() {
               )
               .map((transaction) => transaction.name)
         : [];
+    // Mutation để tạo transaction
+    const createTransactionMutation = useMutation({
+        mutationFn: (body: ICreateTransactionBody) =>
+            createTransactionApi(body),
+        onSuccess: () => {
+            queryClient.invalidateQueries(["transactions"]);
+        },
+        onError: (error) => {
+            console.error("Error creating transaction:", error);
+        },
+    });
+    // Xử lý sự kiện CSV upload
+    const handleCsvData = async (data: any) => {
+        // Kiểm tra xem data.rows có phải là mảng không
+        if (!Array.isArray(data.rows)) {
+            console.error("Dữ liệu từ CSV không hợp lệ:", data);
+            return;
+        }
+
+        for (const row of data.rows) {
+            const values = row.values;
+
+            const body: ICreateTransactionBody = {
+                staff_id: Number(values.staff_id),
+                providers_id: Number(values.providers_id),
+                products_id: Number(values.products_id),
+                status: values.status,
+                name: values.name,
+                quantity: values.quantity,
+                unit: values.unit,
+                price: values.price,
+                description: values.description || "",
+            };
+
+            try {
+                await createTransactionMutation.mutateAsync(body);
+                console.log(
+                    `Transaction for ${body.name} created successfully`
+                );
+            } catch (error) {
+                console.error(
+                    `Failed to create transaction for ${body.name}:`,
+                    error
+                );
+            }
+        }
+    };
+
 
     if (isFetching) {
         return <div className="py-4">Đang tải...</div>;
@@ -220,6 +276,12 @@ export default function Transactions() {
                 >
                     <CircleX className="w-5 h-5 mr-2 !text-gray-100" /> Huỷ
                 </button>
+                <button
+                    onClick={() => setIsSpreadsheetImporterOpen(true)}
+                    className="flex items-center justify-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 ml-4 rounded w-1/6"
+                >
+                    <Book className="w-5 h-5 mr-2 !text-gray-100" /> Thêm hàng loạt
+                </button>
             </div>
             <Buttons
                 onAddNew={openCreateTransaction}
@@ -239,6 +301,15 @@ export default function Transactions() {
                     pagination: CustomPaginationDataGrid,
                 }}
                 initialState={{
+                    columns: {
+                        columnVisibilityModel: {
+                            quantity: false,
+                            unit: false,
+                            price: false,
+                            description: false,
+                            created_at: false,
+                        },
+                    },
                     pagination: {
                         paginationModel: {
                             pageSize: 25,
@@ -301,6 +372,18 @@ export default function Transactions() {
             <NoMatchTransactionDialog
                 open={isFindFailed}
                 onClose={() => setIsFindFailed(false)}
+            />
+            <CSVImporter
+                modalIsOpen={isSpreadsheetImporterOpen}
+                modalOnCloseTriggered={() =>
+                    setIsSpreadsheetImporterOpen(false)
+                }
+                darkMode={true}
+                // onComplete={(data) => console.log(data)}
+                onComplete={handleCsvData}
+                template={csvTemplate}
+                showDownloadTemplateButton={false}
+                skipHeaderRowSelection={true}
             />
         </div>
     );

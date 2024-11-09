@@ -3,6 +3,27 @@ import { GridColDef } from "@mui/x-data-grid-premium";
 
 export const productColumns: GridColDef[] = [
     {
+        field: "products_id",
+        headerName: "Mã hàng",
+        minWidth: 200,
+        editable: false,
+        flex: 2,
+        headerAlign: "center",
+        renderCell: (params) => (
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100%",
+                }}
+            >
+                {params.value}
+            </Box>
+        ),
+        // renderCell: RenderCellExpand,
+    },
+    {
         field: "name",
         headerName: "Tên mặt hàng",
         minWidth: 200,

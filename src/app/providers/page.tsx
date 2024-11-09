@@ -166,6 +166,27 @@ export default function Providers() {
     //datagrid columns
     const columns: GridColDef[] = [
         {
+            field: "providers_id",
+            headerName: "Mã nhà cung cấp",
+            minWidth: 200,
+            editable: false,
+            flex: 1,
+            headerAlign: "center",
+            renderCell: (params) => (
+                <Box
+                    sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: "100%",
+                    }}
+                >
+                    {params.value}
+                </Box>
+            ),
+            // renderCell: RenderCellExpand,
+        },
+        {
             field: "name",
             headerName: "Tên nhà cung cấp",
             minWidth: 200,

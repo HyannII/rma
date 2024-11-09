@@ -1,14 +1,13 @@
 import { Box } from "@mui/material";
-import { GridColDef, GridRenderCellParams } from "@mui/x-data-grid-premium";
+import { GridColDef, GridRenderCellParams, GridValueGetter } from "@mui/x-data-grid-premium";
 import { useState, useEffect } from "react";
 import { getStaffByIDApi } from "../../../../api/staff.api";
 import { getProviderByIDApi } from "../../../../api/provider.api";
 import { getProductByIDApi } from "../../../../api/product.api";
 
-const staffNameCache: Record<number, string> = {}; // Cache tên nhân viên theo staff_id
-const providerNameCache: Record<number, string> = {}; // Cache tên nhân viên theo staff_id
-const productNameCache: Record<number, string> = {}; // Cache tên nhân viên theo staff_id
-
+const staffNameCache: { [key: string]: string } = {}; // Cache tên nhân viên theo staff_id
+const providerNameCache: { [key: string]: string } = {}; // Cache tên nhân viên theo staff_id
+const productNameCache: { [key: string]: string } = {}; // Cache tên nhân viên theo staff_id
 export const transactionColumns: GridColDef[] = [
     {
         field: "transactions_id",
@@ -66,9 +65,13 @@ export const transactionColumns: GridColDef[] = [
                     height: "100%",
                 }}
             >
-                {new Date(params.value).toLocaleDateString()}
+                {params.value}
             </Box>
         ),
+        valueGetter: (value, row) => {
+            const formattedDate = new Date(row.created_at).toLocaleDateString();
+            return `${formattedDate}`;
+        },
     },
     {
         field: "staff_id",
@@ -240,9 +243,6 @@ export const transactionColumns: GridColDef[] = [
             </Box>
         ),
     },
-];
-
-export const detailColumns: GridColDef[] = [
     {
         field: "quantity",
         headerName: "Số lượng",
@@ -302,30 +302,16 @@ export const detailColumns: GridColDef[] = [
                 {params.value}
             </Box>
         ),
+        valueGetter: (value, row) => {
+            const formattedPrice = new Intl.NumberFormat("vi-VN").format(
+                row.price
+            );
+            return `${formattedPrice} VND`;
+        },
     },
     {
         field: "description",
         headerName: "Nội dung chi tiết",
-        minWidth: 100,
-        editable: false,
-        flex: 3,
-        headerAlign: "center",
-        renderCell: (params: GridRenderCellParams) => (
-            <Box
-                sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100%",
-                }}
-            >
-                {params.value}
-            </Box>
-        ),
-    },
-    {
-        field: "created_at",
-        headerName: "Thời gian tạo",
         minWidth: 100,
         editable: false,
         flex: 3,
