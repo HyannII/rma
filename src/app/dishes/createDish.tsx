@@ -196,10 +196,10 @@ export default function CreateDish({
                         <Image
                             src={URL.createObjectURL(dishData.image)}
                             alt=""
-                            layout="responsive"
-                            objectFit="contain"
-                            width={1}
-                            height={1}
+                            layout="intrinsic"
+                            objectFit="cover"
+                            width={200}
+                            height={200}
                         />
                     )}
                 </div>

@@ -88,7 +88,7 @@ export const billColumns: GridColDef[] = [
             </Box>
         ),
         valueGetter: (value, row) => {
-            const formattedDate = new Date(row.created_at).toLocaleDateString();
+            const formattedDate = new Date(row.created_at).toLocaleDateString('vi-VN');
             return `${formattedDate}`;
         }
     },

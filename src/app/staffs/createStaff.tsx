@@ -6,6 +6,7 @@ import Image from "next/legacy/image";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
+import { NodeNextRequest } from "next/dist/server/base-http/node";
 
 interface CreateStaffProps {
     onStaffCreated: () => void;
@@ -85,7 +86,6 @@ export default function CreateStaff({
         }
     };
 
-
     const handleCreateStaff = () => {
         createStaffMutation.mutate(staffData);
     };
@@ -159,13 +159,38 @@ export default function CreateStaff({
                         >
                             Date of Birth
                         </label>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker
-                                value={value}
-                                onChange={handleDateChange}
-                                className=""
-                            />
-                        </LocalizationProvider>
+                        <DatePicker
+                            value={value}
+                            onChange={handleDateChange}
+                            className="w-full shadow rounded-lg bg-zinc-100"
+                            slotProps={{
+                                textField: {
+                                    sx: {
+                                        "& .MuiOutlinedInput-root": {
+                                            height: '44px',
+                                            border: "2px solid #6b7280", // Màu viền `border-gray-500`
+                                            borderRadius: "0.375rem", // Độ bo tròn `rounded-md`
+                                            padding: "0.5rem", // Padding tương tự `p-2`
+                                            color: "#27272a", // Màu chữ `text-zinc-800`
+                                            "&:hover": {
+                                                borderColor: "#6b7280", // Giữ màu viền khi hover
+                                            },
+                                            "&.Mui-focused": {
+                                                borderColor: "#6b7280", // Giữ màu viền khi focus
+                                            },
+                                            "& fieldset": {
+                                                border: 'none',
+                                            }
+                                        },
+                                        "& .MuiInputBase-input": {
+                                            padding: 0, // Loại bỏ padding mặc định bên trong để căn giữa
+                                            border: 'none',
+                                        },
+                                    },
+                                },
+                            }}
+                            
+                        />
                     </div>
                     <div className="mb-4 w-1/2 px-2">
                         <label
@@ -223,10 +248,10 @@ export default function CreateStaff({
                         <Image
                             src={URL.createObjectURL(staffData.image)}
                             alt=""
-                            layout="responsive"
-                            objectFit="contain"
-                            width={1}
-                            height={1}
+                            layout="intrinsic"
+                            objectFit="cover"
+                            width={200}
+                            height={200}
                         />
                     )}
                 </div>

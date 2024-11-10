@@ -34,6 +34,7 @@ import {
     X,
     Calendar,
     Book,
+    FileInput,
 } from "lucide-react";
 import { ICreateTransactionBody, ITransactionResponse } from "../../../interfaces/transaction.interface";
 import CreateTransaction from "./createTransaction";
@@ -259,17 +260,39 @@ export default function Transactions() {
                 <DateRangePicker
                     value={dateRange}
                     onChange={(newValue) => setDateRange(newValue)}
+                    localeText={{ start: "", end: "" }}
                     slotProps={{
-                        field: {
-                            dateSeparator: "đến",
-                        },
+                        // field: {
+                        //     dateSeparator: "đến",
+                        // },
                         textField: {
                             InputProps: { endAdornment: <Calendar /> },
                             className: "w-full shadow rounded-lg bg-zinc-100",
+                            sx: {
+                                "& .MuiOutlinedInput-root": {
+                                    border: "2px solid #6b7280", // Màu viền `border-gray-500`
+                                    borderRadius: "0.375rem", // Độ bo tròn `rounded-md`
+                                    padding: "0.5rem", // Padding tương tự `p-2`
+                                    color: "#27272a", // Màu chữ `text-zinc-800`
+                                    "&:hover": {
+                                        borderColor: "#6b7280", // Giữ màu viền khi hover
+                                    },
+                                    "&.Mui-focused": {
+                                        borderColor: "#6b7280", // Giữ màu viền khi focus
+                                    },
+                                    "& fieldset": {
+                                        border: "none",
+                                    },
+                                },
+                                "& .MuiInputBase-input": {
+                                    padding: 0, // Loại bỏ padding mặc định bên trong để căn giữa
+                                    border: "none",
+                                },
+                            },
                         },
                     }}
                     formatDensity="spacious"
-                    className="w-5/6"
+                    className="w-2/3"
                 />
                 <button
                     onClick={resetDateRange}
@@ -281,8 +304,8 @@ export default function Transactions() {
                     onClick={() => setIsSpreadsheetImporterOpen(true)}
                     className="flex items-center justify-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 ml-4 rounded w-1/6"
                 >
-                    <Book className="w-5 h-5 mr-2 !text-gray-100" /> Thêm hàng
-                    loạt
+                    <FileInput className="w-5 h-5 mr-2 !text-gray-100" /> Thêm
+                    hàng loạt
                 </button>
             </div>
             <Buttons
@@ -291,12 +314,6 @@ export default function Transactions() {
                 onEdit={handleEditTransaction}
                 selectedIds={selectedTransactionIds}
             />
-            {/* {isFetching && <div className="py-4">Đang tải...</div>}
-            {(isError || !transactions) && (
-                <div className="text-center text-red-500 py-4">
-                    Lấy danh sách hàng không thành công
-                </div>
-            )} */}
             <DataGridPremium
                 rows={filterTransactions()}
                 columns={transactionColumns}

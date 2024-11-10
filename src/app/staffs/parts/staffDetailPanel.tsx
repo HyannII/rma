@@ -59,7 +59,7 @@ const StaffDetailPanel = ({ params }) => {
                             name="birthday"
                             value={new Date(
                                 params.row.birthday
-                            ).toLocaleDateString()}
+                            ).toLocaleDateString('vi-VN')}
                             disabled
                             className={inputCssStyles}
                         />
@@ -93,7 +93,7 @@ const StaffDetailPanel = ({ params }) => {
                             name="created_at"
                             value={new Date(
                                 params.row.created_at
-                            ).toLocaleDateString()}
+                            ).toLocaleDateString('vi-VN')}
                             disabled
                             className={inputCssStyles}
                         />

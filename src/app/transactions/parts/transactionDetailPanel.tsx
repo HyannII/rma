@@ -121,7 +121,9 @@ const TransactionDetailPanel = ({ transaction }) => {
                         variant="body1"
                         className="p-2"
                     >
-                        {new Date(transaction.created_at).toLocaleDateString()}
+                        {new Date(transaction.created_at).toLocaleDateString(
+                            "vi-VN"
+                        )}
                     </Typography>
                 </Grid2>
             </Grid2>

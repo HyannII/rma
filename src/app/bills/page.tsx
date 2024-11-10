@@ -83,13 +83,35 @@ export default function Bills() {
                 <DateRangePicker
                     value={dateRange}
                     onChange={(newValue) => setDateRange(newValue)}
+                    localeText={{ start: "", end: "" }}
                     slotProps={{
-                        field: {
-                            dateSeparator: "đến",
-                        },
+                        // field: {
+                        //     dateSeparator: "đến",
+                        // },
                         textField: {
                             InputProps: { endAdornment: <Calendar /> },
                             className: "w-full shadow rounded-lg bg-zinc-100",
+                            sx: {
+                                "& .MuiOutlinedInput-root": {
+                                    border: "2px solid #6b7280", // Màu viền `border-gray-500`
+                                    borderRadius: "0.375rem", // Độ bo tròn `rounded-md`
+                                    padding: "0.5rem", // Padding tương tự `p-2`
+                                    color: "#27272a", // Màu chữ `text-zinc-800`
+                                    "&:hover": {
+                                        borderColor: "#6b7280", // Giữ màu viền khi hover
+                                    },
+                                    "&.Mui-focused": {
+                                        borderColor: "#6b7280", // Giữ màu viền khi focus
+                                    },
+                                    "& fieldset": {
+                                        border: "none",
+                                    },
+                                },
+                                "& .MuiInputBase-input": {
+                                    padding: 0, // Loại bỏ padding mặc định bên trong để căn giữa
+                                    border: "none",
+                                },
+                            },
                         },
                     }}
                     formatDensity="spacious"
@@ -139,6 +161,9 @@ export default function Bills() {
                             columns={detailColumns}
                             getRowId={(row) => row.name} // Sử dụng tên làm ID cho mỗi hàng
                             hideFooter
+                            slots={{
+                                toolbar: CustomToolbar,
+                            }}
                         />
                     </div>
                 )}
