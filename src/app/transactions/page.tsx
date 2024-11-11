@@ -69,7 +69,6 @@ export default function Transactions() {
             const withinEndDate = endDayjs
                 ? billDate.isBefore(endDayjs.add(1, "day"))
                 : true;
-
             return withinStartDate && withinEndDate;
         });
     };
