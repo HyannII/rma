@@ -68,7 +68,7 @@ export default function Dishes() {
     });
 
     const [searchTerm, setSearchTerm] = useState("");
-    const [filteredDishs, setFilteredDishs] = useState([]);
+    const [filteredDishs, setFilteredDishs] = useState<IDishResponse[]>([]);
     const [isFindFailed, setIsFindFailed] = useState(false);
     const [selectedDish, setSelectedDish] = useState<IDishResponse | null>(
         null
@@ -81,7 +81,9 @@ export default function Dishes() {
         useState(false);
     const [isEditSuccessDialogOpen, setIsEditSuccessDialogOpen] =
         useState(false);
-    const [sortCriteria, setSortCriteria] = useState("a-z"); // State for sort criteria
+    const [sortCriteria, setSortCriteria] = useState<
+        "a-z" | "z-a" | "price-asc" | "price-desc"
+    >("a-z");
     const [isCreateDishOpen, setIsCreateDishOpen] = useState(false);
     const [isEditDishOpen, setIsEditDishOpen] = useState(false);
     const [shouldResetForm, setShouldResetForm] = useState(false);
@@ -139,7 +141,9 @@ export default function Dishes() {
 
     const handleNextPage = () => {
         const totalItems =
-            filteredDishs.length > 0 ? filteredDishs.length : dishes.length;
+            filteredDishs.length > 0
+                ? filteredDishs.length
+                : (dishes ?? []).length;
         const totalPages = Math.ceil(totalItems / itemsPerPage);
         if (page < totalPages) setPage(page + 1);
     };
@@ -174,7 +178,7 @@ export default function Dishes() {
 
     const handleEditDish = () => {
         if (selectedDishIds.length === 1) {
-            const productToEdit = dishes.find(
+            const productToEdit = dishes?.find(
                 (dish) => dish.items_id === selectedDishIds[0]
             );
             if (productToEdit) {
@@ -186,18 +190,18 @@ export default function Dishes() {
 
     const handleCloseDeleteSuccessDialog = () => {
         setIsDeleteSuccessDialogOpen(false);
-        queryClient.invalidateQueries(["dishes"]); // Refetch product data
+        queryClient.invalidateQueries(); // Refetch product data
     };
 
     const handleCloseEditSuccessDialog = () => {
         setIsEditSuccessDialogOpen(false);
-        queryClient.invalidateQueries(["dishes"]); // Refetch product data
+        queryClient.invalidateQueries(); // Refetch product data
     };
 
     const handleCancel = () => {
         setIsSuccessDialogOpen(false); // Close both dialog and modal
         setIsCreateDishOpen(false);
-        queryClient.invalidateQueries(["dishes"]);
+        queryClient.invalidateQueries();
     };
 
     // Filter selected dishes to show their names in confirmation dialog
@@ -220,7 +224,11 @@ export default function Dishes() {
     // }
 
     const totalItems =
-        filteredDishs.length > 0 ? filteredDishs.length : (dishes?.length ? dishes?.length : 12);
+        filteredDishs.length > 0
+            ? filteredDishs.length
+            : dishes?.length
+            ? dishes?.length
+            : 12;
     const totalPages = Math.ceil(totalItems / itemsPerPage);
 
     // Function to handle sorting logic
@@ -242,16 +250,17 @@ export default function Dishes() {
         });
     };
 
-
     const displayedDishes = sortDishes(
-        filteredDishs.length > 0 ? filteredDishs : (dishes ? dishes : [])
+        filteredDishs.length > 0 ? filteredDishs : dishes ? dishes : []
     ).slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
     // Dropdown for selecting sorting criteria
     const handleSortChange = (event: {
         target: { value: SetStateAction<string> };
     }) => {
-        setSortCriteria(event.target.value);
+        setSortCriteria(
+            event.target.value as "a-z" | "z-a" | "price-asc" | "price-desc"
+        );
     };
 
     const handleFormatPrice = (value: any) => {
@@ -308,7 +317,10 @@ export default function Dishes() {
             />
             {displayedDishes.map((dish) =>
                 isFetching ? (
-                    <div className="flex flex-col items-center border-2 rounded p-2 animate-pulse">
+                    <div
+                        key={`skeleton-${dish.id}`} // Unique key for skeletons
+                        className="flex flex-col items-center border-2 rounded p-2 animate-pulse"
+                    >
                         <div className="absolute top-1 right-1 w-6 h-6 bg-gray-300 rounded"></div>
                         <div className="h-36 w-36 bg-gray-300 rounded"></div>
                         <div className="h-4 w-24 bg-gray-300 rounded mt-2"></div>
@@ -317,6 +329,7 @@ export default function Dishes() {
                     </div>
                 ) : (
                     <DishCard
+                        key={dish.id} // Unique key for DishCard component
                         dish={dish}
                         selectedDishIds={selectedDishIds}
                         toggleSelectDish={toggleSelectDish}
@@ -324,6 +337,7 @@ export default function Dishes() {
                     />
                 )
             )}
+
             <Pagination
                 page={page}
                 totalPages={totalPages}

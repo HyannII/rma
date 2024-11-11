@@ -3,7 +3,23 @@ import React from "react";
 import { X } from "lucide-react";
 import CreateProduct from "../createProduct";
 import EditProduct from "../editProduct";
+import { IProductResponse } from "../../../../interfaces/product.interface";
 
+/**
+ * Renders a modal for creating or editing a product.
+ *
+ * @param {{
+ *   isCreateProductOpen: boolean,
+ *   closeCreateProduct: () => void,
+ *   handleProductCreated: () => void,
+ *   shouldResetForm: boolean,
+ *   setShouldResetForm: (value: boolean) => void,
+ *   isEditProductOpen: boolean,
+ *   selectedProduct: IProductResponse | null,
+ *   closeEditProduct: () => void,
+ * }} props
+ * @returns {JSX.Element}
+ */
 const ProductModals = ({
     isCreateProductOpen,
     closeCreateProduct,
@@ -13,7 +29,16 @@ const ProductModals = ({
     isEditProductOpen,
     selectedProduct,
     closeEditProduct,
-}) => (
+}: {
+    isCreateProductOpen: boolean;
+    closeCreateProduct: () => void;
+    handleProductCreated: () => void;
+    shouldResetForm: boolean;
+    setShouldResetForm: (value: boolean) => void;
+    isEditProductOpen: boolean;
+    selectedProduct: IProductResponse | null;
+    closeEditProduct: () => void;
+}): JSX.Element => (
     <>
         {isCreateProductOpen && (
             <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -50,5 +75,6 @@ const ProductModals = ({
         )}
     </>
 );
+
 
 export default ProductModals;

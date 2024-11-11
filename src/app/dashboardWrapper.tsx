@@ -7,7 +7,6 @@ import StoreProvider, { useAppSelector } from "./redux";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createBrowserRouter } from "react-router-dom";
-import Products from "./products/page";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const isSidebarCollapsed = useAppSelector(

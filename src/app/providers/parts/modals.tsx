@@ -3,7 +3,14 @@ import React from "react";
 import { X } from "lucide-react";
 import CreateProvider from "../createProvider";
 import EditProvider from "../editProvider";
+import { IProviderResponse } from "../../../../interfaces/provider.interface";
 
+/**
+ * Renders a modal for creating or editing a provider.
+ *
+ * @param {{ isCreateProviderOpen: boolean; closeCreateProvider: () => void; handleProviderCreated: () => void; shouldResetForm: boolean; setShouldResetForm: (value: boolean) => void; isEditProviderOpen: boolean; selectedProvider: IProviderResponse | null; closeEditProvider: () => void; }} props
+ * @returns {JSX.Element}
+ */
 const ProviderModals = ({
     isCreateProviderOpen,
     closeCreateProvider,
@@ -13,7 +20,16 @@ const ProviderModals = ({
     isEditProviderOpen,
     selectedProvider,
     closeEditProvider,
-}) => (
+}: {
+    isCreateProviderOpen: boolean;
+    closeCreateProvider: () => void;
+    handleProviderCreated: () => void;
+    shouldResetForm: boolean;
+    setShouldResetForm: (value: boolean) => void;
+    isEditProviderOpen: boolean;
+    selectedProvider: IProviderResponse | null;
+    closeEditProvider: () => void;
+}): JSX.Element => (
     <>
         {isCreateProviderOpen && (
             <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -50,5 +66,6 @@ const ProviderModals = ({
         )}
     </>
 );
+
 
 export default ProviderModals;

@@ -37,7 +37,7 @@ export default function EditStaff({
 
     const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
     const queryClient = useQueryClient();
-    const fileInputRef = useRef(null);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [imageFile, setImageFile] = useState();
 
     const updateStaffMutation = useMutation({
@@ -56,13 +56,12 @@ export default function EditStaff({
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         const { name, value } = e.target;
-        if (
-            (e as ChangeEvent<HTMLInputElement>).target.files &&
-            name === "image"
-        ) {
+
+        // Check if the event is from an input with files and the files property is not null
+        if (name === "image" && "files" in e.target && e.target.files) {
             setUpdatedStaff({
                 ...updatedStaff,
-                image: (e as ChangeEvent<HTMLInputElement>).target.files[0],
+                image: e.target.files[0],
             });
         } else {
             setUpdatedStaff({
@@ -96,7 +95,7 @@ export default function EditStaff({
     const handleCloseSuccessDialog = () => {
         setIsSuccessDialogOpen(false);
         onCloseEditStaff();
-        queryClient.invalidateQueries(["staffs"]); // Close the edit modal
+        queryClient.invalidateQueries(); // Close the edit modal
     };
 
     const labelCssStyles = "block text-sm font-medium text-gray-700";

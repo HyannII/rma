@@ -1,5 +1,9 @@
 import { Box } from "@mui/material";
-import { GridColDef, GridRenderCellParams, GridValueGetter } from "@mui/x-data-grid-premium";
+import {
+    GridColDef,
+    GridRenderCellParams,
+    GridValueGetter,
+} from "@mui/x-data-grid-premium";
 import { useState, useEffect } from "react";
 import { getStaffByIDApi } from "../../../../api/staff.api";
 import { getProviderByIDApi } from "../../../../api/provider.api";
@@ -8,6 +12,57 @@ import { getProductByIDApi } from "../../../../api/product.api";
 const staffNameCache: { [key: string]: string } = {}; // Cache tên nhân viên theo staff_id
 const providerNameCache: { [key: string]: string } = {}; // Cache tên nhân viên theo staff_id
 const productNameCache: { [key: string]: string } = {}; // Cache tên nhân viên theo staff_id
+
+interface DataCellWithFetchProps {
+    id: number; // Define as number
+    cache: { [key: number]: string }; // Update key type to number
+    fetchFunction: (id: number) => Promise<{ name: string }>; // Expect fetchFunction to take a number
+    loadingText?: string;
+}
+
+// Reusable cell component for fetching and displaying data based on ID
+const DataCellWithFetch: React.FC<DataCellWithFetchProps> = ({
+    id,
+    cache,
+    fetchFunction,
+    loadingText = "Loading...",
+}) => {
+    const [name, setName] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (id) {
+                if (cache[id]) {
+                    setName(cache[id]);
+                } else {
+                    try {
+                        const response = await fetchFunction(id);
+                        const fetchedName = response.name;
+                        cache[id] = fetchedName; // Store in cache
+                        setName(fetchedName);
+                    } catch (error) {
+                        console.error("Error fetching data:", error);
+                    }
+                }
+            }
+        };
+        fetchData();
+    }, [id]);
+
+    return (
+        <Box
+            sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+            }}
+        >
+            {name || loadingText}
+        </Box>
+    );
+};
+
 export const transactionColumns: GridColDef[] = [
     {
         field: "transactions_id",
@@ -69,7 +124,9 @@ export const transactionColumns: GridColDef[] = [
             </Box>
         ),
         valueGetter: (value, row) => {
-            const formattedDate = new Date(row.created_at).toLocaleDateString('vi-VN');
+            const formattedDate = new Date(row.created_at).toLocaleDateString(
+                "vi-VN"
+            );
             return `${formattedDate}`;
         },
     },
@@ -80,46 +137,14 @@ export const transactionColumns: GridColDef[] = [
         editable: false,
         flex: 3,
         headerAlign: "center",
-        renderCell: (params: GridRenderCellParams) => {
-            const [staffName, setStaffName] = useState<string | null>(null);
-
-            useEffect(() => {
-                const fetchStaffName = async () => {
-                    const staffId = params.value;
-                    if (staffId) {
-                        if (staffNameCache[staffId]) {
-                            setStaffName(staffNameCache[staffId]);
-                        } else {
-                            try {
-                                const response = await getStaffByIDApi(staffId);
-                                const name = response.name; // Lấy trường name từ response
-                                staffNameCache[staffId] = name;
-                                setStaffName(name);
-                            } catch (error) {
-                                console.error(
-                                    "Error fetching staff name:",
-                                    error
-                                );
-                            }
-                        }
-                    }
-                };
-                fetchStaffName();
-            }, [params.value]);
-
-            return (
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        height: "100%",
-                    }}
-                >
-                    {staffName || "Loading..."}
-                </Box>
-            );
-        },
+        renderCell: (params: GridRenderCellParams) => (
+            <DataCellWithFetch
+                id={params.value}
+                cache={staffNameCache}
+                fetchFunction={getStaffByIDApi}
+                loadingText="Loading..."
+            />
+        ),
     },
     {
         field: "providers_id",
@@ -128,50 +153,14 @@ export const transactionColumns: GridColDef[] = [
         editable: false,
         flex: 3,
         headerAlign: "center",
-        renderCell: (params: GridRenderCellParams) => {
-            const [providerName, setProviderName] = useState<string | null>(
-                null
-            );
-
-            useEffect(() => {
-                const fetchProviderName = async () => {
-                    const providerId = params.value;
-                    if (providerId) {
-                        if (providerNameCache[providerId]) {
-                            setProviderName(providerNameCache[providerId]);
-                        } else {
-                            try {
-                                const response = await getProviderByIDApi(
-                                    providerId
-                                );
-                                const name = response.name; // Lấy trường name từ response
-                                providerNameCache[providerId] = name;
-                                setProviderName(name);
-                            } catch (error) {
-                                console.error(
-                                    "Error fetching staff name:",
-                                    error
-                                );
-                            }
-                        }
-                    }
-                };
-                fetchProviderName();
-            }, [params.value]);
-
-            return (
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        height: "100%",
-                    }}
-                >
-                    {providerName || "Loading..."}
-                </Box>
-            );
-        },
+        renderCell: (params: GridRenderCellParams) => (
+            <DataCellWithFetch
+                id={params.value}
+                cache={providerNameCache}
+                fetchFunction={getProviderByIDApi}
+                loadingText="Loading..."
+            />
+        ),
     },
     {
         field: "products_id",
@@ -180,48 +169,14 @@ export const transactionColumns: GridColDef[] = [
         editable: false,
         flex: 3,
         headerAlign: "center",
-        renderCell: (params: GridRenderCellParams) => {
-            const [productName, setProductName] = useState<string | null>(null);
-
-            useEffect(() => {
-                const fetchProductName = async () => {
-                    const productId = params.value;
-                    if (productId) {
-                        if (productNameCache[productId]) {
-                            setProductName(productNameCache[productId]);
-                        } else {
-                            try {
-                                const response = await getProductByIDApi(
-                                    productId
-                                );
-                                const name = response.name; // Lấy trường name từ response
-                                productNameCache[productId] = name;
-                                setProductName(name);
-                            } catch (error) {
-                                console.error(
-                                    "Error fetching staff name:",
-                                    error
-                                );
-                            }
-                        }
-                    }
-                };
-                fetchProductName();
-            }, [params.value]);
-
-            return (
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        height: "100%",
-                    }}
-                >
-                    {productName || "Loading..."}
-                </Box>
-            );
-        },
+        renderCell: (params: GridRenderCellParams) => (
+            <DataCellWithFetch
+                id={params.value}
+                cache={productNameCache}
+                fetchFunction={getProductByIDApi}
+                loadingText="Loading..."
+            />
+        ),
     },
     {
         field: "name",

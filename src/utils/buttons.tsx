@@ -2,7 +2,13 @@
 import React from "react";
 import { PlusCircleIcon, Trash2, Edit } from "lucide-react";
 
-const Buttons = ({ onAddNew, onDelete, onEdit, selectedIds }) => (
+/**
+ * Renders a toolbar with buttons for adding new items, deleting selected items, and editing selected items.
+ *
+ * @param {{ onAddNew: () => void; onDelete: () => void; onEdit: () => void; selectedIds: string[] }} props
+ * @returns {JSX.Element}
+ */
+const Buttons: React.FC<{ onAddNew: () => void; onDelete: () => void; onEdit: () => void; selectedIds: number[] }> = ({ onAddNew, onDelete, onEdit, selectedIds }) => (
     <div className="flex justify-between items-center mb-4">
         <div className="flex justify-between items-center">
             <button
@@ -32,5 +38,6 @@ const Buttons = ({ onAddNew, onDelete, onEdit, selectedIds }) => (
         </div>
     </div>
 );
+
 
 export default Buttons;

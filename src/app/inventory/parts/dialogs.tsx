@@ -8,12 +8,21 @@ import {
     Button,
 } from "@mui/material";
 
-// Create Product Success Dialog
-export const CreateProductSuccessDialog = ({
-    open,
-    onCreateMore,
-    onCancel,
-}) => (
+/**
+ * Create Product Success Dialog
+ *
+ * @param {{
+ *   open: boolean,
+ *   onCreateMore: () => void,
+ *   onCancel: () => void,
+ * }} props
+ * @returns {JSX.Element}
+ */
+export const CreateProductSuccessDialog: React.FC<{
+    open: boolean;
+    onCreateMore: () => void;
+    onCancel: () => void;
+}> = ({ open, onCreateMore, onCancel }) => (
     <Dialog open={open}>
         <DialogTitle>Product Created Successfully!</DialogTitle>
         <DialogContent>
@@ -26,8 +35,16 @@ export const CreateProductSuccessDialog = ({
     </Dialog>
 );
 
-// Edit Product Success Dialog
-export const EditProductSuccessDialog = ({ open, onClose }) => (
+/**
+ * Edit Product Success Dialog
+ *
+ * @param {{ open: boolean, onClose: () => void }} props
+ * @returns {JSX.Element}
+ */
+export const EditProductSuccessDialog: React.FC<{
+    open: boolean;
+    onClose: () => void;
+}> = ({ open, onClose }) => (
     <Dialog
         open={open}
         onClose={onClose}
@@ -42,8 +59,17 @@ export const EditProductSuccessDialog = ({ open, onClose }) => (
     </Dialog>
 );
 
-// Delete Product Success Dialog
-export const DeleteProductSuccessDialog = ({ open, onClose }) => (
+
+/**
+ * Delete Product Success Dialog
+ *
+ * @param {{ open: boolean, onClose: () => void }} props
+ * @returns {JSX.Element}
+ */
+export const DeleteProductSuccessDialog: React.FC<{
+    open: boolean;
+    onClose: () => void;
+}> = ({ open, onClose }) => (
     <Dialog
         open={open}
         onClose={onClose}
@@ -58,13 +84,23 @@ export const DeleteProductSuccessDialog = ({ open, onClose }) => (
     </Dialog>
 );
 
-// Delete Confirmation Dialog
-export const DeleteConfirmDialog = ({
-    open,
-    selectedProductNames,
-    onConfirmDelete,
-    onCancel,
-}) => (
+/**
+ * Delete Confirmation Dialog
+ *
+ * @param {{
+ *   open: boolean,
+ *   selectedProductNames: string[],
+ *   onConfirmDelete: () => void,
+ *   onCancel: () => void,
+ * }} props
+ * @returns {JSX.Element}
+ */
+export const DeleteConfirmDialog: React.FC<{
+    open: boolean;
+    selectedProductNames: string[];
+    onConfirmDelete: () => void;
+    onCancel: () => void;
+}> = ({ open, selectedProductNames, onConfirmDelete, onCancel }) => (
     <Dialog open={open}>
         <DialogTitle>Delete</DialogTitle>
         <DialogContent>
@@ -82,8 +118,16 @@ export const DeleteConfirmDialog = ({
     </Dialog>
 );
 
-// No Matching Product Dialog
-export const NoMatchProductDialog = ({ open, onClose }) => (
+/**
+ * No Matching Product Dialog
+ *
+ * @param {{ open: boolean, onClose: () => void }} props
+ * @returns {JSX.Element}
+ */
+export const NoMatchProductDialog: React.FC<{
+    open: boolean;
+    onClose: () => void;
+}> = ({ open, onClose }) => (
     <Dialog open={open}>
         <DialogTitle>No Matching Product</DialogTitle>
         <DialogContent>

@@ -3,7 +3,23 @@ import React from "react";
 import { X } from "lucide-react";
 import CreateDish from "../createDish";
 import EditDish from "../editDish";
+import { IDishResponse } from "../../../../interfaces/dish.interface";
 
+/**
+ * Renders a modal for creating or editing a dish.
+ *
+ * @param {{
+ *   isCreateDishOpen: boolean,
+ *   closeCreateDish: () => void,
+ *   handleDishCreated: () => void,
+ *   shouldResetForm: boolean,
+ *   setShouldResetForm: (value: boolean) => void,
+ *   isEditDishOpen: boolean,
+ *   selectedDish: IDishResponse | null,
+ *   closeEditDish: () => void,
+ * }} props
+ * @returns {JSX.Element}
+ */
 const DishModals = ({
     isCreateDishOpen,
     closeCreateDish,
@@ -13,7 +29,16 @@ const DishModals = ({
     isEditDishOpen,
     selectedDish,
     closeEditDish,
-}) => (
+}: {
+    isCreateDishOpen: boolean;
+    closeCreateDish: () => void;
+    handleDishCreated: () => void;
+    shouldResetForm: boolean;
+    setShouldResetForm: (value: boolean) => void;
+    isEditDishOpen: boolean;
+    selectedDish: IDishResponse | null;
+    closeEditDish: () => void;
+}): JSX.Element => (
     <>
         {isCreateDishOpen && (
             <div className="fixed inset-0 flex items-center justify-center z-50">

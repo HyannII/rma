@@ -1,10 +1,13 @@
 import React from "react";
 import { Grid, Grid2, Typography } from "@mui/material";
 import { DataGridPremium } from "@mui/x-data-grid-premium";
-import { detailColumns } from "./transactionColumns";
+import { ITransactionResponse } from "../../../../interfaces/transaction.interface";
 
-const TransactionDetailPanel = ({ transaction }) => {
-    const { items } = transaction; // Assuming `items` holds the transaction's content
+interface TransactionDetailPanelProps {
+    transaction: ITransactionResponse;
+}
+
+const TransactionDetailPanel: React.FC<TransactionDetailPanelProps> = ({ transaction }) => {
 
     return (
         <div className="p-6">
@@ -88,7 +91,7 @@ const TransactionDetailPanel = ({ transaction }) => {
                         className="p-2"
                     >
                         {`${new Intl.NumberFormat("vi-VN").format(
-                            transaction.price
+                            parseFloat(transaction.price)
                         )} VND`}
                     </Typography>
                 </Grid2>

@@ -3,7 +3,14 @@ import React from "react";
 import { X } from "lucide-react";
 import CreateStaff from "../createStaff";
 import EditStaff from "../editStaff";
+import { IStaffResponse } from "../../../../interfaces/staff.interface";
 
+/**
+ * Renders a modal for creating or editing a staff.
+ *
+ * @param {{ isCreateStaffOpen: boolean; closeCreateStaff: () => void; handleStaffCreated: () => void; shouldResetForm: boolean; setShouldResetForm: (value: boolean) => void; isEditStaffOpen: boolean; selectedStaff: IStaffResponse | null; closeEditStaff: () => void; }} props
+ * @returns {JSX.Element}
+ */
 const StaffModals = ({
     isCreateStaffOpen,
     closeCreateStaff,
@@ -13,7 +20,16 @@ const StaffModals = ({
     isEditStaffOpen,
     selectedStaff,
     closeEditStaff,
-}) => (
+}: {
+    isCreateStaffOpen: boolean;
+    closeCreateStaff: () => void;
+    handleStaffCreated: () => void;
+    shouldResetForm: boolean;
+    setShouldResetForm: (value: boolean) => void;
+    isEditStaffOpen: boolean;
+    selectedStaff: IStaffResponse | null;
+    closeEditStaff: () => void;
+}): JSX.Element => (
     <>
         {isCreateStaffOpen && (
             <div className="fixed inset-0 flex items-center justify-center z-50">

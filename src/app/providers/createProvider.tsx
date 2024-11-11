@@ -24,7 +24,7 @@ export default function CreateProvider({
         description: "",
     });
 
-    const fileInputRef = useRef(null);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const queryClient = useQueryClient();
 
@@ -33,7 +33,7 @@ export default function CreateProvider({
         mutationFn: (body: ICreateProviderBody) => createProviderApi(body),
         onSuccess: (data) => {
             console.log("Create provider success", data);
-            queryClient.invalidateQueries(["providers"]);
+            queryClient.invalidateQueries();
             onProviderCreated();
             // Trigger callback on success
         },
@@ -47,13 +47,10 @@ export default function CreateProvider({
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         const { name, value } = e.target;
-        if (
-            (e as ChangeEvent<HTMLInputElement>).target.files &&
-            name === "image"
-        ) {
+        if (name === "image" && "files" in e.target && e.target.files) {
             setProviderData({
                 ...providerData,
-                image: (e as ChangeEvent<HTMLInputElement>).target.files[0],
+                image: e.target.files[0],
             });
         } else {
             setProviderData({

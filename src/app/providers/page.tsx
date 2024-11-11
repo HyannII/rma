@@ -20,12 +20,18 @@ import { useState } from "react";
 import EditProvider from "./editProvider";
 import { CircleX, PlusCircleIcon, SearchIcon, Trash2, X } from "lucide-react";
 import Header from "../(components)/Header";
-import { RenderCellExpand } from "@/utils/renderCellExpand";
+
 import CustomToolbar from "@/utils/customToolbarDataGrid";
 import { DataGridPremium, GridColDef } from "@mui/x-data-grid-premium";
 import CustomPaginationDataGrid from "@/utils/customPaginationDataGrid";
 import { providerColumns } from "./parts/providerColumns";
-import { CreateProviderSuccessDialog, EditProviderSuccessDialog, DeleteProviderSuccessDialog, DeleteConfirmDialog, NoMatchProviderDialog } from "./parts/dialogs";
+import {
+    CreateProviderSuccessDialog,
+    EditProviderSuccessDialog,
+    DeleteProviderSuccessDialog,
+    DeleteConfirmDialog,
+    NoMatchProviderDialog,
+} from "./parts/dialogs";
 import ProviderModals from "./parts/modals";
 import Buttons from "@/utils/buttons";
 import SearchBar from "@/utils/searchBar";
@@ -59,7 +65,9 @@ export default function Providers() {
         []
     );
     const [searchTerm, setSearchTerm] = useState("");
-    const [filteredProviders, setFilteredProviders] = useState([]);
+    const [filteredProviders, setFilteredProviders] = useState<
+        IProviderResponse[]
+    >([]);
     const [isFindFailed, setIsFindFailed] = useState(false);
     // Define the available search criteria
     const searchParams = [
@@ -110,7 +118,7 @@ export default function Providers() {
 
     const handleEditProvider = () => {
         if (selectedProviderIds.length === 1) {
-            const providerToEdit = providers.find(
+            const providerToEdit = (providers ?? []).find(
                 (provider) => provider.providers_id === selectedProviderIds[0]
             );
             if (providerToEdit) {
@@ -122,12 +130,12 @@ export default function Providers() {
 
     const handleCloseDeleteSuccessDialog = () => {
         setIsDeleteSuccessDialogOpen(false);
-        queryClient.invalidateQueries(["providers"]); // Refetch provider data
+        queryClient.invalidateQueries(); // Refetch provider data
     };
 
     const handleCloseEditSuccessDialog = () => {
         setIsEditSuccessDialogOpen(false);
-        queryClient.invalidateQueries(["providers"]); // Refetch provider data
+        queryClient.invalidateQueries(); // Refetch provider data
     };
 
     const handleSearch = async () => {
@@ -170,7 +178,7 @@ export default function Providers() {
         : [];
 
     //datagrid columns
-    
+
     // if (isFetching) {
     //     return <div className="py-4">Đang tải...</div>;
     // }
@@ -205,7 +213,11 @@ export default function Providers() {
             {/* datagrid */}
             <DataGridPremium
                 rows={
-                    filteredProviders.length > 0 ? filteredProviders : (providers ? providers : [])
+                    filteredProviders.length > 0
+                        ? filteredProviders
+                        : providers
+                        ? providers
+                        : []
                 }
                 columns={providerColumns}
                 getRowId={(row) => row.providers_id}

@@ -1,12 +1,24 @@
 import React from "react";
 import { SquareCheck, Square } from "lucide-react"; // Adjust import based on your icon library
+import { IDishResponse } from "../../../../interfaces/dish.interface";
 
+/**
+ * A component that renders a single dish item in the list.
+ *
+ * @param {{dish: IDishResponse, selectedDishIds: number[], toggleSelectDish: (dishId: number) => void, handleFormatPrice: (price: number) => string}} props
+ * @returns {React.ReactElement}
+ */
 const DishCard = ({
     dish,
     selectedDishIds,
     toggleSelectDish,
     handleFormatPrice,
-}) => {
+}: {
+    dish: IDishResponse;
+    selectedDishIds: number[];
+    toggleSelectDish: (dishId: number) => void;
+    handleFormatPrice: (price: number) => string;
+}): React.ReactElement => {
     return (
         <div
             key={dish.items_id}
@@ -30,7 +42,7 @@ const DishCard = ({
                 />
             </div>
             <h3 className="text-lg text-gray-900 font-semibold">{dish.name}</h3>
-            <p className="text-gray-800">{handleFormatPrice(dish.price)}</p>
+            <p className="text-gray-800">{handleFormatPrice(parseFloat(dish.price))}</p>
             <div className="text-sm text-gray-600 mt-1">
                 Category: {dish.category}
             </div>

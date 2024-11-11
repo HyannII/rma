@@ -25,7 +25,7 @@ import {
 import Header from "../(components)/Header";
 import CustomToolbar from "@/utils/customToolbarDataGrid";
 import CustomPaginationDataGrid from "@/utils/customPaginationDataGrid";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import {
     CircleX,
     SearchIcon,
@@ -152,7 +152,7 @@ export default function Transactions() {
 
     const handleEditTransaction = () => {
         if (selectedTransactionIds.length === 1) {
-            const transactionToEdit = transactions.find(
+            const transactionToEdit = (transactions ?? []).find(
                 (transaction) =>
                     transaction.transactions_id === selectedTransactionIds[0]
             );
@@ -165,12 +165,12 @@ export default function Transactions() {
 
     const handleCloseDeleteSuccessDialog = () => {
         setIsDeleteSuccessDialogOpen(false);
-        queryClient.invalidateQueries(["transactions"]); // Refetch transaction data
+        queryClient.invalidateQueries(); // Refetch transaction data
     };
 
     const handleCloseEditSuccessDialog = () => {
         setIsEditSuccessDialogOpen(false);
-        queryClient.invalidateQueries(["transactions"]); // Refetch transaction data
+        queryClient.invalidateQueries(); // Refetch transaction data
     };
 
     //mutation
@@ -198,7 +198,7 @@ export default function Transactions() {
         mutationFn: (body: ICreateTransactionBody) =>
             createTransactionApi(body),
         onSuccess: () => {
-            queryClient.invalidateQueries(["transactions"]);
+            queryClient.invalidateQueries();
         },
         onError: (error) => {
             console.error("Error creating transaction:", error);
@@ -356,14 +356,16 @@ export default function Transactions() {
                 }}
                 className="shadow rounded-lg bg-zinc-100 mt-8"
                 getDetailPanelContent={(params: GridRowParams) => {
-                    const selectedTransaction = transactions.find(
+                    const selectedTransaction = (transactions ?? []).find(
                         (transaction) =>
                             transaction.transactions_id === params.id
                     );
                     return (
-                        <TransactionDetailPanel
-                            transaction={selectedTransaction}
-                        />
+                        selectedTransaction && (
+                            <TransactionDetailPanel
+                                transaction={selectedTransaction}
+                            />
+                        )
                     );
                 }}
                 getDetailPanelHeight={() => "auto"}

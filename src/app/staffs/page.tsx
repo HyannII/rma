@@ -10,6 +10,7 @@ import {
     DataGridPremium,
     GridColDef,
     GridRenderCellParams,
+    GridRowParams,
 } from "@mui/x-data-grid-premium";
 import {
     Box,
@@ -31,7 +32,13 @@ import EditStaff from "./editStaff";
 import { staffColumns } from "./parts/staffColumns";
 import Buttons from "@/utils/buttons";
 import SearchBar from "@/utils/searchBar";
-import { CreateStaffSuccessDialog, EditStaffSuccessDialog, DeleteStaffSuccessDialog, DeleteConfirmDialog, NoMatchStaffDialog } from "./parts/dialogs";
+import {
+    CreateStaffSuccessDialog,
+    EditStaffSuccessDialog,
+    DeleteStaffSuccessDialog,
+    DeleteConfirmDialog,
+    NoMatchStaffDialog,
+} from "./parts/dialogs";
 import StaffModals from "./parts/modals";
 import StaffDetailPanel from "./parts/staffDetailPanel";
 
@@ -55,9 +62,9 @@ export default function Staffs() {
         // Add more search criteria as needed
     ];
 
-    const fileInputRef = useRef(null);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
-    const [filteredStaffs, setFilteredStaffs] = useState([]);
+    const [filteredStaffs, setFilteredStaffs] = useState<IStaffResponse[]>([]);
     const [selectedParam, setSelectedParam] = useState(searchParams[0].value);
     const [isFindFailed, setIsFindFailed] = useState(false);
     const [selectedStaff, setSelectedStaff] = useState<IStaffResponse | null>(
@@ -108,7 +115,7 @@ export default function Staffs() {
 
     const handleEditStaff = () => {
         if (selectedStaffIds.length === 1) {
-            const staffToEdit = staffs.find(
+            const staffToEdit = (staffs ?? []).find(
                 (staff) => staff.staff_id === selectedStaffIds[0]
             );
             if (staffToEdit) {
@@ -120,12 +127,12 @@ export default function Staffs() {
 
     const handleCloseDeleteSuccessDialog = () => {
         setIsDeleteSuccessDialogOpen(false);
-        queryClient.invalidateQueries(["staffs"]); // Refetch staff data
+        queryClient.invalidateQueries(); // Refetch staff data
     };
 
     const handleCloseEditSuccessDialog = () => {
         setIsEditSuccessDialogOpen(false);
-        queryClient.invalidateQueries(["staffs"]); // Refetch staff data
+        queryClient.invalidateQueries(); // Refetch staff data
     };
 
     const handleSearch = async () => {
@@ -224,9 +231,19 @@ export default function Staffs() {
                     setSelectedStaffIds(newSelection as number[]);
                 }}
                 className="shadow rounded-lg bg-zinc-100 mt-8"
-                getDetailPanelContent={(params) => (
-                    <StaffDetailPanel params={params} />
-                )}
+                getDetailPanelContent={(params: GridRowParams) => {
+                    const selectedStaff = (staffs ?? []).find(
+                        (staff) =>
+                            staff.staff_id === params.id
+                    );
+                    return (
+                        selectedStaff && (
+                            <StaffDetailPanel
+                                staff={selectedStaff}
+                            />
+                        )
+                    );
+                }}
                 getDetailPanelHeight={() => "auto"}
             ></DataGridPremium>
             <StaffModals

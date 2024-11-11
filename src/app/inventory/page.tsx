@@ -52,7 +52,7 @@ export default function Inventory() {
         useState<IProductResponse | null>(null);
     const [selectedProductIds, setSelectedProductIds] = useState<number[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
-    const [filteredProducts, setFilteredProducts] = useState([]);
+    const [filteredProducts, setFilteredProducts] = useState<IProductResponse[]>([]);
     const [isFindFailed, setIsFindFailed] = useState(false);
     // Define the available search criteria
     const searchParams = [
@@ -102,7 +102,7 @@ export default function Inventory() {
 
     const handleEditProduct = () => {
         if (selectedProductIds.length === 1) {
-            const productToEdit = products.find(
+            const productToEdit = (products ?? []).find(
                 (product) => product.products_id === selectedProductIds[0]
             );
             if (productToEdit) {
@@ -114,12 +114,12 @@ export default function Inventory() {
 
     const handleCloseDeleteSuccessDialog = () => {
         setIsDeleteSuccessDialogOpen(false);
-        queryClient.invalidateQueries(["products"]); // Refetch product data
+        queryClient.invalidateQueries(); // Refetch product data
     };
 
     const handleCloseEditSuccessDialog = () => {
         setIsEditSuccessDialogOpen(false);
-        queryClient.invalidateQueries(["products"]); // Refetch product data
+        queryClient.invalidateQueries(); // Refetch product data
     };
 
     const handleSearch = async () => {

@@ -58,7 +58,7 @@ export default function CreateDish({
     // console.log(ingredientList);
     // console.log(selectedIngredients);
 
-    const fileInputRef = useRef(null);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const queryClient = useQueryClient();
 
@@ -67,7 +67,7 @@ export default function CreateDish({
         mutationFn: (body: ICreateDishBody) => createDishApi(body),
         onSuccess: (data) => {
             console.log("Create dish success", data);
-            queryClient.invalidateQueries(["dishes"]);
+            queryClient.invalidateQueries();
             onDishCreated();
             // Trigger callback on success
         },
@@ -92,13 +92,10 @@ export default function CreateDish({
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         const { name, value } = e.target;
-        if (
-            (e as ChangeEvent<HTMLInputElement>).target.files &&
-            name === "image"
-        ) {
+        if (name === "image" && "files" in e.target && e.target.files) {
             setDishData({
                 ...dishData,
-                image: (e as ChangeEvent<HTMLInputElement>).target.files[0],
+                image: e.target.files[0],
             });
         } else {
             setDishData({

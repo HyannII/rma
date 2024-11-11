@@ -1,15 +1,20 @@
 // StaffDetailPanel.tsx
 import React from "react";
 import { Typography } from "@mui/material";
+import { IStaffResponse } from "../../../../interfaces/staff.interface";
 
-const StaffDetailPanel = ({ params }) => {
+interface StaffDetailPanelProps {
+    staff: IStaffResponse;
+}
+
+const StaffDetailPanel: React.FC<StaffDetailPanelProps> = ({ staff }) => {
     const labelCssStyles = "block text-sm font-medium text-zinc-800";
     const inputCssStyles =
         "block w-full mb-2 p-2 border-gray-500 border-2 rounded-md text-zinc-800";
     return (
         <div className="p-6">
             <Typography variant="h6">
-                Chi tiết nhân viên # {params.id}
+                Chi tiết nhân viên # {staff.staff_id}
             </Typography>
             <div className="flex flex-wrap p-6">
                 <div className="flex flex-wrap w-2/3">
@@ -24,7 +29,7 @@ const StaffDetailPanel = ({ params }) => {
                             type="text"
                             id="name"
                             name="name"
-                            value={params.row.name}
+                            value={staff.name}
                             disabled
                             className={inputCssStyles}
                         />
@@ -41,7 +46,7 @@ const StaffDetailPanel = ({ params }) => {
                             type="text"
                             id="gender"
                             name="gender"
-                            value={params.row.gender}
+                            value={staff.gender}
                             disabled
                             className={inputCssStyles}
                         />
@@ -58,7 +63,7 @@ const StaffDetailPanel = ({ params }) => {
                             id="birthday"
                             name="birthday"
                             value={new Date(
-                                params.row.birthday
+                                staff.birthday
                             ).toLocaleDateString('vi-VN')}
                             disabled
                             className={inputCssStyles}
@@ -75,7 +80,7 @@ const StaffDetailPanel = ({ params }) => {
                             type="text"
                             id="role"
                             name="role"
-                            value={params.row.role}
+                            value={staff.role}
                             disabled
                             className={inputCssStyles}
                         />
@@ -92,7 +97,7 @@ const StaffDetailPanel = ({ params }) => {
                             id="created_at"
                             name="created_at"
                             value={new Date(
-                                params.row.created_at
+                                staff.created_at
                             ).toLocaleDateString('vi-VN')}
                             disabled
                             className={inputCssStyles}
@@ -110,7 +115,7 @@ const StaffDetailPanel = ({ params }) => {
                             type="text"
                             id="email"
                             name="email"
-                            value={params.row.email}
+                            value={staff.email}
                             disabled
                             className={inputCssStyles}
                         />
@@ -126,7 +131,7 @@ const StaffDetailPanel = ({ params }) => {
                             type="text"
                             id="phone"
                             name="phone"
-                            value={params.row.phone}
+                            value={staff.phone}
                             disabled
                             className={inputCssStyles}
                         />
@@ -141,7 +146,7 @@ const StaffDetailPanel = ({ params }) => {
                         <input
                             id="citizen_id"
                             name="citizen_id"
-                            value={params.row.citizen_id}
+                            value={staff.citizen_id}
                             disabled
                             className={inputCssStyles}
                         />
@@ -150,7 +155,7 @@ const StaffDetailPanel = ({ params }) => {
 
                 <div className="block w-1/3 p-1 border-2 border-gray-500 rounded">
                     <img
-                        src={params.row.image_url}
+                        src={staff.image_url}
                         alt=""
                     />
                 </div>

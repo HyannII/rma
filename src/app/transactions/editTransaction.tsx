@@ -127,7 +127,7 @@ export default function EditTransaction({
     );
     const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
     const queryClient = useQueryClient();
-    const fileInputRef = useRef(null);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [imageFile, setImageFile] = useState();
 
     const updateTransactionMutation = useMutation({
@@ -168,7 +168,7 @@ export default function EditTransaction({
     };
 
     const handleCloseSuccessDialog = () => {
-        queryClient.invalidateQueries(["transactions"]);
+        queryClient.invalidateQueries();
         setIsSuccessDialogOpen(false);
         onCloseEditTransaction(); // Close the edit modal
     };

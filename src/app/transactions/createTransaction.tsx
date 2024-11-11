@@ -100,11 +100,11 @@ export default function CreateTransaction({
         productData?.map((products) => ({
             product_id: products.products_id,
             name: products.name,
-            unit: products.unit
+            unit: products.unit,
         })) ?? [];
 
     const [selectedProducts, setSelectedProducts] = useState<
-        { product_id: number; name: string; unit: string}[]
+        { product_id: number; name: string; unit: string }[]
     >([]);
 
     const availableProducts = productList.filter(
@@ -114,7 +114,7 @@ export default function CreateTransaction({
             )
     );
 
-    const fileInputRef = useRef(null);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const queryClient = useQueryClient();
 
@@ -124,7 +124,7 @@ export default function CreateTransaction({
             createTransactionApi(body),
         onSuccess: (data) => {
             console.log("Create transaction success", data);
-            queryClient.invalidateQueries(["transactions"]);
+            queryClient.invalidateQueries();
             onTransactionCreated();
             // Trigger callback on success
         },
@@ -249,7 +249,7 @@ export default function CreateTransaction({
                                     setTransactionData((prevData) => ({
                                         ...prevData,
                                         products_id: newValue.product_id,
-                                        unit: newValue.unit// Set the staff_id in transactionData
+                                        unit: newValue.unit, // Set the staff_id in transactionData
                                     }));
                                     // Thêm phần tử đã chọn vào danh sách selectedIngredients
                                     setSelectedProducts([

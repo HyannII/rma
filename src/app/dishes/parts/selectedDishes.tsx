@@ -1,6 +1,6 @@
 import React from "react";
 
-const SelectedDishes = ({ selectedDishNames }) => (
+const SelectedDishes = ({ selectedDishNames }: { selectedDishNames: string[]}) => (
     <div className="col-span-3">
         {selectedDishNames.length > 0 ? (
             <div className="text-gray-800 flex items-center h-full">

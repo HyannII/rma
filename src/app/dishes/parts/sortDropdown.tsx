@@ -1,6 +1,14 @@
 import React from "react";
 
-const SortDropdown = ({ sortCriteria, handleSortChange }) => (
+interface SortDropdownProps {
+    sortCriteria: "a-z" | "z-a" | "price-asc" | "price-desc"; // Define the possible values for sortCriteria
+    handleSortChange: (event: React.ChangeEvent<HTMLSelectElement>) => void; // Function to handle sort change
+}
+
+const SortDropdown: React.FC<SortDropdownProps> = ({
+    sortCriteria,
+    handleSortChange,
+}) => (
     <div className="col-span-1">
         {/* SORT DROPDOWN */}
         <div className="flex items-center justify-end">

@@ -8,8 +8,17 @@ import {
     Button,
 } from "@mui/material";
 
-// Create Provider Success Dialog
-export const CreateProviderSuccessDialog = ({ open, onCreateMore, onCancel }) => (
+/**
+ * Create Provider Success Dialog
+ *
+ * @param {{ open: boolean, onCreateMore: () => void, onCancel: () => void }}
+ * @returns {JSX.Element}
+ */
+export const CreateProviderSuccessDialog: React.FC<{
+    open: boolean;
+    onCreateMore: () => void;
+    onCancel: () => void;
+}> = ({ open, onCreateMore, onCancel }) => (
     <Dialog open={open}>
         <DialogTitle>Provider Created Successfully!</DialogTitle>
         <DialogContent>
@@ -22,8 +31,16 @@ export const CreateProviderSuccessDialog = ({ open, onCreateMore, onCancel }) =>
     </Dialog>
 );
 
-// Edit Provider Success Dialog
-export const EditProviderSuccessDialog = ({ open, onClose }) => (
+/**
+ * Edit Provider Success Dialog
+ *
+ * @param {{ open: boolean, onClose: () => void }} props
+ * @returns {JSX.Element}
+ */
+export const EditProviderSuccessDialog: React.FC<{
+    open: boolean;
+    onClose: () => void;
+}> = ({ open, onClose }) => (
     <Dialog
         open={open}
         onClose={onClose}
@@ -38,8 +55,16 @@ export const EditProviderSuccessDialog = ({ open, onClose }) => (
     </Dialog>
 );
 
-// Delete Provider Success Dialog
-export const DeleteProviderSuccessDialog = ({ open, onClose }) => (
+/**
+ * Delete Provider Success Dialog
+ *
+ * @param {{ open: boolean, onClose: () => void }} props
+ * @returns {JSX.Element}
+ */
+export const DeleteProviderSuccessDialog: React.FC<{
+    open: boolean;
+    onClose: () => void;
+}> = ({ open, onClose }) => (
     <Dialog
         open={open}
         onClose={onClose}
@@ -54,13 +79,23 @@ export const DeleteProviderSuccessDialog = ({ open, onClose }) => (
     </Dialog>
 );
 
-// Delete Confirmation Dialog
-export const DeleteConfirmDialog = ({
-    open,
-    selectedProviderNames,
-    onConfirmDelete,
-    onCancel,
-}) => (
+/**
+ * Delete Confirmation Dialog
+ *
+ * @param {{
+ *   open: boolean,
+ *   selectedProviderNames: string[],
+ *   onConfirmDelete: () => void,
+ *   onCancel: () => void,
+ * }} props
+ * @returns {JSX.Element}
+ */
+export const DeleteConfirmDialog: React.FC<{
+    open: boolean;
+    selectedProviderNames: string[];
+    onConfirmDelete: () => void;
+    onCancel: () => void;
+}> = ({ open, selectedProviderNames, onConfirmDelete, onCancel }) => (
     <Dialog open={open}>
         <DialogTitle>Delete</DialogTitle>
         <DialogContent>
@@ -78,8 +113,16 @@ export const DeleteConfirmDialog = ({
     </Dialog>
 );
 
-// No Matching Provider Dialog
-export const NoMatchProviderDialog = ({ open, onClose }) => (
+/**
+ * No Matching Provider Dialog
+ *
+ * @param {{ open: boolean, onClose: () => void }} props
+ * @returns {JSX.Element}
+ */
+export const NoMatchProviderDialog: React.FC<{
+    open: boolean;
+    onClose: () => void;
+}> = ({ open, onClose }) => (
     <Dialog open={open}>
         <DialogTitle>No Matching Provider</DialogTitle>
         <DialogContent>

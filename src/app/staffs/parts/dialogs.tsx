@@ -8,12 +8,17 @@ import {
     Button,
 } from "@mui/material";
 
-// Create Staff Success Dialog
-export const CreateStaffSuccessDialog = ({
-    open,
-    onCreateMore,
-    onCancel,
-}) => (
+/**
+ * Create Staff Success Dialog
+ *
+ * @param {{ open: boolean, onCreateMore: () => void, onCancel: () => void }} props
+ * @returns {JSX.Element}
+ */
+export const CreateStaffSuccessDialog: React.FC<{
+    open: boolean;
+    onCreateMore: () => void;
+    onCancel: () => void;
+}> = ({ open, onCreateMore, onCancel }) => (
     <Dialog open={open}>
         <DialogTitle>Staff Created Successfully!</DialogTitle>
         <DialogContent>
@@ -26,8 +31,16 @@ export const CreateStaffSuccessDialog = ({
     </Dialog>
 );
 
-// Edit Staff Success Dialog
-export const EditStaffSuccessDialog = ({ open, onClose }) => (
+/**
+ * Edit Staff Success Dialog
+ *
+ * @param {{ open: boolean, onClose: () => void }} props
+ * @returns {JSX.Element}
+ */
+export const EditStaffSuccessDialog: React.FC<{
+    open: boolean;
+    onClose: () => void;
+}> = ({ open, onClose }) => (
     <Dialog
         open={open}
         onClose={onClose}
@@ -42,8 +55,16 @@ export const EditStaffSuccessDialog = ({ open, onClose }) => (
     </Dialog>
 );
 
-// Delete Staff Success Dialog
-export const DeleteStaffSuccessDialog = ({ open, onClose }) => (
+/**
+ * Delete Staff Success Dialog
+ *
+ * @param {{ open: boolean, onClose: () => void }} props
+ * @returns {JSX.Element}
+ */
+export const DeleteStaffSuccessDialog: React.FC<{
+    open: boolean;
+    onClose: () => void;
+}> = ({ open, onClose }) => (
     <Dialog
         open={open}
         onClose={onClose}
@@ -58,13 +79,23 @@ export const DeleteStaffSuccessDialog = ({ open, onClose }) => (
     </Dialog>
 );
 
-// Delete Confirmation Dialog
-export const DeleteConfirmDialog = ({
-    open,
-    selectedStaffNames,
-    onConfirmDelete,
-    onCancel,
-}) => (
+/**
+ * Delete Confirmation Dialog
+ *
+ * @param {{
+ *   open: boolean,
+ *   selectedStaffNames: string[],
+ *   onConfirmDelete: () => void,
+ *   onCancel: () => void,
+ * }} props
+ * @returns {JSX.Element}
+ */
+export const DeleteConfirmDialog: React.FC<{
+    open: boolean;
+    selectedStaffNames: string[];
+    onConfirmDelete: () => void;
+    onCancel: () => void;
+}> = ({ open, selectedStaffNames, onConfirmDelete, onCancel }) => (
     <Dialog open={open}>
         <DialogTitle>Delete</DialogTitle>
         <DialogContent>
@@ -82,8 +113,16 @@ export const DeleteConfirmDialog = ({
     </Dialog>
 );
 
-// No Matching Staff Dialog
-export const NoMatchStaffDialog = ({ open, onClose }) => (
+/**
+ * No Matching Staff Dialog
+ *
+ * @param {{ open: boolean, onClose: () => void }} props
+ * @returns {JSX.Element}
+ */
+export const NoMatchStaffDialog: React.FC<{
+    open: boolean;
+    onClose: () => void;
+}> = ({ open, onClose }) => (
     <Dialog open={open}>
         <DialogTitle>No Matching Staff</DialogTitle>
         <DialogContent>

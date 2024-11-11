@@ -30,7 +30,7 @@ export default function CreateStaff({
         email: "",
     });
 
-    const fileInputRef = useRef(null);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const queryClient = useQueryClient();
 
@@ -39,7 +39,7 @@ export default function CreateStaff({
         mutationFn: (body: ICreateStaffBody) => createStaffApi(body),
         onSuccess: (data) => {
             console.log("Create staff success", data);
-            queryClient.invalidateQueries(["staffs"]);
+            queryClient.invalidateQueries();
             onStaffCreated();
             // Trigger callback on success
         },
@@ -53,13 +53,10 @@ export default function CreateStaff({
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         const { name, value } = e.target;
-        if (
-            (e as ChangeEvent<HTMLInputElement>).target.files &&
-            name === "image"
-        ) {
+        if (name === "image" && "files" in e.target && e.target.files) {
             setStaffData({
                 ...staffData,
-                image: (e as ChangeEvent<HTMLInputElement>).target.files[0],
+                image: e.target.files[0],
             });
         } else {
             setStaffData({
@@ -167,7 +164,7 @@ export default function CreateStaff({
                                 textField: {
                                     sx: {
                                         "& .MuiOutlinedInput-root": {
-                                            height: '44px',
+                                            height: "44px",
                                             border: "2px solid #6b7280", // Màu viền `border-gray-500`
                                             borderRadius: "0.375rem", // Độ bo tròn `rounded-md`
                                             padding: "0.5rem", // Padding tương tự `p-2`
@@ -179,17 +176,16 @@ export default function CreateStaff({
                                                 borderColor: "#6b7280", // Giữ màu viền khi focus
                                             },
                                             "& fieldset": {
-                                                border: 'none',
-                                            }
+                                                border: "none",
+                                            },
                                         },
                                         "& .MuiInputBase-input": {
                                             padding: 0, // Loại bỏ padding mặc định bên trong để căn giữa
-                                            border: 'none',
+                                            border: "none",
                                         },
                                     },
                                 },
                             }}
-                            
                         />
                     </div>
                     <div className="mb-4 w-1/2 px-2">

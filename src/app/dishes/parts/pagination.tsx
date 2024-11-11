@@ -1,11 +1,22 @@
 import React from "react";
 
+/**
+ * A pagination component that displays a previous button, current page number, and next button
+ *
+ * @param {{ page: number, totalPages: number, handlePreviousPage: () => void, handleNextPage: () => void }} props
+ * @return {JSX.Element}
+ */
 const Pagination = ({
     page,
     totalPages,
     handlePreviousPage,
     handleNextPage,
-}) => {
+}: {
+    page: number;
+    totalPages: number;
+    handlePreviousPage: () => void;
+    handleNextPage: () => void;
+}): JSX.Element => {
     return (
         <div className="col-span-4 flex justify-center mt-6">
             <button

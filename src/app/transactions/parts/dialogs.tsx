@@ -8,8 +8,14 @@ import {
     Button,
 } from "@mui/material";
 
+interface CreateTransactionSuccessDialogProps {
+    open: boolean;
+    onCreateMore: () => void;
+    onCancel: () => void;
+}
+
 // Create Transaction Success Dialog
-export const CreateTransactionSuccessDialog = ({
+export const CreateTransactionSuccessDialog: React.FC<CreateTransactionSuccessDialogProps> = ({
     open,
     onCreateMore,
     onCancel,
@@ -26,8 +32,19 @@ export const CreateTransactionSuccessDialog = ({
     </Dialog>
 );
 
-// Edit Transaction Success Dialog
-export const EditTransactionSuccessDialog = ({ open, onClose }) => (
+/**
+ * Edit Transaction Success Dialog
+ *
+ * @param {{
+ *   open: boolean,
+ *   onClose: () => void,
+ * }} props
+ * @returns {JSX.Element}
+ */
+export const EditTransactionSuccessDialog: React.FC<{
+    open: boolean;
+    onClose: () => void;
+}> = ({ open, onClose }) => (
     <Dialog
         open={open}
         onClose={onClose}
@@ -42,8 +59,16 @@ export const EditTransactionSuccessDialog = ({ open, onClose }) => (
     </Dialog>
 );
 
-// Delete Transaction Success Dialog
-export const DeleteTransactionSuccessDialog = ({ open, onClose }) => (
+/**
+ * Delete Transaction Success Dialog
+ *
+ * @param {{ open: boolean, onClose: () => void }}
+ * @returns {JSX.Element}
+ */
+export const DeleteTransactionSuccessDialog: React.FC<{
+    open: boolean;
+    onClose: () => void;
+}> = ({ open, onClose }) => (
     <Dialog
         open={open}
         onClose={onClose}
@@ -58,13 +83,23 @@ export const DeleteTransactionSuccessDialog = ({ open, onClose }) => (
     </Dialog>
 );
 
-// Delete Confirmation Dialog
-export const DeleteConfirmDialog = ({
-    open,
-    selectedTransactionNames,
-    onConfirmDelete,
-    onCancel,
-}) => (
+/**
+ * Delete Confirmation Dialog
+ *
+ * @param {{
+ *   open: boolean,
+ *   selectedTransactionNames: string[],
+ *   onConfirmDelete: () => void,
+ *   onCancel: () => void,
+ * }} props
+ * @returns {JSX.Element}
+ */
+export const DeleteConfirmDialog: React.FC<{
+    open: boolean;
+    selectedTransactionNames: string[];
+    onConfirmDelete: () => void;
+    onCancel: () => void;
+}> = ({ open, selectedTransactionNames, onConfirmDelete, onCancel }) => (
     <Dialog open={open}>
         <DialogTitle>Delete</DialogTitle>
         <DialogContent>
@@ -82,8 +117,16 @@ export const DeleteConfirmDialog = ({
     </Dialog>
 );
 
-// No Matching Transaction Dialog
-export const NoMatchTransactionDialog = ({ open, onClose }) => (
+/**
+ * No Matching Transaction Dialog
+ *
+ * @param {{ open: boolean, onClose: () => void }}
+ * @returns {JSX.Element}
+ */
+export const NoMatchTransactionDialog: React.FC<{
+    open: boolean;
+    onClose: () => void;
+}> = ({ open, onClose }) => (
     <Dialog open={open}>
         <DialogTitle>No Matching Transaction</DialogTitle>
         <DialogContent>

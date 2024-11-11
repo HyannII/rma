@@ -33,7 +33,7 @@ export default function CreateProduct({
         description: "",
     });
 
-    const fileInputRef = useRef(null);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const queryClient = useQueryClient();
 
@@ -44,7 +44,7 @@ export default function CreateProduct({
         mutationFn: (body: ICreateProductBody) => createProductApi(body),
         onSuccess: (data) => {
             console.log("Create product success", data);
-            queryClient.invalidateQueries(["products"]);
+            queryClient.invalidateQueries();
             onProductCreated();
             // Trigger callback on success
         },
@@ -60,13 +60,10 @@ export default function CreateProduct({
         >
     ) => {
         const { name, value } = e.target;
-        if (
-            (e as ChangeEvent<HTMLInputElement>).target.files &&
-            name === "image"
-        ) {
+        if (name === "image" && "files" in e.target && e.target.files) {
             setProductData({
                 ...productData,
-                image: (e as ChangeEvent<HTMLInputElement>).target.files[0],
+                image: e.target.files[0],
             });
         } else {
             setProductData({

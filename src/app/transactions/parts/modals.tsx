@@ -3,7 +3,23 @@ import React from "react";
 import { X } from "lucide-react";
 import CreateTransaction from "../createTransaction";
 import EditTransaction from "../editTransaction";
+import { ITransactionResponse } from "../../../../interfaces/transaction.interface";
 
+/**
+ * Renders a modal for creating or editing a transaction.
+ *
+ * @param {{
+ *   isCreateTransactionOpen: boolean,
+ *   closeCreateTransaction: () => void,
+ *   handleTransactionCreated: () => void,
+ *   shouldResetForm: boolean,
+ *   setShouldResetForm: (value: boolean) => void,
+ *   isEditTransactionOpen: boolean,
+ *   selectedTransaction: ITransactionResponse | null,
+ *   closeEditTransaction: () => void,
+ * }} props
+ * @returns {JSX.Element}
+ */
 const TransactionModals = ({
     isCreateTransactionOpen,
     closeCreateTransaction,
@@ -13,7 +29,16 @@ const TransactionModals = ({
     isEditTransactionOpen,
     selectedTransaction,
     closeEditTransaction,
-}) => (
+}: {
+    isCreateTransactionOpen: boolean;
+    closeCreateTransaction: () => void;
+    handleTransactionCreated: () => void;
+    shouldResetForm: boolean;
+    setShouldResetForm: (value: boolean) => void;
+    isEditTransactionOpen: boolean;
+    selectedTransaction: ITransactionResponse | null;
+    closeEditTransaction: () => void;
+}): JSX.Element => (
     <>
         {isCreateTransactionOpen && (
             <div className="fixed inset-0 flex items-center justify-center z-50">
