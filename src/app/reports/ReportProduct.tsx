@@ -97,36 +97,14 @@ const  Report = () => {
                 justifyContent: "center",
                 alignItems: "center",
                 height: "100%",
-                backgroundColor: 'whitesmoke'
-              }}
-            >
-              {params.value}
-            </Box>
-          ),
-        },
-        {
-          field: "total_price",
-          headerName: "Giá nhập trung bình",
-          minWidth: 180,
-          type: "number",
-          flex: 2,
-          headerAlign: "center",
-          editable: true,
-          renderCell: (params) => (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "100%",
                 backgroundColor: 'white'
               }}
             >
               {params.value}
             </Box>
           ),
-          valueGetter: (value, row) => `${row.total_price} VND`,
         },
+        
         {
           field: "customer_price",
           headerName: "Giá bán",
@@ -195,7 +173,7 @@ const  Report = () => {
             className="shadow rounded-lg border border-gray-200 mt-5 text-gray-900"
           />
           <div className="my-2 mx-2">
-            <button className="bg-blue-700 text-white py-2 px-4 rounded" onClick={() => exportToExcel(products)}>Xuat file excel</button>
+            <button className="bg-blue-700 text-white py-2 px-4 rounded" onClick={() => exportToExcel(products)}>Export Excel</button>
           </div>
         </div>
       );

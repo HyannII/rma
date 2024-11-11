@@ -118,26 +118,53 @@ export default function ReportTransaction() {
       return (
         <div>
             <div>
-            <div className="flex gap-4 mb-4">
-                  <select value={year} onChange={(e) => setYear(e.target.value)} className="px-2 py-1 border rounded bg-white shadow-sm focus:outline-none focus:ring-blue-500 focus:ring-1">
-                      {[...Array(10).keys()].map(i => {
-                          const y = (new Date().getFullYear() - i).toString();
-                          return <option key={y} value={y}>{y}</option>;
-                      })}
-                  </select>
-                  <select value={month} onChange={(e) => setMonth(e.target.value)} className="px-2 py-1 border rounded bg-white shadow-sm focus:outline-none focus:ring-blue-500 focus:ring-1">
-                      {[...Array(12).keys()].map(i => {
-                          const m = (i + 1).toString().padStart(2, '0');
-                          return <option key={m} value={m}>{m}</option>;
-                      })}
-                  </select>
-                  <select value={day} onChange={(e) => setDay(e.target.value)} className="px-2 py-1 border rounded bg-white shadow-sm focus:outline-none focus:ring-blue-500 focus:ring-1">
-                      {[...Array(31).keys()].map(i => {
-                          const d = (i + 1).toString().padStart(2, '0');
-                          return <option key={d} value={d}>{d}</option>;
-                      })}
-                  </select>
+              <div className="flex gap-4 mb-4">
+                <select
+                    value={year}
+                    onChange={(e) => setYear(e.target.value)}
+                    className="px-2 py-1 border rounded bg-white shadow-sm focus:outline-none focus:ring-blue-500 focus:ring-1"
+                >
+                    {Array.from(Array(10)).map((_, i) => {
+                        const y = (new Date().getFullYear() - i).toString();
+                        return (
+                            <option key={y} value={y}>
+                                {y}
+                            </option>
+                        );
+                    })}
+                </select>
+
+                <select
+                    value={month}
+                    onChange={(e) => setMonth(e.target.value)}
+                    className="px-2 py-1 border rounded bg-white shadow-sm focus:outline-none focus:ring-blue-500 focus:ring-1"
+                >
+                    {Array.from(Array(12)).map((_, i) => {
+                        const m = (i + 1).toString().padStart(2, '0');
+                        return (
+                            <option key={m} value={m}>
+                                {m}
+                            </option>
+                        );
+                    })}
+                </select>
+
+                <select
+                    value={day}
+                    onChange={(e) => setDay(e.target.value)}
+                    className="px-2 py-1 border rounded bg-white shadow-sm focus:outline-none focus:ring-blue-500 focus:ring-1"
+                >
+                    {Array.from(Array(31)).map((_, i) => {
+                        const d = (i + 1).toString().padStart(2, '0');
+                        return (
+                            <option key={d} value={d}>
+                                {d}
+                            </option>
+                        );
+                    })}
+                </select>
               </div>
+
                 <div className="bg-white">
                   <DataGrid
                       rows={dailyTotalsArray}
@@ -151,7 +178,7 @@ export default function ReportTransaction() {
             </div>
             </div>
             <div className="my-2 mx-2">
-                <button className="bg-blue-700 text-white py-2 px-4 rounded cursor-pointer" onClick={() => exportToExcel(dailyTotalsArray)}>Xuat file excel</button>
+                <button className="bg-blue-700 text-white py-2 px-4 rounded cursor-pointer" onClick={() => exportToExcel(dailyTotalsArray)}>Export Excel</button>
             </div>
         </div>
       )
