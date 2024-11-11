@@ -27,27 +27,17 @@ const DataCellWithFetch: React.FC<DataCellWithFetchProps> = ({
     fetchFunction,
     loadingText = "Loading...",
 }) => {
-    const [name, setName] = useState<string | null>(null);
+    const [name, setName] = useState<string | null>(cache[id] || null);
 
     useEffect(() => {
-        const fetchData = async () => {
-            if (id) {
-                if (cache[id]) {
-                    setName(cache[id]);
-                } else {
-                    try {
-                        const response = await fetchFunction(id);
-                        const fetchedName = response.name;
-                        cache[id] = fetchedName; // Store in cache
-                        setName(fetchedName);
-                    } catch (error) {
-                        console.error("Error fetching data:", error);
-                    }
-                }
-            }
-        };
-        fetchData();
-    }, [id]);
+        if (id && !name) {
+            fetchFunction(id).then((response) => {
+                const fetchedName = response.name;
+                cache[id] = fetchedName; // Store in cache
+                setName(fetchedName);
+            });
+        }
+    }, [id, name, cache, fetchFunction]);
 
     return (
         <Box

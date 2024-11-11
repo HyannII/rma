@@ -1,51 +1,67 @@
-const csvTemplate = {
-    columns: [
-        {
-            name: "Mã nhân viên",
-            key: "staff_id",
-            required: true,
+const fields = [
+    {
+        label: "Mã nhân viên",
+        key: "staff_id",
+        fieldType: {
+            type: "input",
         },
-        {
-            name: "Mã nhà cung cấp",
-            key: "providers_id",
-            required: true,
+    },
+    {
+        label: "Mã nhà cung cấp",
+        key: "providers_id",
+        fieldType: {
+            type: "input",
         },
-        {
-            name: "Mã sản phẩm",
-            key: "products_id",
-            required: true,
+    },
+    {
+        label: "Mã sản phẩm",
+        key: "products_id",
+        fieldType: {
+            type: "input",
         },
-        {
-            name: "Trạng thái",
-            key: "status",
-            required: true,
+    },
+    {
+        label: "Trạng thái",
+        key: "status",
+        fieldType: {
+            type: "input",
         },
-        {
-            name: "Nội dung",
-            key: "name",
-            required: true,
+    },
+    {
+        label: "Nội dung",
+        key: "name",
+        fieldType: {
+            type: "input",
         },
-        {
-            name: "Số lượng",
-            key: "quantity",
-            required: true,
+    },
+    {
+        label: "Số lượng",
+        key: "quantity",
+        fieldType: {
+            type: "input",
         },
-        {
-            name: "Đơn vị tính",
-            key: "unit",
-            required: true,
+    },
+    {
+        label: "Đơn vị tính",
+        key: "unit",
+        fieldType: {
+            type: "input",
         },
-        {
-            name: "Đơn giá",
-            key: "price",
-            required: true,
+    },
+    {
+        label: "Đơn giá",
+        key: "price",
+        fieldType: {
+            type: "input",
         },
-        {
-            name: "Nội dung chi tiết",
-            key: "description",
-            required: true,
+    },
+    {
+        label: "Nội dung chi tiết",
+        key: "description",
+        fieldType: {
+            type: "input",
         },
-    ],
-};
+    },
+] as const;
 
-export default csvTemplate;
+export default fields;

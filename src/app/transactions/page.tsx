@@ -5,41 +5,17 @@ import {
     createTransactionApi,
     deleteTransactionApi,
     getAllTransactionsApi,
-    getTransactionByFieldApi,
 } from "../../../api/transaction.api";
-import {
-    DataGridPremium,
-    GridColDef,
-    GridRenderCellParams,
-    GridRowParams,
-} from "@mui/x-data-grid-premium";
-import {
-    Box,
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Typography,
-} from "@mui/material";
+import { DataGridPremium, GridRowParams } from "@mui/x-data-grid-premium";
 import Header from "../(components)/Header";
 import CustomToolbar from "@/utils/customToolbarDataGrid";
 import CustomPaginationDataGrid from "@/utils/customPaginationDataGrid";
 import { useState } from "react";
+import { CircleX, Calendar, FileInput } from "lucide-react";
 import {
-    CircleX,
-    SearchIcon,
-    PlusCircleIcon,
-    Trash2,
-    X,
-    Calendar,
-    Book,
-    FileInput,
-} from "lucide-react";
-import { ICreateTransactionBody, ITransactionResponse } from "../../../interfaces/transaction.interface";
-import CreateTransaction from "./createTransaction";
-import EditTransaction from "./editTransaction";
-import SearchBar from "@/utils/searchBar";
+    ICreateTransactionBody,
+    ITransactionResponse,
+} from "../../../interfaces/transaction.interface";
 import Buttons from "@/utils/buttons";
 import {
     CreateTransactionSuccessDialog,
@@ -54,9 +30,8 @@ import TransactionDetailPanel from "./parts/transactionDetailPanel";
 import dayjs, { Dayjs } from "dayjs";
 import { DateRangePicker } from "@mui/x-date-pickers-pro";
 import { ReactSpreadsheetImport } from "react-spreadsheet-import";
-import { CSVImporter } from "csv-import-react";
-import importColumns from "./parts/excelImport";
-import csvTemplate from "./parts/excelImport";
+import { Result } from "react-spreadsheet-import/types/types";
+import fields from "./parts/excelImport";
 
 export default function Transactions() {
     const queryClient = useQueryClient();
@@ -206,25 +181,23 @@ export default function Transactions() {
     });
     // Xử lý sự kiện CSV upload
     const handleCsvData = async (data: any) => {
-        // Kiểm tra xem data.rows có phải là mảng không
-        if (!Array.isArray(data.rows)) {
+        // Kiểm tra xem data.validData có phải là mảng không
+        if (!Array.isArray(data.validData)) {
             console.error("Dữ liệu từ CSV không hợp lệ:", data);
             return;
         }
 
-        for (const row of data.rows) {
-            const values = row.values;
-
+        for (const row of data.validData) {
             const body: ICreateTransactionBody = {
-                staff_id: Number(values.staff_id),
-                providers_id: Number(values.providers_id),
-                products_id: Number(values.products_id),
-                status: values.status,
-                name: values.name,
-                quantity: values.quantity,
-                unit: values.unit,
-                price: values.price,
-                description: values.description || "",
+                staff_id: Number(row.staff_id),
+                providers_id: Number(row.providers_id),
+                products_id: Number(row.products_id),
+                status: row.status,
+                name: row.name,
+                quantity: row.quantity,
+                unit: row.unit,
+                price: row.price,
+                description: row.description || "",
             };
 
             try {
@@ -240,7 +213,6 @@ export default function Transactions() {
             }
         }
     };
-
 
     // if (isFetching) {
     //     return <div className="py-4">Đang tải...</div>;
@@ -332,7 +304,6 @@ export default function Transactions() {
                             unit: false,
                             price: false,
                             description: false,
-                            created_at: false,
                         },
                     },
                     pagination: {
@@ -341,7 +312,7 @@ export default function Transactions() {
                         },
                     },
                     sorting: {
-                        sortModel: [{ field: "created_at", sort: "desc" }],
+                        sortModel: [{ field: "transactions_id", sort: "desc" }],
                     },
                 }}
                 onRowSelectionModelChange={(newSelection) =>
@@ -407,17 +378,12 @@ export default function Transactions() {
                 open={isFindFailed}
                 onClose={() => setIsFindFailed(false)}
             />
-            <CSVImporter
-                modalIsOpen={isSpreadsheetImporterOpen}
-                modalOnCloseTriggered={() =>
-                    setIsSpreadsheetImporterOpen(false)
-                }
-                darkMode={true}
-                // onComplete={(data) => console.log(data)}
-                onComplete={handleCsvData}
-                template={csvTemplate}
-                showDownloadTemplateButton={false}
-                skipHeaderRowSelection={true}
+
+            <ReactSpreadsheetImport
+                isOpen={isSpreadsheetImporterOpen}
+                onClose={() => setIsSpreadsheetImporterOpen(false)}
+                fields={fields}
+                onSubmit={handleCsvData}
             />
         </div>
     );
