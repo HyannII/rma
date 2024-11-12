@@ -173,17 +173,6 @@ export default function Staffs() {
         setSelectedParam(e.target.value);
     };
 
-    if (isFetching) {
-        return <div className="py-4">Đang tải...</div>;
-    }
-    if (isError || !staffs) {
-        return (
-            <div className="text-center text-red-500 py-4">
-                Lấy danh sách hàng không thành công
-            </div>
-        );
-    }
-
     const labelCssStyles = "block text-sm font-medium text-zinc-800";
     const inputCssStyles =
         "block w-full mb-2 p-2 border-gray-500 border-2 rounded-md text-zinc-800";
@@ -210,7 +199,7 @@ export default function Staffs() {
                 selectedIds={selectedStaffIds}
             />
             <DataGridPremium
-                rows={filteredStaffs.length > 0 ? filteredStaffs : staffs}
+                rows={filteredStaffs.length > 0 ? filteredStaffs : (staffs ? staffs : [])}
                 columns={staffColumns}
                 getRowId={(row) => row.staff_id}
                 pagination
@@ -230,17 +219,21 @@ export default function Staffs() {
                 onRowSelectionModelChange={(newSelection) => {
                     setSelectedStaffIds(newSelection as number[]);
                 }}
+                loading={isFetching} // Shows the loading overlay while fetching
+                slotProps={{
+                    loadingOverlay: {
+                        variant: "skeleton",
+                        noRowsVariant: "skeleton",
+                    },
+                }}
                 className="shadow rounded-lg bg-zinc-100 mt-8"
                 getDetailPanelContent={(params: GridRowParams) => {
                     const selectedStaff = (staffs ?? []).find(
-                        (staff) =>
-                            staff.staff_id === params.id
+                        (staff) => staff.staff_id === params.id
                     );
                     return (
                         selectedStaff && (
-                            <StaffDetailPanel
-                                staff={selectedStaff}
-                            />
+                            <StaffDetailPanel staff={selectedStaff} />
                         )
                     );
                 }}

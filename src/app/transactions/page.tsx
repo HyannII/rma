@@ -233,30 +233,26 @@ export default function Transactions() {
                     onChange={(newValue) => setDateRange(newValue)}
                     localeText={{ start: "", end: "" }}
                     slotProps={{
-                        // field: {
-                        //     dateSeparator: "đến",
-                        // },
                         textField: {
                             InputProps: { endAdornment: <Calendar /> },
                             className: "w-full shadow rounded-lg bg-zinc-100",
                             sx: {
                                 "& .MuiOutlinedInput-root": {
-                                    border: "2px solid #6b7280", // Màu viền `border-gray-500`
-                                    borderRadius: "0.375rem", // Độ bo tròn `rounded-md`
-                                    padding: "0.5rem", // Padding tương tự `p-2`
-                                    color: "#27272a", // Màu chữ `text-zinc-800`
+                                    border: "2px solid #6b7280",
+                                    borderRadius: "0.375rem",
+                                    padding: "0.5rem",
+                                    color: "#27272a",
                                     "&:hover": {
-                                        borderColor: "#6b7280", // Giữ màu viền khi hover
+                                        borderColor: "#6b7280",
                                     },
                                     "&.Mui-focused": {
-                                        borderColor: "#6b7280", // Giữ màu viền khi focus
+                                        borderColor: "#6b7280",
                                     },
                                     "& fieldset": {
                                         border: "none",
                                     },
                                 },
                                 "& .MuiInputBase-input": {
-                                    padding: 0, // Loại bỏ padding mặc định bên trong để căn giữa
                                     border: "none",
                                 },
                             },
