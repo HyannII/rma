@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useQuery } from "@tanstack/react-query";
 import { getBillByDate } from "../../../api/CDApi/billbydate.api";
@@ -8,9 +8,8 @@ export default function SumPriceByBill() {
         data: billByDate,
         isFetching,
         isError,
-      } = useQuery({
+    } = useQuery({
         queryKey: ["BillByDate"],
         queryFn: getBillByDate,
-      });
-
+    });
 }
