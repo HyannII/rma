@@ -1,59 +1,35 @@
 "use client";
 
+import Buttons from "@/utils/buttons";
+import SearchBar from "@/utils/searchBar";
 import {
-    QueryClient,
     useMutation,
     useQuery,
-    useQueryClient,
+    useQueryClient
 } from "@tanstack/react-query";
+import {
+    CircleX
+} from "lucide-react"; // Import CheckIcon
+import { SetStateAction, useState } from "react";
+import Header from "../(components)/Header";
 import {
     deleteDishApi,
     getAllDishesApi,
-    getDishByFieldApi,
-    getDishByNameApi,
+    getDishByFieldApi
 } from "../../../api/dish.api";
-import Image from "next/legacy/image";
-import Header from "../(components)/Header";
-import {
-    CircleX,
-    SearchIcon,
-    CheckIcon,
-    PlusCircleIcon,
-    Trash2,
-    X,
-    CircleCheck,
-    CircleCheckBig,
-    CircleCheckBigIcon,
-    Square,
-    SquareCheck,
-    Pencil,
-    Edit,
-} from "lucide-react"; // Import CheckIcon
-import { SetStateAction, useState } from "react";
-import {
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-} from "@mui/material";
 import { IDishResponse } from "../../../interfaces/dish.interface";
-import CreateDish from "./createDish";
-import EditDish from "./editDish";
-import SearchBar from "@/utils/searchBar";
 import {
     CreateDishSuccessDialog,
-    EditDishSuccessDialog,
-    DeleteDishSuccessDialog,
     DeleteConfirmDialog,
+    DeleteDishSuccessDialog,
+    EditDishSuccessDialog,
     NoMatchDishDialog,
 } from "./parts/dialogs";
-import DishModals from "./parts/modals";
-import Buttons from "@/utils/buttons";
-import SortDropdown from "./parts/sortDropdown";
-import SelectedDishes from "./parts/selectedDishes";
-import Pagination from "./parts/pagination";
 import DishCard from "./parts/dishList";
+import DishModals from "./parts/modals";
+import Pagination from "./parts/pagination";
+import SelectedDishes from "./parts/selectedDishes";
+import SortDropdown from "./parts/sortDropdown";
 
 export default function Dishes() {
     const queryClient = useQueryClient();

@@ -1,10 +1,3 @@
-import { ChangeEvent, useRef, useState } from "react";
-import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
-import {
-    IProductResponse,
-    IUpdateProductBody,
-} from "../../../interfaces/product.interface";
-import { updateProductApi } from "../../../api/product.api";
 import {
     Button,
     Dialog,
@@ -12,7 +5,13 @@ import {
     DialogContent,
     DialogTitle,
 } from "@mui/material";
-import Image from "next/legacy/image";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ChangeEvent, useRef, useState } from "react";
+import { updateProductApi } from "../../../api/product.api";
+import {
+    IProductResponse,
+    IUpdateProductBody,
+} from "../../../interfaces/product.interface";
 
 export default function EditProduct({
     product,

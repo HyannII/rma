@@ -1,10 +1,3 @@
-import { ChangeEvent, useRef, useState } from "react";
-import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
-import {
-    IProviderResponse,
-    IUpdateProviderBody,
-} from "../../../interfaces/provider.interface";
-import { updateProviderApi } from "../../../api/provider.api";
 import {
     Button,
     Dialog,
@@ -12,7 +5,13 @@ import {
     DialogContent,
     DialogTitle,
 } from "@mui/material";
-import Image from "next/legacy/image";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ChangeEvent, useRef, useState } from "react";
+import { updateProviderApi } from "../../../api/provider.api";
+import {
+    IProviderResponse,
+    IUpdateProviderBody,
+} from "../../../interfaces/provider.interface";
 
 export default function EditProvider({
     provider,

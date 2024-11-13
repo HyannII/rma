@@ -1,10 +1,3 @@
-import { ChangeEvent, useRef, useState } from "react";
-import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
-import {
-    IDishResponse,
-    IUpdateDishBody,
-} from "../../../interfaces/dish.interface";
-import { updateDishApi } from "../../../api/dish.api";
 import {
     Button,
     Dialog,
@@ -12,7 +5,13 @@ import {
     DialogContent,
     DialogTitle,
 } from "@mui/material";
-import Image from "next/legacy/image";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ChangeEvent, useRef, useState } from "react";
+import { updateDishApi } from "../../../api/dish.api";
+import {
+    IDishResponse,
+    IUpdateDishBody,
+} from "../../../interfaces/dish.interface";
 
 export default function EditDish({
     dish,

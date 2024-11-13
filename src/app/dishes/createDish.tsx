@@ -1,12 +1,12 @@
+import { Autocomplete, TextField } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ICreateDishBody } from "../../../interfaces/dish.interface";
-import { createDishApi } from "../../../api/dish.api";
-import { useState, ChangeEvent, useEffect, useRef } from "react";
 import Image from "next/legacy/image";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { createDishProductApi } from "../../../api/dish-products.api";
+import { createDishApi } from "../../../api/dish.api";
 import { getProductByCategoryApi } from "../../../api/product.api";
 import { ICreateDish_ProductsBody } from "../../../interfaces/dish-products.interface";
-import { Autocomplete, TextField } from "@mui/material";
-import { createDishProductApi } from "../../../api/dish-products.api";
+import { ICreateDishBody } from "../../../interfaces/dish.interface";
 
 interface CreateDishProps {
     onDishCreated: () => void;
