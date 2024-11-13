@@ -44,9 +44,6 @@ const Navbar = () => {
               <Moon className="cursor-pointer text-gray-500" size={24}></Moon>
             )}
           </button>
-          <Link href="/" className="px-3">
-            <Settings className="cursor-pointer text-gray-500" size={24} />
-          </Link>
         </div>
       </div>
     </div>

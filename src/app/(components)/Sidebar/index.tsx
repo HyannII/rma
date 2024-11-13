@@ -10,6 +10,7 @@ import {
     Contact,
     ContactRound,
     CookingPot,
+    Copyright,
     Icon,
     Layout,
     LucideIcon,
@@ -158,15 +159,6 @@ const Sidebar = () => {
                     label="Báo cáo"
                     isCollapsed={isSidebarCollapsed}
                 ></SidebarLink>
-            </div>
-            {/* footer */}
-            <div>
-                <SidebarLink
-                    href="/settings"
-                    icon={Settings}
-                    label="Cài đặt"
-                    isCollapsed={isSidebarCollapsed}
-                />
             </div>
         </div>
     );

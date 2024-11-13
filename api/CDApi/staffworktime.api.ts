@@ -34,3 +34,8 @@ export const deleteStaffWorkTime = async (id: number) => {
   const res = await api.delete<StaffShift>(`/workingtime/delete/${id}`);
   return res.data;
 };
+
+export const addRollCall = async (id: number) => {
+  const res = await api.post<StaffShift>(`/workingtime/attendance/${id}`);
+  return res.data;
+}

@@ -24,3 +24,7 @@ export interface createStaffWorkTimeBody {
 export interface deleteStaffWorkTimeBody {
   message: string
 }
+
+export interface addRollCall {
+  message: string
+}

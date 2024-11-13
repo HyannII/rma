@@ -2,11 +2,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import {
   getStaffWorkTime,
-  deleteStaffWorkTime,
+  addRollCall,
   getStaffShift,
 } from "../../../api/CDApi/staffworktime.api";
 import {
-  deleteStaffWorkTimeBody,
   StaffShift,
   StaffWork,
 } from "../../../interfaces/CDInterface/staffworktime.interface";
@@ -16,7 +15,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { getAllStaffsApi } from "../../../api/staff.api";
 import { getAllShift } from "../../../api/CDApi/shift.api";
 
-export default function DeleteShiftForStaff() {
+export default function AddRollCall() {
   const [staff_id, setStaffId] = useState<number | null>(null);
   const [shift_id, setShiftId] = useState<number | null>(null);
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
@@ -56,18 +55,18 @@ export default function DeleteShiftForStaff() {
     queryFn: getStaffShift,
   });
 
-  const deleteStaffWorkTimeMutation = useMutation({
-    mutationFn: (staff_shift_id: number) => deleteStaffWorkTime(staff_shift_id),
+  const addRollCallMutation = useMutation({
+    mutationFn: (staff_shift_id: number) => addRollCall(staff_shift_id),
     onSuccess: () => {
-      console.log("Deleted staff work time successfully");
+      console.log("Điểm danh thành công");
       queryClient.invalidateQueries();
     },
     onError: (error) => {
-      console.log("Error deleting staff work time:", error);
+      console.log("Điểm danh thất bại:", error);
     },
   });
 
-  const handleDeleteShiftForStaff = () => {
+  const handleAddRollCall = () => {
     if (staff_id && shift_id && selectedDate) {
       // Cộng thêm 1 ngày vào selectedDate trước khi thực hiện thao tác xóa
       const updatedDate = selectedDate.subtract(1, "day");
@@ -93,7 +92,7 @@ export default function DeleteShiftForStaff() {
         console.log("StaffShiftEntry:", staffShiftEntry);
 
         if (staffShiftEntry) {
-          deleteStaffWorkTimeMutation.mutate(staffShiftEntry.staff_shift_id);
+          addRollCallMutation.mutate(staffShiftEntry.staff_shift_id);
         } else {
           console.log("No matching staff shift found.");
         }
@@ -105,11 +104,11 @@ export default function DeleteShiftForStaff() {
 
   return (
     <div className="flex flex-wrap w-full mx-auto p-6">
-      <h1 className="text-4xl font-bold mb-4 w-full">Delete Shift for Staff</h1>
+      <h1 className="text-4xl font-bold mb-4 w-full">Điểm danh</h1>
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          handleDeleteShiftForStaff();
+          handleAddRollCall();
         }}
         className="flex flex-wrap w-full"
       >
@@ -153,7 +152,7 @@ export default function DeleteShiftForStaff() {
           type="submit"
           className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
         >
-          Delete Shift for Staff
+          Điểm danh
         </button>
       </form>
     </div>

@@ -78,8 +78,11 @@ const ReportShift = () => {
     useState(false);
   const [isDeleteShiftForStaffOpen, setIsDeleteShiftForStaffOpen] =
     useState(false);
+  const [isAddRollCallOpen, setIsAddRollCallOpen] =
+    useState(false);
   const closeCreateShiftForStaff = () => setIsCreateShiftForStaffOpen(false);
   const closeDeleteShiftForStaff = () => setIsDeleteShiftForStaffOpen(false);
+  const closeAddRollCall = () => setIsAddRollCallOpen(false);
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
   const [shouldResetForm, setShouldResetForm] = useState(false);
 
@@ -184,9 +187,15 @@ const ReportShift = () => {
           </button>
           <button
             onClick={() => setIsDeleteShiftForStaffOpen(true)}
-            className="flex items-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 ml-2 rounded"
+            className="flex items-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 mx-2 rounded"
           >
             <Trash2 className="w-5 h-5 mr-2 !text-gray-100" /> Xoá ca đã gán
+          </button>
+          <button
+            onClick={() => setIsAddRollCallOpen(true)}
+            className="flex items-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 ml-2 rounded"
+          >
+            <Trash2 className="w-5 h-5 mr-2 !text-gray-100" /> Điểm danh
           </button>
         </div>
       </div>
@@ -205,8 +214,10 @@ const ReportShift = () => {
       <ShiftForStaffModals
         isCreateShiftForStaffOpen={isCreateShiftForStaffOpen}
         isDeleteShiftForStaffOpen={isDeleteShiftForStaffOpen}
+        isAddRollCallOpen={isAddRollCallOpen}
         closeCreateShiftForStaff={closeCreateShiftForStaff}
         closeDeleteShiftForStaff={closeDeleteShiftForStaff}
+        closeAddRollCall={closeAddRollCall}
         handleShiftForStaffCreated={handleShiftForStaffCreated}
         shouldResetForm={shouldResetForm}
         setShouldResetForm={setShouldResetForm}
