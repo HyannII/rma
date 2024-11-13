@@ -1,15 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ICreateTransactionBody } from "../../../interfaces/transaction.interface";
-import { createTransactionApi } from "../../../api/transaction.api";
-import { useState, ChangeEvent, useEffect, useRef } from "react";
-import Image from "next/legacy/image";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import dayjs, { Dayjs } from "dayjs";
-import { getAllStaffsApi } from "../../../api/staff.api";
-import { getAllProvidersApi } from "../../../api/provider.api";
-import { getAllProductsApi } from "../../../api/product.api";
 import { Autocomplete, TextField } from "@mui/material";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { getAllProductsApi } from "../../../api/product.api";
+import { getAllProvidersApi } from "../../../api/provider.api";
+import { getAllStaffsApi } from "../../../api/staff.api";
+import { createTransactionApi } from "../../../api/transaction.api";
+import { ICreateTransactionBody } from "../../../interfaces/transaction.interface";
 
 interface CreateTransactionProps {
     onTransactionCreated: () => void;

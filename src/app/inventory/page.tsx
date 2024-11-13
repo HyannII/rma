@@ -1,18 +1,19 @@
 "use client";
 
-import { IProductResponse } from "../../../interfaces/product.interface";
+import CustomPaginationDataGrid from "@/utils/customPaginationDataGrid";
+import CustomToolbar from "@/utils/customToolbarDataGrid";
+import { DataGridPremium } from "@mui/x-data-grid-premium";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { DataGridPremium, GridColDef } from "@mui/x-data-grid-premium";
+import { useState } from "react";
+import Header from "../(components)/Header";
 import {
     deleteProductApi,
     getAllProductsApi,
     getProductByFieldApi,
 } from "../../../api/product.api";
-import { Box } from "@mui/material";
-import { useState } from "react";
-import Header from "../(components)/Header";
-import CustomToolbar from "@/utils/customToolbarDataGrid";
-import CustomPaginationDataGrid from "@/utils/customPaginationDataGrid";
+import { IProductResponse } from "../../../interfaces/product.interface";
+import Buttons from "../../utils/buttons";
+import SearchBar from "../../utils/searchBar";
 import {
     CreateProductSuccessDialog,
     DeleteConfirmDialog,
@@ -21,8 +22,6 @@ import {
     NoMatchProductDialog,
 } from "./parts/dialogs";
 import ProductModals from "./parts/modals";
-import SearchBar from "../../utils/searchBar";
-import Buttons from "../../utils/buttons";
 import { productColumns } from "./parts/productColumns";
 
 export default function Inventory() {

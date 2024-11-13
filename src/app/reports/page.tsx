@@ -1,17 +1,11 @@
 "use client";
 
-import { IProductResponse } from "../../../interfaces/product.interface";
-import { useQuery } from "@tanstack/react-query";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { getAllProductsApi } from "../../../api/product.api";
-import { Box } from "@mui/material";
 import { useState } from "react";
-import ReportProduct from "./ReportProduct";
-import ReportStaff from "./ReportStaff";
 import ReportBill from "./ReportBill";
-import ReportTransaction from "./ReportTransaction";
-import { act } from "react-dom/test-utils";
+import ReportProduct from "./ReportProduct";
 import ReportShift from "./ReportShift";
+import ReportStaff from "./ReportStaff";
+import ReportTransaction from "./ReportTransaction";
 
 const Report = () => {
     const [activeComponent, setActiveComponent] = useState<
