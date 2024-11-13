@@ -205,17 +205,6 @@ export default function Transactions() {
     }
   };
 
-  // if (isFetching) {
-  //     return <div className="py-4">Đang tải...</div>;
-  // }
-  // if (isError || !transactions) {
-  //     return (
-  //         <div className="text-center text-red-500 py-4">
-  //             Lấy danh sách hàng không thành công
-  //         </div>
-  //     );
-  // }
-
   return (
     <div className="flex flex-col w-full">
       <Header name="Hoá đơn nhập hàng"></Header>

@@ -1,5 +1,3 @@
-// ReportShift.tsx
-
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
@@ -11,6 +9,9 @@ import ShiftTable from "./parts/shiftTable";
 import { Schedule, createStaffSchedule } from "./parts/scheduleUtils";
 import StaffWorkTimeTable from "./parts/staffWorkTimeTable";
 import Header from "../(components)/Header";
+import { StaffWork, StaffShift } from "../../../interfaces/CDInterface/staffworktime.interface"; // Đảm bảo file này có các interface mới
+import ShiftForStaffModals from "./parts/modals";
+import { CreateShiftForStaffSuccessDialog } from "./parts/dialogs";
 
 const ReportShift = () => {
   const [isExporting, setIsExporting] = useState(false);
@@ -31,11 +32,20 @@ const ReportShift = () => {
     refetchOnWindowFocus: false,
   });
 
-  const { data: staffWorkTimes, isLoading: isStaffWorkTimeLoading } = useQuery({
+  const { data: staffWorkTimes, isLoading: isStaffWorkTimeLoading } = useQuery<
+    StaffWork[]
+  >({
     queryKey: ["staffworktime"],
     queryFn: getStaffWorkTime,
     refetchOnWindowFocus: false,
   });
+
+  const [isCreateShiftForStaffOpen, setIsCreateShiftForStaffOpen] = useState(false);
+  const closeCreateShiftForStaff = () => setIsCreateShiftForStaffOpen(false);
+  const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
+  const [isDeleteConfirmDialogOpen, setIsDeleteConfirmDialogOpen] =
+    useState(false);
+  const [shouldResetForm, setShouldResetForm] = useState(false);
 
   const staffSchedule = useMemo(() => {
     if (!shifts || !staffWorkTimes) return {};
@@ -73,15 +83,37 @@ const ReportShift = () => {
       const row = [shift.name];
       for (let i = 1; i <= 7; i++) {
         const cellKey = `${shift.name}-thu${i}`;
-        row.push(
-          scheduleData[cellKey]?.join("\n") || "" // Thêm ký tự xuống dòng giữa các tên
-        );
+        row.push(scheduleData[cellKey]?.join("\n") || "");
       }
       rows.push(row);
     });
 
     return [headers, ...rows];
   };
+
+  const handleShiftForStaffCreated = () => {
+    setIsSuccessDialogOpen(true);
+  }
+  const handleCreateMore = () => {
+    setIsSuccessDialogOpen(false); // Close success dialog, keep modal open
+    setShouldResetForm(true);
+  };
+
+  const handleCancel = () => {
+    setIsSuccessDialogOpen(false); // Close both dialog and modal
+    setIsCreateShiftForStaffOpen(false);
+  };
+
+  // const handleConfirmDelete = () => {
+  //   setIsDeleteConfirmDialogOpen(true);
+  // };
+
+  // const handleConfirmedDelete = () => {
+  //   selectedShiftForStaffIds.forEach((id) => {
+  //     deleteShiftForStaffMutation.mutate(id);
+  //   });
+  //   setIsDeleteConfirmDialogOpen(false); // Close confirmation dialog after deletion
+  // };
 
   return (
     <div>
@@ -106,7 +138,20 @@ const ReportShift = () => {
         >
           {isExporting ? "Đang xuất..." : "Xuất file excel"}
         </button>
+        <button onClick={() => setIsCreateShiftForStaffOpen(true)}>Tạo</button>
       </div>
+      <ShiftForStaffModals
+        isCreateShiftForStaffOpen={isCreateShiftForStaffOpen}
+        closeCreateShiftForStaff={closeCreateShiftForStaff}
+        handleShiftForStaffCreated={handleShiftForStaffCreated}
+        shouldResetForm={shouldResetForm}
+        setShouldResetForm={setShouldResetForm}
+      />
+      <CreateShiftForStaffSuccessDialog
+        open={isSuccessDialogOpen}
+        onCreateMore={handleCreateMore}
+        onCancel={handleCancel}
+      />
     </div>
   );
 };
