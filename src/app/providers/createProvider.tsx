@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ICreateProviderBody } from "../../../interfaces/provider.interface";
-import { createProviderApi } from "../../../api/provider.api";
-import { useState, ChangeEvent, useEffect, useRef } from "react";
 import Image from "next/legacy/image";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { createProviderApi } from "../../../api/provider.api";
+import { ICreateProviderBody } from "../../../interfaces/provider.interface";
 
 interface CreateProviderProps {
     onProviderCreated: () => void;

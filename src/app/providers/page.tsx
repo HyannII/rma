@@ -1,40 +1,29 @@
 "use client";
 
-import { IProviderResponse } from "../../../interfaces/provider.interface";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import Header from "../(components)/Header";
 import {
     deleteProviderApi,
     getAllProvidersApi,
     getProviderByFieldApi,
 } from "../../../api/provider.api";
-import {
-    Box,
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-} from "@mui/material";
-import CreateProvider from "./createProvider";
-import { useState } from "react";
-import EditProvider from "./editProvider";
-import { CircleX, PlusCircleIcon, SearchIcon, Trash2, X } from "lucide-react";
-import Header from "../(components)/Header";
+import { IProviderResponse } from "../../../interfaces/provider.interface";
 
-import CustomToolbar from "@/utils/customToolbarDataGrid";
-import { DataGridPremium, GridColDef } from "@mui/x-data-grid-premium";
+import Buttons from "@/utils/buttons";
 import CustomPaginationDataGrid from "@/utils/customPaginationDataGrid";
-import { providerColumns } from "./parts/providerColumns";
+import CustomToolbar from "@/utils/customToolbarDataGrid";
+import SearchBar from "@/utils/searchBar";
+import { DataGridPremium } from "@mui/x-data-grid-premium";
 import {
     CreateProviderSuccessDialog,
-    EditProviderSuccessDialog,
-    DeleteProviderSuccessDialog,
     DeleteConfirmDialog,
+    DeleteProviderSuccessDialog,
+    EditProviderSuccessDialog,
     NoMatchProviderDialog,
 } from "./parts/dialogs";
 import ProviderModals from "./parts/modals";
-import Buttons from "@/utils/buttons";
-import SearchBar from "@/utils/searchBar";
+import { providerColumns } from "./parts/providerColumns";
 
 export default function Providers() {
     const queryClient = useQueryClient();
