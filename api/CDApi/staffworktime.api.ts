@@ -1,10 +1,15 @@
-import { createStaffWorkTimeBody, StaffWork } from "../../interfaces/CDInterface/staffworktime.interface";
+import { createStaffWorkTimeBody, deleteStaffWorkTimeBody, StaffShift, StaffWork } from "../../interfaces/CDInterface/staffworktime.interface";
 import api from "../api";
 
 export const getStaffWorkTime = async () => {
   const res = await api.get<StaffWork[]>("/workingtime/getall");
   return res.data;
 };
+
+export const getStaffShift = async () => {
+  const res = await api.get<StaffShift>("/workingtime/getall");
+  return res.data;
+}
 
 export const createStaffWorkTime = async (
   body: [staff_id: number, shift_id: number, date: string]
@@ -22,5 +27,10 @@ export const createStaffWorkTime = async (
     },
   });
 
+  return res.data;
+};
+
+export const deleteStaffWorkTime = async (id: number) => {
+  const res = await api.delete<StaffShift>(`/workingtime/delete/${id}`);
   return res.data;
 };

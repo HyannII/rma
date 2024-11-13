@@ -20,13 +20,13 @@ export const CreateDishSuccessDialog: React.FC<{
     onCancel: () => void;
 }> = ({ open, onCreateMore, onCancel }) => (
     <Dialog open={open}>
-        <DialogTitle>Dish Created Successfully!</DialogTitle>
+        <DialogTitle>Tạo món ăn thành công!</DialogTitle>
         <DialogContent>
-            <p>Do you want to create another product?</p>
+            <p>Bạn có muốn tạo món khác không?</p>
         </DialogContent>
         <DialogActions>
-            <Button onClick={onCreateMore}>Create More</Button>
-            <Button onClick={onCancel}>Cancel</Button>
+            <Button onClick={onCreateMore}>Tạo thêm</Button>
+            <Button onClick={onCancel}>Huỷ</Button>
         </DialogActions>
     </Dialog>
 );
@@ -38,21 +38,21 @@ export const CreateDishSuccessDialog: React.FC<{
  * @returns {JSX.Element}
  */
 export const EditDishSuccessDialog: React.FC<{
-    open: boolean;
-    onClose: () => void;
+  open: boolean;
+  onClose: () => void;
 }> = ({ open, onClose }) => (
-    <Dialog
-        open={open}
-        onClose={onClose}
-    >
-        <DialogTitle>Edit Successful</DialogTitle>
-        <DialogContent>
-            <p>The selected products have been successfully edited.</p>
-        </DialogContent>
-        <DialogActions>
-            <Button onClick={onClose}>Close</Button>
-        </DialogActions>
-    </Dialog>
+  <Dialog
+    open={open}
+    onClose={onClose}
+  >
+    <DialogTitle>Chỉnh sửa thông tin thành công!</DialogTitle>
+    <DialogContent>
+      <p>Thông tin món ăn được chọn đã được chỉnh sửa thành công.</p>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={onClose}>Đóng</Button>
+    </DialogActions>
+  </Dialog>
 );
 
 /**
@@ -62,21 +62,21 @@ export const EditDishSuccessDialog: React.FC<{
  * @returns {JSX.Element}
  */
 export const DeleteDishSuccessDialog: React.FC<{
-    open: boolean;
-    onClose: () => void;
+  open: boolean;
+  onClose: () => void;
 }> = ({ open, onClose }) => (
-    <Dialog
-        open={open}
-        onClose={onClose}
-    >
-        <DialogTitle>Delete Successful</DialogTitle>
-        <DialogContent>
-            <p>The selected products have been successfully deleted.</p>
-        </DialogContent>
-        <DialogActions>
-            <Button onClick={onClose}>Close</Button>
-        </DialogActions>
-    </Dialog>
+  <Dialog
+    open={open}
+    onClose={onClose}
+  >
+    <DialogTitle>Xoá món ăn thành công!</DialogTitle>
+    <DialogContent>
+      <p>Món ăn đã được xoá thành công.</p>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={onClose}>Close</Button>
+    </DialogActions>
+  </Dialog>
 );
 
 /**
@@ -99,7 +99,7 @@ export const DeleteConfirmDialog: React.FC<{
     <Dialog open={open}>
         <DialogTitle>Delete</DialogTitle>
         <DialogContent>
-            <p>Do you want to delete these products?</p>
+            <p>Bạn có muốn xoá những món ăn này không?</p>
             <ul>
                 {selectedDishNames.map((name, index) => (
                     <li key={index}>{name}</li>
@@ -124,12 +124,12 @@ export const NoMatchDishDialog: React.FC<{
     onClose: () => void;
 }> = ({ open, onClose }) => (
     <Dialog open={open}>
-        <DialogTitle>No Matching Dish</DialogTitle>
+        <DialogTitle>Không tìm thấy món ăn!</DialogTitle>
         <DialogContent>
-            <p>No product matched your search request</p>
+            <p>Không có món ăn nào khớp với tìm kiếm của bạn.</p>
         </DialogContent>
         <DialogActions>
-            <Button onClick={onClose}>Close</Button>
+            <Button onClick={onClose}>Đóng</Button>
         </DialogActions>
     </Dialog>
 );

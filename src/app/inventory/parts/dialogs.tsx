@@ -1,11 +1,11 @@
 // ProductDialogs.tsx
 import React from "react";
 import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
 } from "@mui/material";
 
 /**
@@ -19,20 +19,20 @@ import {
  * @returns {JSX.Element}
  */
 export const CreateProductSuccessDialog: React.FC<{
-    open: boolean;
-    onCreateMore: () => void;
-    onCancel: () => void;
+  open: boolean;
+  onCreateMore: () => void;
+  onCancel: () => void;
 }> = ({ open, onCreateMore, onCancel }) => (
-    <Dialog open={open}>
-        <DialogTitle>Product Created Successfully!</DialogTitle>
-        <DialogContent>
-            <p>Do you want to create another product?</p>
-        </DialogContent>
-        <DialogActions>
-            <Button onClick={onCreateMore}>Create More</Button>
-            <Button onClick={onCancel}>Cancel</Button>
-        </DialogActions>
-    </Dialog>
+  <Dialog open={open}>
+    <DialogTitle>Tạo sản phẩm thành công!</DialogTitle>
+    <DialogContent>
+      <p>Bạn có muốn tạo sản phẩm khác không?</p>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={onCreateMore}>Tạo thêm</Button>
+      <Button onClick={onCancel}>Huỷ</Button>
+    </DialogActions>
+  </Dialog>
 );
 
 /**
@@ -42,23 +42,22 @@ export const CreateProductSuccessDialog: React.FC<{
  * @returns {JSX.Element}
  */
 export const EditProductSuccessDialog: React.FC<{
-    open: boolean;
-    onClose: () => void;
+  open: boolean;
+  onClose: () => void;
 }> = ({ open, onClose }) => (
-    <Dialog
-        open={open}
-        onClose={onClose}
-    >
-        <DialogTitle>Edit Successful</DialogTitle>
-        <DialogContent>
-            <p>The selected products have been successfully edited.</p>
-        </DialogContent>
-        <DialogActions>
-            <Button onClick={onClose}>Close</Button>
-        </DialogActions>
-    </Dialog>
+  <Dialog
+    open={open}
+    onClose={onClose}
+  >
+    <DialogTitle>Chỉnh sửa thông tin thành công!</DialogTitle>
+    <DialogContent>
+      <p>Thông tin sản phẩm được chọn đã được sửa thành công.</p>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={onClose}>Đóng</Button>
+    </DialogActions>
+  </Dialog>
 );
-
 
 /**
  * Delete Product Success Dialog
@@ -67,21 +66,21 @@ export const EditProductSuccessDialog: React.FC<{
  * @returns {JSX.Element}
  */
 export const DeleteProductSuccessDialog: React.FC<{
-    open: boolean;
-    onClose: () => void;
+  open: boolean;
+  onClose: () => void;
 }> = ({ open, onClose }) => (
-    <Dialog
-        open={open}
-        onClose={onClose}
-    >
-        <DialogTitle>Delete Successful</DialogTitle>
-        <DialogContent>
-            <p>The selected products have been successfully deleted.</p>
-        </DialogContent>
-        <DialogActions>
-            <Button onClick={onClose}>Close</Button>
-        </DialogActions>
-    </Dialog>
+  <Dialog
+    open={open}
+    onClose={onClose}
+  >
+    <DialogTitle>Xoá sản phẩm thành công!</DialogTitle>
+    <DialogContent>
+      <p>Sản phẩm được chọn đã được xoá thành công.</p>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={onClose}>Close</Button>
+    </DialogActions>
+  </Dialog>
 );
 
 /**
@@ -96,26 +95,26 @@ export const DeleteProductSuccessDialog: React.FC<{
  * @returns {JSX.Element}
  */
 export const DeleteConfirmDialog: React.FC<{
-    open: boolean;
-    selectedProductNames: string[];
-    onConfirmDelete: () => void;
-    onCancel: () => void;
+  open: boolean;
+  selectedProductNames: string[];
+  onConfirmDelete: () => void;
+  onCancel: () => void;
 }> = ({ open, selectedProductNames, onConfirmDelete, onCancel }) => (
-    <Dialog open={open}>
-        <DialogTitle>Delete</DialogTitle>
-        <DialogContent>
-            <p>Do you want to delete these products?</p>
-            <ul>
-                {selectedProductNames.map((name, index) => (
-                    <li key={index}>{name}</li>
-                ))}
-            </ul>
-        </DialogContent>
-        <DialogActions>
-            <Button onClick={onConfirmDelete}>Xác nhận</Button>
-            <Button onClick={onCancel}>Huỷ</Button>
-        </DialogActions>
-    </Dialog>
+  <Dialog open={open}>
+    <DialogTitle>Delete</DialogTitle>
+    <DialogContent>
+      <p>Bạn có muốn xoá những sản phẩm này không?</p>
+      <ul>
+        {selectedProductNames.map((name, index) => (
+          <li key={index}>{name}</li>
+        ))}
+      </ul>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={onConfirmDelete}>Xác nhận</Button>
+      <Button onClick={onCancel}>Huỷ</Button>
+    </DialogActions>
+  </Dialog>
 );
 
 /**
@@ -125,16 +124,16 @@ export const DeleteConfirmDialog: React.FC<{
  * @returns {JSX.Element}
  */
 export const NoMatchProductDialog: React.FC<{
-    open: boolean;
-    onClose: () => void;
+  open: boolean;
+  onClose: () => void;
 }> = ({ open, onClose }) => (
-    <Dialog open={open}>
-        <DialogTitle>No Matching Product</DialogTitle>
-        <DialogContent>
-            <p>No product matched your search request</p>
-        </DialogContent>
-        <DialogActions>
-            <Button onClick={onClose}>Close</Button>
-        </DialogActions>
-    </Dialog>
+  <Dialog open={open}>
+    <DialogTitle>Không tìm thấy sản phẩm!</DialogTitle>
+    <DialogContent>
+      <p>Không có sản phẩm nào khớp với tìm kiếm của bạn.</p>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={onClose}>Close</Button>
+    </DialogActions>
+  </Dialog>
 );

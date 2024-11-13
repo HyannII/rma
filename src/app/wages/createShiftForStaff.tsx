@@ -178,7 +178,6 @@ export default function CreateShiftForStaff({
                     ...prevData,
                     staff_id: newValue.staff_id, // Set the staff_id in transactionData
                   }));
-                  setSelectedStaffs([...selectedStaffs, newValue]);
                 }
               }}
               renderInput={(params) => <TextField {...params} />} // Reset ô chọn sau khi chọn
@@ -200,7 +199,6 @@ export default function CreateShiftForStaff({
                     shift_id: newValue.shift_id, // Set the staff_id in transactionData
                   }));
                   // Thêm phần tử đã chọn vào danh sách selectedIngredients
-                  setSelectedShifts([...selectedShifts, newValue]);
                 }
               }}
               renderInput={(params) => <TextField {...params} />} // Reset ô chọn sau khi chọn
@@ -209,7 +207,7 @@ export default function CreateShiftForStaff({
               }
             ></Autocomplete>
           </div>
-          <div className="mb-4 w-1/2 px-2">
+          <div className="mb-4 w-full px-2">
             <label
               className={labelCssStyles}
               htmlFor="dateOfBirth"

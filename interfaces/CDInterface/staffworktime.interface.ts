@@ -20,3 +20,7 @@ export interface createStaffWorkTimeBody {
   shift_id: number;
   date: string; // ISO 8601 formatted date-time string
 }
+
+export interface deleteStaffWorkTimeBody {
+  message: string
+}

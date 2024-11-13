@@ -14,8 +14,8 @@ import {
   StaffShift,
 } from "../../../interfaces/CDInterface/staffworktime.interface";
 import ShiftForStaffModals from "./parts/modals";
-import { CreateShiftForStaffSuccessDialog } from "./parts/dialogs";
-import { FileDown, PlusCircleIcon } from "lucide-react";
+import { CreateShiftForStaffSuccessDialog, DeleteShiftForStaffSuccessDialog } from "./parts/dialogs";
+import { FileDown, PlusCircleIcon, Trash2 } from "lucide-react";
 import dayjs from "dayjs"; // Import dayjs
 
 const ReportShift = () => {
@@ -76,7 +76,10 @@ const ReportShift = () => {
 
   const [isCreateShiftForStaffOpen, setIsCreateShiftForStaffOpen] =
     useState(false);
+  const [isDeleteShiftForStaffOpen, setIsDeleteShiftForStaffOpen] =
+    useState(false);
   const closeCreateShiftForStaff = () => setIsCreateShiftForStaffOpen(false);
+  const closeDeleteShiftForStaff = () => setIsDeleteShiftForStaffOpen(false);
   const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
   const [shouldResetForm, setShouldResetForm] = useState(false);
 
@@ -154,7 +157,7 @@ const ReportShift = () => {
     <div>
       <div className="flex justify-between items-center">
         <div>
-          <Header name="Ca làm và lương" />
+          <Header name="Ca làm" />
         </div>
         <div className="mr-4">
           Tuần thứ {weekNumberInMonth},{" "}
@@ -175,9 +178,15 @@ const ReportShift = () => {
           </button>
           <button
             onClick={() => setIsCreateShiftForStaffOpen(true)}
-            className="flex items-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 ml-2 rounded"
+            className="flex items-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 mx-2 rounded"
           >
             <PlusCircleIcon className="w-5 h-5 mr-2 !text-gray-100" /> Tạo mới
+          </button>
+          <button
+            onClick={() => setIsDeleteShiftForStaffOpen(true)}
+            className="flex items-center bg-gray-700 hover:bg-gray-500 text-gray-100 font-bold py-2 px-4 ml-2 rounded"
+          >
+            <Trash2 className="w-5 h-5 mr-2 !text-gray-100" /> Xoá ca đã gán
           </button>
         </div>
       </div>
@@ -195,7 +204,9 @@ const ReportShift = () => {
       </div>
       <ShiftForStaffModals
         isCreateShiftForStaffOpen={isCreateShiftForStaffOpen}
+        isDeleteShiftForStaffOpen={isDeleteShiftForStaffOpen}
         closeCreateShiftForStaff={closeCreateShiftForStaff}
+        closeDeleteShiftForStaff={closeDeleteShiftForStaff}
         handleShiftForStaffCreated={handleShiftForStaffCreated}
         shouldResetForm={shouldResetForm}
         setShouldResetForm={setShouldResetForm}
@@ -204,6 +215,10 @@ const ReportShift = () => {
         open={isSuccessDialogOpen}
         onCreateMore={handleCreateMore}
         onCancel={handleCancel}
+      />
+      <DeleteShiftForStaffSuccessDialog
+        open={isSuccessDialogOpen}
+        onClose={handleCancel}
       />
     </div>
   );
