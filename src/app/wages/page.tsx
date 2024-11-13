@@ -16,6 +16,7 @@ import {
 import ShiftForStaffModals from "./parts/modals";
 import { CreateShiftForStaffSuccessDialog } from "./parts/dialogs";
 import { FileDown, PlusCircleIcon } from "lucide-react";
+import dayjs from "dayjs"; // Import dayjs
 
 const ReportShift = () => {
   const [isExporting, setIsExporting] = useState(false);
@@ -85,17 +86,13 @@ const ReportShift = () => {
     return staffWorkTimes
       .map((staffWork) => ({
         ...staffWork,
-        shifts: staffWork.shifts.filter((shift) => {
-          const shiftDate = new Date(shift.date);
-          const normalizedShiftDate = normalizeToUTCStartOfDay(shiftDate); // Normalize shift date to UTC start of the day
-          return (
-            normalizedShiftDate >= normalizedStartOfWeek &&
-            normalizedShiftDate <= normalizedEndOfWeek
-          );
+        shifts: staffWork.shifts.map((shift) => {
+          const shiftDate = dayjs(shift.date).add(7, "hour").toISOString(); // Add 7 hours and convert to ISO format
+          return { ...shift, date: shiftDate };
         }),
       }))
       .filter((staffWork) => staffWork.shifts.length > 0); // Include only staff with shifts this week
-  }, [staffWorkTimes, normalizedStartOfWeek, normalizedEndOfWeek]);
+  }, [staffWorkTimes]);
 
   const staffSchedule = useMemo(() => {
     if (!shifts || !filteredStaffWorkTimes) return {};
@@ -159,10 +156,10 @@ const ReportShift = () => {
         <div>
           <Header name="Ca làm và lương" />
         </div>
-          <div className="mr-4">
-            Tuần thứ {weekNumberInMonth},{" "}
-            {normalizedStartOfWeek.toLocaleDateString('vi-VN')} -{" "}
-            {normalizedEndOfWeek.toLocaleDateString('vi-VN')}
+        <div className="mr-4">
+          Tuần thứ {weekNumberInMonth},{" "}
+          {normalizedStartOfWeek.toLocaleDateString("vi-VN")} -{" "}
+          {normalizedEndOfWeek.toLocaleDateString("vi-VN")}
         </div>
       </div>
       {/* Display current week number in the month */}
