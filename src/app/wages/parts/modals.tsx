@@ -5,6 +5,7 @@ import CreateShiftForStaff from "../createShiftForStaff";
 // import EditShiftForStaff from "../editShiftForStaff";
 import { StaffWork } from "../../../../interfaces/CDInterface/staffworktime.interface";
 import DeleteShiftForStaff from "../deleteShiftForStaff";
+import AddRollCall from "../addRollCall";
 
 /**
  * Renders a modal for creating or editing a transaction.
@@ -24,16 +25,20 @@ import DeleteShiftForStaff from "../deleteShiftForStaff";
 const ShiftForStaffModals = ({
   isCreateShiftForStaffOpen,
   isDeleteShiftForStaffOpen,
+  isAddRollCallOpen,
   closeDeleteShiftForStaff,
   closeCreateShiftForStaff,
+  closeAddRollCall,
   handleShiftForStaffCreated,
   shouldResetForm,
   setShouldResetForm,
 }: {
   isCreateShiftForStaffOpen: boolean;
   isDeleteShiftForStaffOpen: boolean;
+  isAddRollCallOpen: boolean;
   closeCreateShiftForStaff: () => void;
   closeDeleteShiftForStaff: () => void;
+  closeAddRollCall: () => void;
   handleShiftForStaffCreated: () => void;
   shouldResetForm: boolean;
   setShouldResetForm: (value: boolean) => void;
@@ -66,9 +71,26 @@ const ShiftForStaffModals = ({
             <X />
           </button>
           <DeleteShiftForStaff
-            // // onShiftForStaffCreated={handleShiftForStaffCreated}
-            // shouldResetForm={shouldResetForm}
-            // setShouldResetForm={setShouldResetForm}
+          // // onShiftForStaffCreated={handleShiftForStaffCreated}
+          // shouldResetForm={shouldResetForm}
+          // setShouldResetForm={setShouldResetForm}
+          />
+        </div>
+      </div>
+    )}
+    {isAddRollCallOpen && (
+      <div className="fixed inset-0 flex items-center justify-center z-50">
+        <div className="bg-white p-6 rounded-lg shadow-4xl max-w-2xl w-full relative">
+          <button
+            onClick={closeAddRollCall}
+            className="flex absolute top-2 right-2 w-7 h-7 rounded bg-gray-400 hover:bg-red-600 text-gray-100 font-bold justify-center items-center"
+          >
+            <X />
+          </button>
+          <AddRollCall
+          // // onShiftForStaffCreated={handleShiftForStaffCreated}
+          // shouldResetForm={shouldResetForm}
+          // setShouldResetForm={setShouldResetForm}
           />
         </div>
       </div>
