@@ -6,11 +6,21 @@ export const getStaffWorkTime = async () => {
   return res.data;
 };
 
-export const createStaffWorkTime = async (body: [staff_id: number, shift_id: number, date: string]) => {
-  const res = await api.post("/workingtime/assign", body, {
+export const createStaffWorkTime = async (
+  body: [staff_id: number, shift_id: number, date: string]
+) => {
+  // Tạo đối tượng URLSearchParams để gửi dưới dạng x-www-form-urlencoded
+  const formData = new URLSearchParams();
+  formData.append("staff_id", body[0].toString());
+  formData.append("shift_id", body[1].toString());
+  formData.append("date", body[2]);
+
+  // Gửi yêu cầu POST với header application/x-www-form-urlencoded
+  const res = await api.post("/workingtime/assign", formData, {
     headers: {
-      "Content-Type": "application/json", // Đảm bảo gửi dữ liệu dạng JSON
+      "Content-Type": "application/x-www-form-urlencoded", // Đảm bảo gửi dữ liệu dạng x-www-form-urlencoded
     },
   });
+
   return res.data;
 };

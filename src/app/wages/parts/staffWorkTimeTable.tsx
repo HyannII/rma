@@ -1,4 +1,5 @@
 import React from "react";
+import { StaffWork } from "../../../../interfaces/CDInterface/staffworktime.interface";
 
 interface StaffWorkTimeTableProps {
   staffWorkTimes: StaffWork[];
@@ -17,13 +18,13 @@ const StaffWorkTimeTable: React.FC<StaffWorkTimeTableProps> = ({
       <table className="table-auto w-full border border-collapse">
         <thead>
           <tr>
-            <th className="border border-gray-300 px-4 py-2 text-center bg-gray-200 text-sm">
+            <th className="border border-gray-300 px-4 py-2 text-center bg-gray-200">
               Tên
             </th>
-            <th className="border border-gray-300 px-4 py-2 text-center bg-gray-200 text-sm">
+            <th className="border border-gray-300 px-4 py-2 text-center bg-gray-200">
               Số lượng ca làm
             </th>
-            <th className="border border-gray-300 px-4 py-2 text-center bg-gray-200 text-sm">
+            <th className="border border-gray-300 px-4 py-2 text-center bg-gray-200">
               Số lần điểm danh trong tháng
             </th>
           </tr>
@@ -44,7 +45,7 @@ const StaffWorkTimeTable: React.FC<StaffWorkTimeTableProps> = ({
                 </tr>
               ))
             : staffWorkTimes?.map((staff) => {
-                const attendanceCount = staff.shifts.filter((shift) => {
+                const attendanceCount = staff.shifts.filter((shift: { date: string | number | Date; is_attendance: any; }) => {
                   const shiftDate = new Date(shift.date);
                   return (
                     shift.is_attendance &&
@@ -55,13 +56,13 @@ const StaffWorkTimeTable: React.FC<StaffWorkTimeTableProps> = ({
 
                 return (
                   <tr key={staff.staff_id}>
-                    <td className="border border-gray-300 px-4 py-2 text-center text-sm">
+                    <td className="border border-gray-300 px-4 py-2 text-center">
                       {staff.name}
                     </td>
-                    <td className="border border-gray-300 px-4 py-2 text-center text-sm">
+                    <td className="border border-gray-300 px-4 py-2 text-center">
                       {staff.shifts.length}
                     </td>
-                    <td className="border border-gray-300 px-4 py-2 text-center text-sm">
+                    <td className="border border-gray-300 px-4 py-2 text-center">
                       {attendanceCount}
                     </td>
                   </tr>

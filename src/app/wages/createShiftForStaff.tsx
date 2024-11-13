@@ -114,9 +114,45 @@ export default function CreateShiftForStaff({
   };
 
   const handleCreateShiftForStaff = async () => {
-    console.log(staffWorkData);
-    createStaffWorkTimeMutation.mutate([staffWorkData]);
+    // Kiểm tra giá trị của staffWorkData
+    console.log("Current staffWorkData:", staffWorkData);
+
+    // Kiểm tra từng trường và thông báo nếu trường đó thiếu
+    if (!staffWorkData.staff_id) {
+      console.log("Missing staff_id. Current value:", staffWorkData.staff_id);
+    }
+
+    if (!staffWorkData.shift_id) {
+      console.log("Missing shift_id. Current value:", staffWorkData.shift_id);
+    }
+
+    if (!staffWorkData.date) {
+      console.log("Missing date. Current value:", staffWorkData.date);
+    }
+
+    // Kiểm tra nếu tất cả các trường đều hợp lệ, thì tiến hành mutate
+    if (
+      staffWorkData.staff_id &&
+      staffWorkData.shift_id &&
+      staffWorkData.date
+    ) {
+      // Thêm 7 giờ vào ngày trước khi gọi hàm mutate
+      const adjustedDate = dayjs(staffWorkData.date)
+        .add(7, "hour")
+        .format("YYYY-MM-DDTHH:mm:ssZ");
+
+      // Cập nhật lại date trong staffWorkData với thời gian đã được điều chỉnh
+      createStaffWorkTimeMutation.mutate([
+        staffWorkData.staff_id,
+        staffWorkData.shift_id,
+        adjustedDate,
+      ]);
+    } else {
+      console.log("One or more required fields are missing.");
+    }
   };
+
+
 
   const labelCssStyles = "block text-sm font-medium text-gray-700";
   const inputCssStyles =
