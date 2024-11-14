@@ -1,12 +1,10 @@
 "use client";
 
-import { Menu, Moon, Settings, Sun, LogOut } from "lucide-react";
-import React from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/app/redux";
-import { setIsDarkMode, setIsSidebarCollapsed } from "../../../state";
+import { LogOut, Menu, Moon, Sun } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { setIsDarkMode, setIsSidebarCollapsed } from "../../../state";
 
 const Navbar = () => {
     const dispatch = useAppDispatch();
@@ -54,20 +52,33 @@ const Navbar = () => {
                 </button>
             </div>
 
-      {/* RIGHT SIDE */}
-      <div className="flex justify-between items-center gap-5">
-        <div className="flex">
-          <button onClick={toggleDarkMode} className="px-3">
-            {!isDarkMode ? (
-              <Sun className="cursor-pointer text-gray-500" size={24}></Sun>
-            ) : (
-              <Moon className="cursor-pointer text-gray-500" size={24}></Moon>
-            )}
-          </button>
+            {/* RIGHT SIDE */}
+            <div className="flex justify-between items-center gap-5">
+                <div className="flex">
+                    <button onClick={toggleDarkMode} className="px-3">
+                        {!isDarkMode ? (
+                            <Sun
+                                className="cursor-pointer text-gray-500"
+                                size={24}
+                            />
+                        ) : (
+                            <Moon
+                                className="cursor-pointer text-gray-500"
+                                size={24}
+                            />
+                        )}
+                    </button>
+                    {/* Logout Button */}
+                    <button onClick={handleLogout} className="px-3">
+                        <LogOut
+                            className="cursor-pointer text-gray-500"
+                            size={24}
+                        />
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default Navbar;
