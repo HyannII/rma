@@ -1,14 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ICreateProductBody } from "../../../interfaces/product.interface";
-import { createProductApi } from "../../../api/product.api";
+import Image from "next/legacy/image";
 import {
-    useState,
     ChangeEvent,
+    SetStateAction,
     useEffect,
     useRef,
-    SetStateAction,
+    useState,
 } from "react";
-import Image from "next/legacy/image";
+import { createProductApi } from "../../../api/product.api";
+import { ICreateProductBody } from "../../../interfaces/product.interface";
 
 interface CreateProductProps {
     onProductCreated: () => void;

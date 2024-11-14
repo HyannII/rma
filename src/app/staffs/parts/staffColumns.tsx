@@ -1,5 +1,5 @@
-import { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { Box } from "@mui/material";
+import { GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 
 export const staffColumns: GridColDef[] = [
     {

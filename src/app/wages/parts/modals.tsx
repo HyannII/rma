@@ -1,11 +1,9 @@
 // ShiftForStaffModals.js
-import React from "react";
-import { Delete, X } from "lucide-react";
+import { X } from "lucide-react";
 import CreateShiftForStaff from "../createShiftForStaff";
 // import EditShiftForStaff from "../editShiftForStaff";
-import { StaffWork } from "../../../../interfaces/CDInterface/staffworktime.interface";
-import DeleteShiftForStaff from "../deleteShiftForStaff";
 import AddRollCall from "../addRollCall";
+import DeleteShiftForStaff from "../deleteShiftForStaff";
 
 /**
  * Renders a modal for creating or editing a transaction.

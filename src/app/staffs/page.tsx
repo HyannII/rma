@@ -1,45 +1,31 @@
 "use client";
 
+import Buttons from "@/utils/buttons";
+import CustomPaginationDataGrid from "@/utils/customPaginationDataGrid";
+import CustomToolbar from "@/utils/customToolbarDataGrid";
+import SearchBar from "@/utils/searchBar";
+import {
+    DataGridPremium,
+    GridRowParams
+} from "@mui/x-data-grid-premium";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRef, useState } from "react";
+import Header from "../(components)/Header";
 import {
     deleteStaffApi,
     getAllStaffsApi,
     getStaffByFieldApi,
 } from "../../../api/staff.api";
-import {
-    DataGridPremium,
-    GridColDef,
-    GridRenderCellParams,
-    GridRowParams,
-} from "@mui/x-data-grid-premium";
-import {
-    Box,
-    Button,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Typography,
-} from "@mui/material";
-import Header from "../(components)/Header";
-import CustomToolbar from "@/utils/customToolbarDataGrid";
-import CustomPaginationDataGrid from "@/utils/customPaginationDataGrid";
-import { useRef, useState } from "react";
-import { CircleX, SearchIcon, PlusCircleIcon, Trash2, X } from "lucide-react";
 import { IStaffResponse } from "../../../interfaces/staff.interface";
-import CreateStaff from "./createStaff";
-import EditStaff from "./editStaff";
-import { staffColumns } from "./parts/staffColumns";
-import Buttons from "@/utils/buttons";
-import SearchBar from "@/utils/searchBar";
 import {
     CreateStaffSuccessDialog,
-    EditStaffSuccessDialog,
-    DeleteStaffSuccessDialog,
     DeleteConfirmDialog,
+    DeleteStaffSuccessDialog,
+    EditStaffSuccessDialog,
     NoMatchStaffDialog,
 } from "./parts/dialogs";
 import StaffModals from "./parts/modals";
+import { staffColumns } from "./parts/staffColumns";
 import StaffDetailPanel from "./parts/staffDetailPanel";
 
 export default function Staffs() {

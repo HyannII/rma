@@ -104,6 +104,7 @@ class Api {
             toast.error(
                 "Bạn không có quyền truy cập vào trang này. Vui lòng kiểm tra quyền hạn của bạn."
             );
+            return
         }
         // Hiển thị thông báo lỗi nếu không phải lỗi 410
         if (error.response?.status !== 410) {

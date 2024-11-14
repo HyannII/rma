@@ -69,7 +69,7 @@ export default function DeleteShiftForStaff() {
 
   const handleDeleteShiftForStaff = () => {
     if (staff_id && shift_id && selectedDate) {
-      // Cộng thêm 1 ngày vào selectedDate trước khi thực hiện thao tác xóa
+      // Lùi 1 ngày vào selectedDate trước khi thực hiện thao tác xóa
       const updatedDate = selectedDate.subtract(1, "day");
       const newDate = updatedDate.format("YYYY-MM-DD");
 

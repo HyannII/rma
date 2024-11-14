@@ -1,6 +1,5 @@
+import { Grid2, Typography } from "@mui/material";
 import React from "react";
-import { Grid, Grid2, Typography } from "@mui/material";
-import { DataGridPremium } from "@mui/x-data-grid-premium";
 import { ITransactionResponse } from "../../../../interfaces/transaction.interface";
 
 interface TransactionDetailPanelProps {
@@ -8,7 +7,6 @@ interface TransactionDetailPanelProps {
 }
 
 const TransactionDetailPanel: React.FC<TransactionDetailPanelProps> = ({ transaction }) => {
-
     return (
         <div className="p-6">
             <Typography variant="h5">

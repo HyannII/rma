@@ -1,12 +1,12 @@
 // ShiftForStaffDialogs.tsx
-import React from "react";
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from "@mui/material";
+import React from "react";
 
 interface CreateShiftForStaffSuccessDialogProps {
   open: boolean;

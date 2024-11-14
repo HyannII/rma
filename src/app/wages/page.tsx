@@ -1,22 +1,21 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import React, { useMemo, useState } from "react";
+import dayjs from "dayjs"; // Import dayjs
+import { FileDown, PlusCircleIcon, Trash2 } from "lucide-react";
+import { useMemo, useState } from "react";
+import * as XLSX from "xlsx";
+import Header from "../(components)/Header";
 import { getAllShift } from "../../../api/CDApi/shift.api";
 import { getStaffWorkTime } from "../../../api/CDApi/staffworktime.api";
-import * as XLSX from "xlsx";
-import ShiftTable from "./parts/shiftTable";
-import { Schedule, createStaffSchedule } from "./parts/scheduleUtils";
-import StaffWorkTimeTable from "./parts/staffWorkTimeTable";
-import Header from "../(components)/Header";
 import {
-  StaffWork,
-  StaffShift,
+  StaffWork
 } from "../../../interfaces/CDInterface/staffworktime.interface";
-import ShiftForStaffModals from "./parts/modals";
 import { CreateShiftForStaffSuccessDialog, DeleteShiftForStaffSuccessDialog } from "./parts/dialogs";
-import { FileDown, PlusCircleIcon, Trash2 } from "lucide-react";
-import dayjs from "dayjs"; // Import dayjs
+import ShiftForStaffModals from "./parts/modals";
+import { Schedule, createStaffSchedule } from "./parts/scheduleUtils";
+import ShiftTable from "./parts/shiftTable";
+import StaffWorkTimeTable from "./parts/staffWorkTimeTable";
 
 const ReportShift = () => {
   const [isExporting, setIsExporting] = useState(false);

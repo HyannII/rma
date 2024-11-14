@@ -1,9 +1,8 @@
 // TransactionModals.js
-import React from "react";
 import { X } from "lucide-react";
+import { ITransactionResponse } from "../../../../interfaces/transaction.interface";
 import CreateTransaction from "../createTransaction";
 import EditTransaction from "../editTransaction";
-import { ITransactionResponse } from "../../../../interfaces/transaction.interface";
 
 /**
  * Renders a modal for creating or editing a transaction.

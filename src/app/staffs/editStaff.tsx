@@ -1,10 +1,3 @@
-import { ChangeEvent, useRef, useState } from "react";
-import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
-import {
-    IStaffResponse,
-    IUpdateStaffBody,
-} from "../../../interfaces/staff.interface";
-import { updateStaffApi } from "../../../api/staff.api";
 import {
     Button,
     Dialog,
@@ -12,10 +5,15 @@ import {
     DialogContent,
     DialogTitle,
 } from "@mui/material";
-import Image from "next/legacy/image";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import dayjs, { Dayjs } from "dayjs";
+import { ChangeEvent, useRef, useState } from "react";
+import { updateStaffApi } from "../../../api/staff.api";
+import {
+    IStaffResponse,
+    IUpdateStaffBody,
+} from "../../../interfaces/staff.interface";
 
 export default function EditStaff({
     staff,

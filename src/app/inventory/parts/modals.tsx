@@ -1,9 +1,8 @@
 // ProductModals.js
-import React from "react";
 import { X } from "lucide-react";
+import { IProductResponse } from "../../../../interfaces/product.interface";
 import CreateProduct from "../createProduct";
 import EditProduct from "../editProduct";
-import { IProductResponse } from "../../../../interfaces/product.interface";
 
 /**
  * Renders a modal for creating or editing a product.
