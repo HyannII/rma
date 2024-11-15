@@ -167,21 +167,16 @@ const Report = () => {
 
     return (
         <div className="">
-            <DataGrid
-                rows={products}
-                columns={columns}
-                getRowId={(row) => row.products_id}
-                style={{ backgroundColor: "white" }}
-                className="shadow rounded-lg border border-gray-200 mt-5 text-gray-900"
-            />
-            <div className="my-2 mx-2">
-                <button
-                    className="bg-blue-700 text-white py-2 px-4 rounded"
-                    onClick={() => exportToExcel(products)}
-                >
-                    Export Excel
-                </button>
-            </div>
+          <DataGrid
+            rows={products}
+            columns={columns.map((column) => ({ ...column, editable: false }))}
+            getRowId={(row) => row.products_id}
+            style={{backgroundColor: 'white'}}
+            className="shadow rounded-lg border border-gray-200 mt-5 text-gray-900"
+          />
+          <div className="my-2 mx-2">
+            <button className="bg-blue-700 text-white py-2 px-4 rounded" onClick={() => exportToExcel(products)}>Export Excel</button>
+          </div>
         </div>
     );
 };

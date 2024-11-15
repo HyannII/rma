@@ -167,41 +167,33 @@ export default function ReportBill() {
                         })}
                     </select>
 
-                    <select
-                        value={day}
-                        onChange={(e) => setDay(e.target.value)}
-                        className="px-2 py-1 border rounded bg-white shadow-sm focus:outline-none focus:ring-blue-500 focus:ring-1"
-                    >
-                        {Array.from(Array(31)).map((_, i) => {
-                            const d = (i + 1).toString().padStart(2, "0");
-                            return (
-                                <option
-                                    key={d}
-                                    value={d}
-                                >
-                                    {d}
-                                </option>
-                            );
-                        })}
-                    </select>
-                </div>
+              <select
+                  value={day}
+                  onChange={(e) => setDay(e.target.value)}
+                  className="px-2 py-1 border rounded bg-white shadow-sm focus:outline-none focus:ring-blue-500 focus:ring-1"
+              >
+                  {Array.from(Array(31)).map((_, i) => {
+                      const d = (i + 1).toString().padStart(2, '0');
+                      return (
+                          <option key={d} value={d}>
+                              {d}
+                          </option>
+                      );
+                  })}
+              </select>
+            </div>
 
-                <DataGrid
-                    rows={dailyTotalsArray} // Chuyển từ `staff` sang `bills` để phù hợp với dữ liệu hóa đơn
-                    columns={columns}
-                    getRowId={(row) => row.id} // Sử dụng `bill_id` làm định danh
-                    style={{ backgroundColor: "white" }}
-                    className="shadow rounded-lg border border-gray-200 mt-5 text-gray-900"
-                />
-                <div
-                    style={{
-                        marginTop: "20px",
-                        textAlign: "right",
-                        fontSize: "24px",
-                    }}
-                >
-                    <strong>Tổng tiền: {bills.totalSum} VND</strong>
-                </div>
+            
+            <DataGrid
+                rows={dailyTotalsArray} // Chuyển từ `staff` sang `bills` để phù hợp với dữ liệu hóa đơn
+                columns={columns.map((column) => ({ ...column, editable: false }))}// khong edit
+                getRowId={(row) => row.id} // Sử dụng `bill_id` làm định danh
+                style={{backgroundColor: 'white'}}
+                className="shadow rounded-lg border border-gray-200 mt-5 text-gray-900"
+            />
+            <div style={{ marginTop: '20px', textAlign: 'right', fontSize: '24px' }}>
+                <strong>Tổng tiền: {bills.totalSum} VND</strong>
+            </div>
             </div>
             <div className="my-2 mx-2">
                 <button

@@ -98,12 +98,20 @@ const ShiftTable: React.FC<ShiftTableProps> = ({
                       </td>
                     );
                   })}
-                </tr>
-              ))}
-        </tbody>
-      </table>
-    </div>
-  );
-};
+              </select>
+            </div>
 
-export default ShiftTable;
+            <DataGrid
+              rows={staff}
+              columns={columns.map((column) => ({ ...column, editable: false }))}
+              getRowId={(row) => row.staff_id}
+              style={{backgroundColor: 'white'}}
+              className="shadow rounded-lg border border-gray-200 mt-5 text-gray-900"
+            />
+          </div>
+          <div className="my-2 mx-2">
+            <button className="bg-blue-700 text-white py-2 px-4 rounded" onClick={() => exportToExcel(staff)}>Export Excel</button>
+          </div>
+        </div>
+      );
+}

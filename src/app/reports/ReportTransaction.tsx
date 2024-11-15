@@ -184,12 +184,12 @@ export default function ReportTransaction() {
                 </div>
 
                 <div className="bg-white">
-                    <DataGrid
-                        rows={dailyTotalsArray}
-                        columns={columns}
-                        getRowId={(row) => row.id}
-                        style={{ backgroundColor: "white" }}
-                    />
+                  <DataGrid
+                      rows={dailyTotalsArray}
+                      columns={columns.map((column) => ({ ...column, editable: false }))}
+                      getRowId={(row) => row.id}
+                      style={{backgroundColor: 'white', }}
+                  />
                 </div>
                 <div style={{ marginTop: "20px", textAlign: "right" }}>
                     <strong>Tổng tiền: {transactions.totalSum} VND</strong>
