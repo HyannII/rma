@@ -3,8 +3,8 @@
 import { useState } from "react";
 import ReportBill from "./ReportBill";
 import ReportProduct from "./ReportProduct";
-import ReportShift from "./ReportShift";
-import ReportStaff from "./ReportStaff";
+// import ReportShift from "./ReportShift";
+// import ReportStaff from "./ReportStaff";
 import ReportTransaction from "./ReportTransaction";
 
 const Report = () => {
@@ -39,12 +39,12 @@ const Report = () => {
                     >
                         Báo cáo kho
                     </option>
-                    <option
+                    {/* <option
                         value="staff"
                         className="cursor-pointer"
                     >
                         Báo cáo nhân viên
-                    </option>
+                    </option> */}
                     <option
                         value="bill"
                         className="cursor-pointer"
@@ -57,20 +57,20 @@ const Report = () => {
                     >
                         Báo cáo chi tiêu
                     </option>
-                    <option
+                    {/* <option
                         value="shift"
                         className="cursor-pointer"
                     >
                         Báo cáo ca làm
-                    </option>
+                    </option> */}
                 </select>
             </div>
             <div>
                 {activeComponent === "product" && <ReportProduct />}
-                {activeComponent === "staff" && <ReportStaff />}
+                {/* {activeComponent === "staff" && <ReportStaff />} */}
                 {activeComponent === "bill" && <ReportBill />}
                 {activeComponent === "transaction" && <ReportTransaction />}
-                {activeComponent === "shift" && <ReportShift />}
+                {/* {activeComponent === "shift" && <ReportShift />} */}
             </div>
         </div>
     );
