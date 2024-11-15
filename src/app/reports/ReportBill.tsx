@@ -173,7 +173,7 @@ export  default function ReportBill () {
             
             <DataGrid
                 rows={dailyTotalsArray} // Chuyển từ `staff` sang `bills` để phù hợp với dữ liệu hóa đơn
-                columns={columns}
+                columns={columns.map((column) => ({ ...column, editable: false }))}// khong edit
                 getRowId={(row) => row.id} // Sử dụng `bill_id` làm định danh
                 style={{backgroundColor: 'white'}}
                 className="shadow rounded-lg border border-gray-200 mt-5 text-gray-900"

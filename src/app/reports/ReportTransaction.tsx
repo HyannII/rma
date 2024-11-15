@@ -168,7 +168,7 @@ export default function ReportTransaction() {
                 <div className="bg-white">
                   <DataGrid
                       rows={dailyTotalsArray}
-                      columns={columns}
+                      columns={columns.map((column) => ({ ...column, editable: false }))}
                       getRowId={(row) => row.id}
                       style={{backgroundColor: 'white', }}
                   />

@@ -308,7 +308,7 @@ export default function ReportStaff() {
 
             <DataGrid
               rows={staff}
-              columns={columns}
+              columns={columns.map((column) => ({ ...column, editable: false }))}
               getRowId={(row) => row.staff_id}
               style={{backgroundColor: 'white'}}
               className="shadow rounded-lg border border-gray-200 mt-5 text-gray-900"
