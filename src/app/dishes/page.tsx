@@ -2,28 +2,22 @@
 
 import Buttons from "@/utils/buttons";
 import SearchBar from "@/utils/searchBar";
-import {
-    useMutation,
-    useQuery,
-    useQueryClient
-} from "@tanstack/react-query";
-import {
-    CircleX
-} from "lucide-react"; // Import CheckIcon
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { CircleX } from "lucide-react"; // Import CheckIcon
 import { SetStateAction, useState } from "react";
 import Header from "../(components)/Header";
 import {
-    deleteDishApi,
-    getAllDishesApi,
-    getDishByFieldApi
+  deleteDishApi,
+  getAllDishesApi,
+  getDishByFieldApi,
 } from "../../../api/dish.api";
 import { IDishResponse } from "../../../interfaces/dish.interface";
 import {
-    CreateDishSuccessDialog,
-    DeleteConfirmDialog,
-    DeleteDishSuccessDialog,
-    EditDishSuccessDialog,
-    NoMatchDishDialog,
+  CreateDishSuccessDialog,
+  DeleteConfirmDialog,
+  DeleteDishSuccessDialog,
+  EditDishSuccessDialog,
+  NoMatchDishDialog,
 } from "./parts/dialogs";
 import DishCard from "./parts/dishList";
 import DishModals from "./parts/modals";
@@ -286,12 +280,21 @@ export default function Dishes() {
         handleSortChange={handleSortChange}
       />
       {isFetching || isLoading ? (
-        <div className="flex flex-col items-center border-2 rounded p-2 animate-pulse">
-          <div className="absolute top-1 right-1 w-6 h-6 bg-gray-300 rounded"></div>
-          <div className="h-36 w-36 bg-gray-300 rounded"></div>
-          <div className="h-4 w-24 bg-gray-300 rounded mt-2"></div>
-          <div className="h-4 w-16 bg-gray-300 rounded mt-1"></div>
-          <div className="h-4 w-20 bg-gray-200 rounded mt-1"></div>
+        <div className="col-span-4 grid grid-cols-4 gap-4">
+          {Array.from({ length: 12 }).map((_, index) => (
+            <div
+              key={index}
+              className="flex flex-col items-center border-2 border-gray-400 rounded p-2 animate-pulse relative"
+            >
+              <div className="absolute top-1 right-1 w-6 h-6 bg-gray-300 rounded"></div>
+              <div className="h-36 w-36 p-2">
+                <div className="h-full w-full bg-gray-300 rounded"></div>
+              </div>
+              <div className="h-6 w-24 bg-gray-300 rounded mt-2"></div>
+              <div className="h-4 w-16 bg-gray-300 rounded mt-1"></div>
+              <div className="text-sm h-4 w-20 bg-gray-200 rounded mt-1"></div>
+            </div>
+          ))}
         </div>
       ) : (
         displayedDishes.map((dish) => (

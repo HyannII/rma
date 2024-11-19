@@ -201,6 +201,14 @@ export default function Staffs() {
                             pageSize: 25,
                         },
                     },
+                    sorting: {
+                        sortModel: [
+                            {
+                                field: "name",
+                                sort: "asc",
+                            },
+                        ]
+                    }
                 }}
                 onRowSelectionModelChange={(newSelection) => {
                     setSelectedStaffIds(newSelection as number[]);

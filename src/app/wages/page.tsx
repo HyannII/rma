@@ -162,7 +162,7 @@ const ReportShift = () => {
           <Header name="Ca làm" />
         </div>
         <div className="mr-4">
-          Tuần thứ {weekNumberInMonth},{" "}
+          Tuần từ {""}
           {normalizedStartOfWeek.toLocaleDateString("vi-VN")} -{" "}
           {normalizedEndOfWeek.toLocaleDateString("vi-VN")}
         </div>
