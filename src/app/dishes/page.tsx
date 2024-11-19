@@ -24,6 +24,7 @@ import DishModals from "./parts/modals";
 import Pagination from "./parts/pagination";
 import SelectedDishes from "./parts/selectedDishes";
 import SortDropdown from "./parts/sortDropdown";
+import { getAllDishProductsApi } from "../../../api/dish-products.api";
 
 export default function Dishes() {
   const queryClient = useQueryClient();

@@ -49,15 +49,17 @@ export default function CreateDish({
     products_id: number;
     name: string;
     quantity: string;
+    unit: string;
   }[] =
     ings?.map((ingredient) => ({
       products_id: ingredient.products_id,
       name: ingredient.name,
       quantity: "",
+      unit: ingredient.unit,
     })) ?? [];
 
   const [selectedIngredients, setSelectedIngredients] = useState<
-    { products_id: number; name: string; quantity: string }[]
+    { products_id: number; name: string; quantity: string; unit: string }[]
   >([]);
 
   const availableIngredients = ingredientList.filter(
@@ -120,21 +122,21 @@ export default function CreateDish({
   const validateForm = () => {
     const newErrors: typeof errorMessage = {};
 
-    if (!dishData.name.trim() || !/^[a-zA-Z0-9\s]+$/.test(dishData.name)) {
+    if (!dishData.name.trim() || !/^[\p{L}0-9\s]+$/u.test(dishData.name)) {
       newErrors.name =
         "Tên món không hợp lệ. Vui lòng chỉ sử dụng chữ cái và số.";
     }
 
-    if (!dishData.unit.trim() || !/^[a-zA-Z\s]+$/.test(dishData.unit)) {
+    if (!dishData.unit.trim() || !/^[\p{L}\s]+$/u.test(dishData.unit)) {
       newErrors.unit = "Đơn vị không hợp lệ. Vui lòng chỉ sử dụng chữ cái.";
     }
 
     if (
       !dishData.category.trim() ||
-      !/^[a-zA-Z0-9\s]+$/.test(dishData.category)
+      !/^[\p{L}0-9\s]+$/u.test(dishData.category) // Cho phép ký tự Unicode
     ) {
       newErrors.category =
-        "Danh mục không hợp lệ. Vui lòng chỉ sử dụng chữ cái và số.";
+        "Danh mục không hợp lệ. Vui lòng chỉ sử dụng chữ cái, số và khoảng trắng.";
     }
 
     if (
@@ -401,7 +403,7 @@ export default function CreateDish({
             key={ing.products_id}
             className="flex flex-wrap mx-2 w-full"
           >
-            <div className="flex w-6/12 pr-2">
+            <div className="flex w-4/12 pr-2">
               <label
                 className={
                   "block text-sm font-medium text-gray-700 w-1/4 my-auto mx-2"
@@ -436,6 +438,23 @@ export default function CreateDish({
                 min="0.001"
                 step="0.001"
                 onChange={(e) => handleQuantityChange(e, ing.products_id)}
+              />
+            </div>
+            <div className="flex w-2/12 pr-2">
+              <label
+                className={
+                  "block text-sm font-medium text-gray-700 w-1/4 my-auto mx-2"
+                }
+              >
+                Unit
+              </label>
+              <input
+                type="text"
+                value={ing.unit}
+                className={
+                  "block my-auto w-3/4 p-2 border-gray-500 border-2 rounded-md text-zinc-800 bg-zinc-50"
+                }
+                disabled
               />
             </div>
             <div className="flex w-2/12 px-2">
