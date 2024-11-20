@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useRef, useState,useEffect } from "react";
 import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import {
     IDishResponse,
@@ -30,6 +30,7 @@ export default function EditDish({
     });
 
     const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
+    const [isFormValid, setIsFormValid] = useState(false);
     const queryClient = useQueryClient();
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -44,6 +45,7 @@ export default function EditDish({
             console.log("Error updating dish", error);
         },
     });
+
 
     const handleInputChange = (
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -62,7 +64,26 @@ export default function EditDish({
         }
     };
 
+    const validateForm = () => {
+        const nameValid = updatedDish.name ? /^[a-zA-Z0-9\s]+$/.test(updatedDish.name) : false;
+        const categoryValid = updatedDish.category ? /^[a-zA-Z0-9\s]+$/.test(updatedDish.category) : false;
+        const unitValid = updatedDish.unit ? /^[a-zA-Z0-9\s]+$/.test(updatedDish.unit) : false;
+        const priceValid =
+            updatedDish.price && /^[0-9]+(\.[0-9]{1,2})?$/.test(updatedDish.price) && Number(updatedDish.price) > 0;
+    
+        return !!(nameValid && categoryValid && unitValid && priceValid)
+    };
+    
+
+    useEffect(() => {
+        setIsFormValid(validateForm());
+    }, [updatedDish]);
+
     const handleUpdateDish = () => {
+        if (!validateForm()) {
+            alert("Form is invalid. Please check your inputs.");
+            return;
+        }
         updateDishMutation.mutate(updatedDish);
     };
 
@@ -102,6 +123,9 @@ export default function EditDish({
                             value={updatedDish.name}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
+                            pattern="[a-zA-Z0-9\s]+"
+                            title="Tên món không được bao gồm kí tự đặc biệt"
                         />
                     </div>
                     <div className="mb-4 w-full px-2">
@@ -118,6 +142,9 @@ export default function EditDish({
                             value={updatedDish.category}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
+                            pattern="[a-zA-Z0-9\s]+"
+                            title="Tên món không được bao gồm kí tự đặc biệt"
                         />
                     </div>
                 </div>
@@ -147,6 +174,9 @@ export default function EditDish({
                         value={updatedDish.unit}
                         onChange={handleInputChange}
                         className={inputCssStyles}
+                        required
+                        pattern="[a-zA-Z0-9\s]+"
+                        title="Tên món không được bao gồm kí tự đặc biệt"
                     />
                 </div>
 
@@ -185,6 +215,10 @@ export default function EditDish({
                         value={updatedDish.price}
                         onChange={handleInputChange}
                         className={inputCssStyles}
+                        required
+                        min="1"
+                        step="1"
+                        title="Giá tiền phải lớn hơn 0"
                     />
                 </div>
 
@@ -204,6 +238,7 @@ export default function EditDish({
 
                 <button
                     type="submit"
+                    disabled={!isFormValid || updateDishMutation.isPending} // disable form 
                     className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
                 >
                     {updateDishMutation.isPending

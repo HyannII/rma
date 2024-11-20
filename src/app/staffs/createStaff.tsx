@@ -31,7 +31,7 @@ export default function CreateStaff({
     });
 
     const fileInputRef = useRef<HTMLInputElement | null>(null);
-
+    const [isFormValid, setIsFormValid] = useState(false);
     const queryClient = useQueryClient();
 
     // mutation
@@ -65,6 +65,39 @@ export default function CreateStaff({
             });
         }
     };
+
+    const validateForm = () : boolean =>  {
+        const nameValid =
+        staffData.name.trim() !== "" && /^[a-zA-Z\s]+$/.test(staffData.name); // Không rỗng, chỉ chứa chữ cái và khoảng trắng
+
+        const genderValid =
+            staffData.gender.trim() !== "" &&
+            (staffData.gender === "Male" || staffData.gender === "Female"); // Chỉ chấp nhận Male hoặc Female
+
+        const birthdayValid =
+            staffData.birthday.trim() !== "" &&
+            /^\d{4}-\d{2}-\d{2}$/.test(staffData.birthday); // Định dạng ngày YYYY-MM-DD
+
+        const phoneValid =
+            staffData.phone.trim() !== "" &&
+            /^[0-9]{10,11}$/.test(staffData.phone); // Số điện thoại 10-11 chữ số
+
+        const citizenIdValid =
+            staffData.citizen_id.trim() !== "" &&
+            /^[0-9]{9,12}$/.test(staffData.citizen_id); // Chỉ chấp nhận số từ 9-12 ký tự
+
+        const roleValid = staffData.role.trim() !== ""; // Không được để trống
+
+        const emailValid =
+            staffData.email.trim() !== "" &&
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(staffData.email);
+        
+        return nameValid && genderValid && birthdayValid && phoneValid && citizenIdValid && roleValid && emailValid 
+    }
+
+    useEffect(() => {
+        setIsFormValid(validateForm());
+    }, [staffData]);
 
     const [value, setValue] = useState<Dayjs | null>(dayjs(""));
 
@@ -130,6 +163,9 @@ export default function CreateStaff({
                             value={staffData.name}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
+                            pattern="[a-zA-Z\s]+"
+                            title="Tên nhân viên không được bao gồm kí tự đặc biệt"
                         />
                     </div>
 
@@ -147,6 +183,7 @@ export default function CreateStaff({
                             value={staffData.gender}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
                         />
                     </div>
                     <div className="mb-4 w-1/2 px-2">
@@ -202,6 +239,9 @@ export default function CreateStaff({
                             value={staffData.role}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
+                            pattern="[a-zA-Z\s]+"
+                            title="Vai trò nhân viên không được bao gồm kí tự đặc biệt"
                         />
                     </div>
 
@@ -219,6 +259,9 @@ export default function CreateStaff({
                             value={staffData.email}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
+                            pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
+                            title="Email nhân viên sai định dạng"
                         />
                     </div>
                     <div className="mb-4 w-full px-2">
@@ -235,6 +278,9 @@ export default function CreateStaff({
                             value={staffData.phone}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
+                            pattern="[0-9]{10,11}"
+                            title="Số điện thoại chưa đúng định dạng"
                         />
                     </div>
                 </div>
@@ -264,6 +310,9 @@ export default function CreateStaff({
                         value={staffData.citizen_id}
                         onChange={handleInputChange}
                         className={inputCssStyles}
+                        required
+                        pattern="[0-9]{9,12}"
+                        title="Id không đúng định dạng"
                     />
                 </div>
                 <div className="mb-4 w-1/3 px-2">

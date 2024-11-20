@@ -35,6 +35,8 @@ export default function CreateProduct({
 
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+    const [isFormValid, setIsFormValid] = useState(false);
+
     const queryClient = useQueryClient();
 
     const [categoryValue, setCategoryValue] = useState<string>("");
@@ -73,6 +75,24 @@ export default function CreateProduct({
         }
     };
 
+    const validateForm = (): boolean => {
+        const nameValid = productData.name.trim() !== "" && /^[a-zA-Z0-9\s]+$/.test(productData.name);
+        const colorValid = productData.color === "" || /^[a-zA-Z0-9\s]+$/.test(productData.color); // Cho phép rỗng hoặc hợp lệ
+        const quantityValid = /^[1-9][0-9]*$/.test(productData.quantity); // Số nguyên dương
+        const categoryValid = productData.category.trim() !== "";
+        const unitValid = productData.unit === "" || /^[a-zA-Z0-9\s]+$/.test(productData.unit); // Cho phép rỗng hoặc hợp lệ
+        const priceValid =
+            productData.customer_price === "" ||
+            (/^[0-9]+(\.[0-9]{1,2})?$/.test(productData.customer_price) &&
+                parseFloat(productData.customer_price) >= 0);
+    
+        return nameValid && colorValid && quantityValid && categoryValid && unitValid && priceValid;
+    };
+
+    useEffect(() => {
+        setIsFormValid(validateForm());
+    }, [productData]);
+
     const handleCategoryChange = (event: {
         target: { value: SetStateAction<string> };
     }) => {
@@ -80,6 +100,10 @@ export default function CreateProduct({
     };
 
     const handleCreateProduct = () => {
+        if (!isFormValid) {
+            console.log("Form is invalid. Please fix the errors.");
+            return;
+        }
         createProductMutation.mutate(productData);
     };
     useEffect(() => {
@@ -128,6 +152,8 @@ export default function CreateProduct({
                             onChange={handleInputChange}
                             className={inputCssStyles}
                             required
+                            pattern="[a-zA-Z0-9\s]+"
+                            title="Tên sản phẩm không được bao gồm kí tự đặc biệt"
                         />
                     </div>
 
@@ -145,6 +171,9 @@ export default function CreateProduct({
                             value={productData.color}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
+                            pattern="[a-zA-Z0-9\s]+"
+                            title="Tên màu không được bao gồm kí tự đặc biệt"
                         />
                     </div>
                     <div className="mb-4 w-1/2 px-2">
@@ -162,6 +191,9 @@ export default function CreateProduct({
                             onChange={handleInputChange}
                             className={inputCssStyles}
                             required
+                            min = "1"
+                            step = "1"
+                            title="Số lượng phải lớn hơn 0"
                         />
                     </div>
                 </div>
@@ -250,6 +282,9 @@ export default function CreateProduct({
                         value={productData.unit}
                         onChange={handleInputChange}
                         className={inputCssStyles}
+                        required
+                        pattern="[a-zA-Z0-9\s]+"
+                        title="Đơn vị không được bao gồm kí tự đặc biệt"
                     />
                 </div>
 
@@ -267,6 +302,9 @@ export default function CreateProduct({
                         value={productData.customer_price}
                         onChange={handleInputChange}
                         className={inputCssStyles}
+                        required
+                            min = "1"
+                            title="Số lượng phải lớn hơn 0"
                     />
                 </div>
 

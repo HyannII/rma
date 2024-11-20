@@ -26,6 +26,8 @@ export default function CreateProvider({
 
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+    const [isFormValid, setIsFormValid] = useState(false);
+
     const queryClient = useQueryClient();
 
     // mutation
@@ -59,6 +61,18 @@ export default function CreateProvider({
             });
         }
     };
+
+    const validateForm = () : boolean => {
+        const nameValid = providerData.name.trim() !== "" && /^[a-zA-Z\s]+$/.test(providerData.name)
+        const addressValid = providerData.address.trim() !== "" && /^[a-zA-Z0-9\s]+$/.test(providerData.address)
+        const phoneValid = providerData.phone.trim() !== "" && /^[0-9]{10,11}$/.test(providerData.phone)
+        const emailValid = providerData.email.trim() !== "" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(providerData.email)
+        return nameValid && addressValid && phoneValid && emailValid
+    }
+
+    useEffect(() => {
+        setIsFormValid(validateForm());
+    }, [providerData]);
 
     const handleCreateProvider = () => {
         createProviderMutation.mutate(providerData);
@@ -106,6 +120,8 @@ export default function CreateProvider({
                             onChange={handleInputChange}
                             className={inputCssStyles}
                             required
+                            pattern="[a-zA-Z\s]+"
+                            title="Tên nhà cung cấp không được bao gồm kí tự đặc biệt"
                         />
                     </div>
 
@@ -123,6 +139,9 @@ export default function CreateProvider({
                             value={providerData.address}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
+                            pattern="[a-zA-Z\s]+"
+                            title="Địa chỉ không được bao gồm kí tự đặc biệt"
                         />
                     </div>
                     <div className="mb-4 w-1/2 px-2">
@@ -140,6 +159,8 @@ export default function CreateProvider({
                             onChange={handleInputChange}
                             className={inputCssStyles}
                             required
+                            pattern="[0-9]{10,11}"
+                            title="Số điện thoại chưa đúng định dạng"
                         />
                     </div>
                 </div>
@@ -172,6 +193,8 @@ export default function CreateProvider({
                         onChange={handleInputChange}
                         className={inputCssStyles}
                         required
+                            pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
+                            title="Email nhân viên sai định dạng"
                     />
                 </div>
 
@@ -209,6 +232,7 @@ export default function CreateProvider({
                         value={providerData.description}
                         onChange={handleInputChange}
                         className={inputCssStyles}
+                        maxLength={255}
                     />
                 </div>
 

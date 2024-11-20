@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useRef, useState, useEffect } from "react";
 import {
     useMutation,
     useQueries,
@@ -64,6 +64,8 @@ export default function EditTransaction({
     const [selectedStaffs, setSelectedStaffs] = useState<
         { staff_id: number; name: string }[]
     >([]);
+
+    const [isFormValid, setIsFormValid] = useState(false);
 
     const availableStaffs = staffList.filter(
         (staffs) =>
@@ -163,6 +165,48 @@ export default function EditTransaction({
         }
     };
 
+    const validateForm = () : boolean => {
+        const nameValid =
+            updatedTransaction.name?.trim() !== "" &&
+            /^[a-zA-Z\s]+$/.test(updatedTransaction.name ?? ""); // Không rỗng, chỉ chứa chữ cái và khoảng trắng
+    
+        const quantityValid =
+            updatedTransaction.quantity?.trim() !== "" &&
+            /^[0-9]+$/.test(updatedTransaction.quantity ?? ""); // Không rỗng, phải là số
+    
+        const priceValid =
+            updatedTransaction.price?.trim() !== "" &&
+            /^[0-9]+$/.test(updatedTransaction.price ?? ""); // Không rỗng, phải là số
+    
+        const statusValid = updatedTransaction.status?.trim() !== ""; // Không được để trống
+    
+        const descriptionValid =
+            updatedTransaction.description?.trim() === "" ||
+            (updatedTransaction.description?.length ?? 0) <= 255; // Mô tả có thể rỗng hoặc tối đa 255 ký tự
+    
+        const staffValid = updatedTransaction.staff_id != null && updatedTransaction.staff_id > 0; // staff_id phải lớn hơn 0
+    
+        const providerValid = updatedTransaction.providers_id != null && updatedTransaction.providers_id > 0; // providers_id phải lớn hơn 0
+    
+        const productValid = updatedTransaction.products_id != null &&updatedTransaction.products_id > 0; // products_id phải lớn hơn 0
+    
+        // Kiểm tra tất cả các trường hợp lệ
+        return (
+            nameValid &&
+            quantityValid &&
+            priceValid &&
+            statusValid &&
+            descriptionValid &&
+            staffValid &&
+            providerValid &&
+            productValid
+        );
+    }
+
+    useEffect(() => {
+        setIsFormValid(validateForm());
+    }, [updatedTransaction]);
+
     const handleUpdateTransaction = () => {
         updateTransactionMutation.mutate(updatedTransaction);
     };
@@ -192,6 +236,7 @@ export default function EditTransaction({
                     <div className="mb-4 w-full px-2">
                         <label className={labelCssStyles}>Staff Name</label>
                         <Autocomplete
+                        aria-required
                             size="small"
                             options={availableStaffs}
                             getOptionLabel={(options) => options.name}
@@ -210,6 +255,7 @@ export default function EditTransaction({
                     <div className="mb-4 w-full px-2">
                         <label className={labelCssStyles}>Provider Name</label>
                         <Autocomplete
+                            aria-required
                             size="small"
                             options={availableProviders}
                             getOptionLabel={(options) => options.name}
@@ -299,6 +345,9 @@ export default function EditTransaction({
                             value={updatedTransaction.name}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
+                            pattern="[a-zA-Z\s]+"
+                            title="Tên không được chứa ký tự đặc biệt"
                         />
                     </div>
                     <div className="mb-4 w-1/2 px-2">
@@ -315,6 +364,9 @@ export default function EditTransaction({
                             value={updatedTransaction.quantity}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
+                            min="1"
+                            step="1"
                         />
                     </div>
 
@@ -349,6 +401,9 @@ export default function EditTransaction({
                             value={updatedTransaction.price}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
+                            pattern="[0-9]+"
+                            title="Giá phải có định dạng số"
                         />
                     </div>
                 </div>
@@ -365,12 +420,15 @@ export default function EditTransaction({
                         value={updatedTransaction.description}
                         onChange={handleInputChange}
                         className={inputCssStyles}
+                        required
+                        maxLength= {255}
                     />
                 </div>
 
                 <button
                     type="submit"
                     className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
+                    disabled={!isFormValid || updateTransactionMutation.isPending}
                 >
                     {updateTransactionMutation.isPending
                         ? "Updating"
