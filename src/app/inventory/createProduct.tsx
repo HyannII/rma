@@ -47,7 +47,9 @@ export default function CreateProduct({
   const [isFormValid, setIsFormValid] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+    const [isFormValid, setIsFormValid] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -67,23 +69,43 @@ export default function CreateProduct({
     },
   });
 
-  //handler
-  const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    if (name === "image" && "files" in e.target && e.target.files) {
-      setProductData({
-        ...productData,
-        image: e.target.files[0],
-      });
-    } else {
-      setProductData({
-        ...productData,
-        [name]: value,
-      });
-    }
-  };
+    //handler
+    const handleInputChange = (
+        e: ChangeEvent<
+            HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+        >
+    ) => {
+        const { name, value } = e.target;
+        if (name === "image" && "files" in e.target && e.target.files) {
+            setProductData({
+                ...productData,
+                image: e.target.files[0],
+            });
+        } else {
+            setProductData({
+                ...productData,
+                [name]: value,
+            });
+        }
+    };
+
+    const validateForm = (): boolean => {
+        const nameValid = productData.name.trim() !== "" && /^[a-zA-Z0-9\s]+$/.test(productData.name);
+        const colorValid = productData.color === "" || /^[a-zA-Z0-9\s]+$/.test(productData.color); // Cho phép rỗng hoặc hợp lệ
+        const quantityValid = /^[1-9][0-9]*$/.test(productData.quantity); // Số nguyên dương
+        const categoryValid = productData.category.trim() !== "";
+        const unitValid = productData.unit === "" || /^[a-zA-Z0-9\s]+$/.test(productData.unit); // Cho phép rỗng hoặc hợp lệ
+        const priceValid =
+            productData.customer_price === "" ||
+            (/^[0-9]+(\.[0-9]{1,2})?$/.test(productData.customer_price) &&
+                parseFloat(productData.customer_price) >= 0);
+    
+        return nameValid && colorValid && quantityValid && categoryValid && unitValid && priceValid;
+    };
+
+    useEffect(() => {
+        setIsFormValid(validateForm());
+    }, [productData]);
 
   const handleCategoryChange = (event: {
     target: { value: SetStateAction<string> };
@@ -91,92 +113,104 @@ export default function CreateProduct({
     setCategoryValue(event.target.value);
   };
 
-  const handleCreateProduct = () => {
-    createProductMutation.mutate(productData);
-  };
-  useEffect(() => {
-    if (shouldResetForm) {
-      setProductData({
-        name: "",
-        image: null,
-        color: "",
-        quantity: "",
-        category: "",
-        weight: "",
-        unit: "",
-        customer_price: "",
-        description: "",
-      });
-      setShouldResetForm(false); // Reset the trigger flag
-    }
-  }, [shouldResetForm, setShouldResetForm]);
-  const labelCssStyles = "block text-sm font-medium text-gray-700";
-  const inputCssStyles =
-    "block w-full mb-2 p-2 border-gray-500 border-2 rounded-md text-zinc-800";
+    const handleCreateProduct = () => {
+        if (!isFormValid) {
+            console.log("Form is invalid. Please fix the errors.");
+            return;
+        }
+        createProductMutation.mutate(productData);
+    };
+    useEffect(() => {
+        if (shouldResetForm) {
+            setProductData({
+                name: "",
+                image: null,
+                color: "",
+                quantity: "",
+                category: "",
+                weight: "",
+                unit: "",
+                customer_price: "",
+                description: "",
+            });
+            setShouldResetForm(false); // Reset the trigger flag
+        }
+    }, [shouldResetForm, setShouldResetForm]);
+    const labelCssStyles = "block text-sm font-medium text-gray-700";
+    const inputCssStyles =
+        "block w-full mb-2 p-2 border-gray-500 border-2 rounded-md text-zinc-800";
 
-  return (
-    <div className="flex flex-wrap max-w-3xl mx-auto p-6">
-      <h1 className="text-4xl font-bold mb-4 w-full">Tạo sản phẩm mới</h1>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleCreateProduct();
-        }}
-        className="flex flex-wrap w-full"
-      >
-        <div className="flex flex-wrap w-2/3">
-          <div className="mb-4 w-full px-2">
-            <label
-              className={labelCssStyles}
-              htmlFor="name"
+    return (
+        <div className="flex flex-wrap max-w-3xl mx-auto p-6">
+            <h1 className="text-4xl font-bold mb-4 w-full">Tạo sản phẩm mới</h1>
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    handleCreateProduct();
+                }}
+                className="flex flex-wrap w-full"
             >
-              Product Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={productData.name}
-              onChange={handleInputChange}
-              className={inputCssStyles}
-              required
-            />
-          </div>
+                <div className="flex flex-wrap w-2/3">
+                    <div className="mb-4 w-full px-2">
+                        <label
+                            className={labelCssStyles}
+                            htmlFor="name"
+                        >
+                            Product Name
+                        </label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            value={productData.name}
+                            onChange={handleInputChange}
+                            className={inputCssStyles}
+                            required
+                            pattern="[a-zA-Z0-9\s]+"
+                            title="Tên sản phẩm không được bao gồm kí tự đặc biệt"
+                        />
+                    </div>
 
-          <div className="mb-4 w-1/2 px-2">
-            <label
-              className={labelCssStyles}
-              htmlFor="color"
-            >
-              Color
-            </label>
-            <input
-              type="text"
-              id="color"
-              name="color"
-              value={productData.color}
-              onChange={handleInputChange}
-              className={inputCssStyles}
-            />
-          </div>
-          <div className="mb-4 w-1/2 px-2">
-            <label
-              className={labelCssStyles}
-              htmlFor="quantity"
-            >
-              Quantity
-            </label>
-            <input
-              type="text"
-              id="quantity"
-              name="quantity"
-              value={productData.quantity}
-              onChange={handleInputChange}
-              className={inputCssStyles}
-              required
-            />
-          </div>
-        </div>
+                    <div className="mb-4 w-1/2 px-2">
+                        <label
+                            className={labelCssStyles}
+                            htmlFor="color"
+                        >
+                            Color
+                        </label>
+                        <input
+                            type="text"
+                            id="color"
+                            name="color"
+                            value={productData.color}
+                            onChange={handleInputChange}
+                            className={inputCssStyles}
+                            required
+                            pattern="[a-zA-Z0-9\s]+"
+                            title="Tên màu không được bao gồm kí tự đặc biệt"
+                        />
+                    </div>
+                    <div className="mb-4 w-1/2 px-2">
+                        <label
+                            className={labelCssStyles}
+                            htmlFor="quantity"
+                        >
+                            Quantity
+                        </label>
+                        <input
+                            type="text"
+                            id="quantity"
+                            name="quantity"
+                            value={productData.quantity}
+                            onChange={handleInputChange}
+                            className={inputCssStyles}
+                            required
+                            min = "1"
+                            step = "1"
+                            title="Số lượng phải lớn hơn 0"
+                        />
+                    </div>
+                </div>
 
         <div className="block w-1/3 p-1 border-2 border-gray-500 rounded">
           {productData.image && (
@@ -248,39 +282,45 @@ export default function CreateProduct({
           </button>
         </div>
 
-        <div className="mb-4 w-1/2 px-2">
-          <label
-            className={labelCssStyles}
-            htmlFor="unit"
-          >
-            Unit
-          </label>
-          <input
-            type="text"
-            id="unit"
-            name="unit"
-            value={productData.unit}
-            onChange={handleInputChange}
-            className={inputCssStyles}
-          />
-        </div>
+                <div className="mb-4 w-1/2 px-2">
+                    <label
+                        className={labelCssStyles}
+                        htmlFor="unit"
+                    >
+                        Unit
+                    </label>
+                    <input
+                        type="text"
+                        id="unit"
+                        name="unit"
+                        value={productData.unit}
+                        onChange={handleInputChange}
+                        className={inputCssStyles}
+                        required
+                        pattern="[a-zA-Z0-9\s]+"
+                        title="Đơn vị không được bao gồm kí tự đặc biệt"
+                    />
+                </div>
 
-        <div className="mb-4 w-1/2 px-2">
-          <label
-            className={labelCssStyles}
-            htmlFor="customer_price"
-          >
-            Customer Price
-          </label>
-          <input
-            type="text"
-            id="customer_price"
-            name="customer_price"
-            value={productData.customer_price}
-            onChange={handleInputChange}
-            className={inputCssStyles}
-          />
-        </div>
+                <div className="mb-4 w-1/2 px-2">
+                    <label
+                        className={labelCssStyles}
+                        htmlFor="customer_price"
+                    >
+                        Customer Price
+                    </label>
+                    <input
+                        type="text"
+                        id="customer_price"
+                        name="customer_price"
+                        value={productData.customer_price}
+                        onChange={handleInputChange}
+                        className={inputCssStyles}
+                        required
+                            min = "1"
+                            title="Số lượng phải lớn hơn 0"
+                    />
+                </div>
 
         <div className="mb-4 w-full px-2">
           <label

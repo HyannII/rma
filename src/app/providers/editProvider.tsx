@@ -32,6 +32,7 @@ export default function EditProvider({
     );
 
     const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
+    const [isFormValid, setIsFormValid] = useState(false);
     const queryClient = useQueryClient();
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [imageFile, setImageFile] = useState();
@@ -64,6 +65,18 @@ export default function EditProvider({
             });
         }
     };
+
+    const validateForm = () : boolean => {
+        const nameValid = updatedProvider.name?.trim() !== "" && /^[a-zA-Z\s]+$/.test(updatedProvider.name ?? "")
+        const addressValid = updatedProvider.address?.trim() !== "" && /^[a-zA-Z0-9\s]+$/.test(updatedProvider.address ?? "")
+        const phoneValid = updatedProvider.phone?.trim() !== "" && /^[0-9]{10,11}$/.test(updatedProvider.phone ?? "")
+        const emailValid = updatedProvider.email?.trim() !== "" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(updatedProvider.email ?? "")
+        return nameValid && addressValid && phoneValid && emailValid
+    }
+
+    useEffect(() => {
+        setIsFormValid(validateForm());
+    }, [updatedProvider]);
 
     const handleUpdateProvider = () => {
         updateProviderMutation.mutate(updatedProvider);
@@ -106,6 +119,8 @@ export default function EditProvider({
                             onChange={handleInputChange}
                             className={inputCssStyles}
                             required
+                            pattern="[a-zA-Z\s]+"
+                            title="Tên nhà cung cấp không được bao gồm kí tự đặc biệt"
                         />
                     </div>
 
@@ -114,7 +129,7 @@ export default function EditProvider({
                             className={labelCssStyles}
                             htmlFor="color"
                         >
-                            Color
+                            Địa chỉ
                         </label>
                         <input
                             type="text"
@@ -123,6 +138,9 @@ export default function EditProvider({
                             value={updatedProvider.address}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
+                            pattern="[a-zA-Z\s]+"
+                            title="Địa chỉ không được bao gồm kí tự đặc biệt"
                         />
                     </div>
                     <div className="mb-4 w-1/2 px-2">
@@ -130,7 +148,7 @@ export default function EditProvider({
                             className={labelCssStyles}
                             htmlFor="quantity"
                         >
-                            Quantity
+                            Số điện thoại
                         </label>
                         <input
                             type="text"
@@ -140,6 +158,8 @@ export default function EditProvider({
                             onChange={handleInputChange}
                             className={inputCssStyles}
                             required
+                            pattern="[0-9]{10,11}"
+                            title="Số điện thoại chưa đúng định dạng"
                         />
                     </div>
                 </div>
@@ -160,7 +180,7 @@ export default function EditProvider({
                         className={labelCssStyles}
                         htmlFor="category"
                     >
-                        Category
+                        Email
                     </label>
                     <input
                         type="text"
@@ -170,6 +190,8 @@ export default function EditProvider({
                         onChange={handleInputChange}
                         className={inputCssStyles}
                         required
+                            pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
+                            title="Email nhân viên sai định dạng"
                     />
                 </div>
                 <div className="mb-4 w-1/3 px-2">
@@ -206,12 +228,14 @@ export default function EditProvider({
                         value={updatedProvider.description}
                         onChange={handleInputChange}
                         className={inputCssStyles}
+                        maxLength={255}
                     />
                 </div>
 
                 <button
                     type="submit"
                     className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
+                    disabled={!isFormValid || updateProviderMutation.isPending}
                 >
                     {updateProviderMutation.isPending
                         ? "Changing..."

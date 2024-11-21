@@ -34,6 +34,7 @@ export default function EditStaff({
     });
 
     const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
+    const [isFormValid, setIsFormValid] = useState(false);
     const queryClient = useQueryClient();
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [imageFile, setImageFile] = useState();
@@ -68,6 +69,40 @@ export default function EditStaff({
             });
         }
     };
+
+    const validateForm = () : boolean => {
+        const nameValid =
+        updatedStaff.name?.trim() !== "" &&
+        /^[a-zA-Z\s]+$/.test(updatedStaff.name ?? ""); // Không rỗng, chỉ chứa chữ cái và khoảng trắng
+
+        const genderValid =
+            updatedStaff.gender?.trim() !== "" &&
+            (updatedStaff.gender === "Male" || updatedStaff.gender === "Female"); // Chỉ chấp nhận Male hoặc Female
+
+        const birthdayValid =
+            updatedStaff.birthday?.trim() !== "" &&
+            /^\d{4}-\d{2}-\d{2}$/.test(updatedStaff.birthday ?? ""); // Định dạng ngày YYYY-MM-DD
+
+        const phoneValid =
+            updatedStaff.phone?.trim() !== "" &&
+            /^[0-9]{10,11}$/.test(updatedStaff.phone ?? ""); // Số điện thoại 10-11 chữ số
+
+        const citizenIdValid =
+            updatedStaff.citizen_id?.trim() !== "" &&
+            /^[0-9]{9,12}$/.test(updatedStaff.citizen_id ?? ""); // Chỉ chấp nhận số từ 9-12 ký tự
+
+        const roleValid = updatedStaff.role?.trim() !== ""; // Không được để trống
+
+        const emailValid =
+            updatedStaff.email?.trim() !== "" &&
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(updatedStaff.email ?? ""); // Định dạng email hợp lệ
+        
+        return nameValid && genderValid && birthdayValid && phoneValid && citizenIdValid && roleValid && emailValid
+    }    
+
+    useEffect(() => {
+        setIsFormValid(validateForm());
+    }, [updatedStaff]);
 
     const [value, setValue] = useState<Dayjs | null>(dayjs(staff.birthday));
 
@@ -126,6 +161,9 @@ export default function EditStaff({
                             value={updatedStaff.name}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
+                            pattern="[a-zA-Z\s]+"
+                            title="Tên nhân viên không được bao gồm kí tự đặc biệt"
                         />
                     </div>
 
@@ -143,6 +181,7 @@ export default function EditStaff({
                             value={updatedStaff.gender}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
                         />
                     </div>
                     <div className="mb-4 w-1/2 px-2">
@@ -198,6 +237,7 @@ export default function EditStaff({
                             value={updatedStaff.role}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+
                         />
                     </div>
 
@@ -215,6 +255,9 @@ export default function EditStaff({
                             value={updatedStaff.email}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
+                            pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
+                            title="Email nhân viên sai định dạng"
                         />
                     </div>
                     <div className="mb-4 w-full px-2">
@@ -231,6 +274,9 @@ export default function EditStaff({
                             value={updatedStaff.phone}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
+                            pattern="[0-9]{10,11}"
+                            title="Số điện thoại chưa đúng định dạng"
                         />
                     </div>
                 </div>
@@ -258,6 +304,9 @@ export default function EditStaff({
                         value={updatedStaff.citizen_id}
                         onChange={handleInputChange}
                         className={inputCssStyles}
+                        required
+                        pattern="[0-9]{9,12}"
+                        title="Id không đúng định dạng"
                     />
                 </div>
                 <div className="mb-4 w-1/3 px-2">
@@ -284,6 +333,7 @@ export default function EditStaff({
                 <button
                     type="submit"
                     className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
+                    disabled={!isFormValid || updateStaffMutation.isPending}
                 >
                     {updateStaffMutation.isPending
                         ? "Updating"

@@ -7,7 +7,6 @@ import { createDishApi } from "../../../api/dish.api";
 import { getProductByCategoryApi } from "../../../api/product.api";
 import { ICreateDish_ProductsBody } from "../../../interfaces/dish-products.interface";
 import { ICreateDishBody } from "../../../interfaces/dish.interface";
-import { error } from "console";
 
 interface CreateDishProps {
   onDishCreated: () => void;

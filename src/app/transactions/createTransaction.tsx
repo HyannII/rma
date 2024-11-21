@@ -45,6 +45,8 @@ export default function CreateTransaction({
             name: staffs.name,
         })) ?? [];
 
+    const [isFormValid, setIsFormValid] = useState(false);
+
     const [selectedStaffs, setSelectedStaffs] = useState<
         { staff_id: number; name: string }[]
     >([]);
@@ -151,6 +153,48 @@ export default function CreateTransaction({
         }
     };
 
+    const validateForm = (): boolean => {
+        const nameValid =
+            transactionData.name.trim() !== "" &&
+            /^[a-zA-Z\s]+$/.test(transactionData.name); // Không rỗng, chỉ chứa chữ cái và khoảng trắng
+    
+        const quantityValid =
+            transactionData.quantity.trim() !== "" &&
+            /^[0-9]+$/.test(transactionData.quantity); // Không rỗng, phải là số
+    
+        const priceValid =
+            transactionData.price.trim() !== "" &&
+            /^[0-9]+$/.test(transactionData.price); // Không rỗng, phải là số
+    
+        const statusValid = transactionData.status.trim() !== ""; // Không được để trống
+    
+        const descriptionValid =
+            transactionData.description.trim() === "" ||
+            transactionData.description.length <= 255; // Mô tả có thể rỗng hoặc tối đa 255 ký tự
+    
+        const staffValid = transactionData.staff_id > 0; // staff_id phải lớn hơn 0
+    
+        const providerValid = transactionData.providers_id > 0; // providers_id phải lớn hơn 0
+    
+        const productValid = transactionData.products_id > 0; // products_id phải lớn hơn 0
+    
+        // Kiểm tra tất cả các trường hợp lệ
+        return (
+            nameValid &&
+            quantityValid &&
+            priceValid &&
+            statusValid &&
+            descriptionValid &&
+            staffValid &&
+            providerValid &&
+            productValid
+        );
+    };
+    
+    useEffect(() => {
+        setIsFormValid(validateForm());
+    }, [transactionData]);
+
     const handleCreateTransaction = () => {
         createTransactionMutation.mutate(transactionData);
     };
@@ -212,6 +256,7 @@ export default function CreateTransaction({
                     <div className="mb-4 w-full px-2">
                         <label className={labelCssStyles}>Provider Name</label>
                         <Autocomplete
+                            aria-required
                             size="small"
                             options={availableProviders}
                             getOptionLabel={(options) => options.name}
@@ -237,6 +282,7 @@ export default function CreateTransaction({
                     <div className="mb-4 w-full px-2">
                         <label className={labelCssStyles}>Product</label>
                         <Autocomplete
+                            aria-required
                             size="small"
                             options={availableProducts}
                             getOptionLabel={(options) => options.name}
@@ -316,6 +362,9 @@ export default function CreateTransaction({
                             value={transactionData.name}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
+                            pattern="[a-zA-Z\s]+"
+                            title="Tên không được chứa ký tự đặc biệt"
                         />
                     </div>
                     <div className="mb-4 w-1/2 px-2">
@@ -332,6 +381,9 @@ export default function CreateTransaction({
                             value={transactionData.quantity}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
+                            min="1"
+                            step="1"
                         />
                     </div>
 
@@ -366,6 +418,9 @@ export default function CreateTransaction({
                             value={transactionData.price}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
+                            pattern="[0-9]+"
+                            title="Giá phải có định dạng số"
                         />
                     </div>
                 </div>
@@ -382,6 +437,8 @@ export default function CreateTransaction({
                         value={transactionData.description}
                         onChange={handleInputChange}
                         className={inputCssStyles}
+                        required
+                        maxLength= {255}
                     />
                 </div>
                 <button

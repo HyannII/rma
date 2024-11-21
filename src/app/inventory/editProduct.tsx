@@ -33,6 +33,7 @@ export default function EditProduct({
     });
 
     const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
+    const [isFormValid, setIsFormValid] = useState(false);
     const queryClient = useQueryClient();
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -66,6 +67,29 @@ export default function EditProduct({
             });
         }
     };
+
+    const validateForm = (): boolean => {
+        const nameValid =
+        (updatedProduct.name?.trim() ?? "") !== "" && /^[a-zA-Z0-9\s]+$/.test(updatedProduct.name ?? "");
+        const colorValid =
+            (updatedProduct.color ?? "") === "" || /^[a-zA-Z0-9\s]+$/.test(updatedProduct.color ?? "");
+        const quantityValid =
+            (updatedProduct.quantity ?? "").trim() !== "" &&
+            /^[1-9][0-9]*$/.test(updatedProduct.quantity ?? ""); // Số nguyên dương
+        const categoryValid = (updatedProduct.category?.trim() ?? "") !== "";
+        const unitValid =
+            (updatedProduct.unit ?? "") === "" || /^[a-zA-Z0-9\s]+$/.test(updatedProduct.unit ?? "");
+        const priceValid =
+            (updatedProduct.customer_price ?? "") === "" ||
+            (/^[0-9]+(\.[0-9]{1,2})?$/.test(updatedProduct.customer_price ?? "") &&
+                parseFloat(updatedProduct.customer_price ?? "0") >= 0);
+    
+        return nameValid && colorValid && quantityValid && categoryValid && unitValid && priceValid;
+    };
+
+    useEffect(() => {
+        setIsFormValid(validateForm());
+    }, [updatedProduct]);
 
     const handleUpdateProduct = () => {
         updateProductMutation.mutate(updatedProduct);
@@ -107,6 +131,9 @@ export default function EditProduct({
                             value={updatedProduct.name}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
+                            pattern="[a-zA-Z0-9\s]+"
+                            title="Tên sản phẩm không được bao gồm kí tự đặc biệt"
                         />
                     </div>
 
@@ -124,6 +151,9 @@ export default function EditProduct({
                             value={updatedProduct.color}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
+                            pattern="[a-zA-Z0-9\s]+"
+                            title="Tên màu không được bao gồm kí tự đặc biệt"
                         />
                     </div>
                     <div className="mb-4 w-1/2 px-2">
@@ -140,6 +170,10 @@ export default function EditProduct({
                             value={updatedProduct.quantity}
                             onChange={handleInputChange}
                             className={inputCssStyles}
+                            required
+                            min = "1"
+                            step = "1"
+                            title="Số lượng phải lớn hơn 0"
                         />
                     </div>
                 </div>
@@ -226,6 +260,9 @@ export default function EditProduct({
                         value={updatedProduct.unit}
                         onChange={handleInputChange}
                         className={inputCssStyles}
+                        required
+                        pattern="[a-zA-Z0-9\s]+"
+                        title="Đơn vị không được bao gồm kí tự đặc biệt"    
                     />
                 </div>
 
@@ -264,6 +301,7 @@ export default function EditProduct({
 
                 <button
                     type="submit"
+                    disabled={!isFormValid || updateProductMutation.isPending} // disable form 
                     className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
                 >
                     {updateProductMutation.isPending
