@@ -6,7 +6,7 @@ import {
     DialogTitle,
 } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { updateProductApi } from "../../../api/product.api";
 import {
     IProductResponse,

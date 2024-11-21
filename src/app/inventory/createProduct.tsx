@@ -49,8 +49,6 @@ export default function CreateProduct({
 
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-    const [isFormValid, setIsFormValid] = useState(false);
-
   const queryClient = useQueryClient();
 
   const [categoryValue, setCategoryValue] = useState<string>("");
