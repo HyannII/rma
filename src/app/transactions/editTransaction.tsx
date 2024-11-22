@@ -177,8 +177,12 @@ export default function EditTransaction({
         const newErrors: typeof errorMessage = {};
     
         // Kiểm tra tên giao dịch
-        if (!updatedTransaction.name?.trim() || !/^[a-zA-Z\s]+$/.test(updatedTransaction.name ?? "")) {
-            newErrors.name = "Tên giao dịch không hợp lệ. Vui lòng chỉ sử dụng chữ cái và khoảng trắng.";
+        if (
+          !updatedTransaction.name?.trim() ||
+          !/^[\p{L}0-9\s]+$/u.test(updatedTransaction.name ?? "")
+        ) {
+          newErrors.name =
+            "Tên giao dịch không hợp lệ. Vui lòng chỉ sử dụng chữ cái và khoảng trắng.";
         }
     
         // Kiểm tra số lượng
@@ -194,14 +198,6 @@ export default function EditTransaction({
         // Kiểm tra trạng thái
         if (!updatedTransaction.status?.trim()) {
             newErrors.status = "Trạng thái không thể để trống.";
-        }
-    
-        // Kiểm tra mô tả
-        if (
-            updatedTransaction.description?.trim() !== "" &&
-            (updatedTransaction.description?.length ?? 0) > 255
-        ) {
-            newErrors.description = "Mô tả không hợp lệ. Vui lòng nhập tối đa 255 ký tự.";
         }
     
         // Kiểm tra staff_id
@@ -249,261 +245,269 @@ export default function EditTransaction({
     const inputCssStyles =
         "block w-full mb-2 p-2 border-gray-500 border-2 rounded-md text-zinc-800";
     return (
-        <div className="flex flex-wrap max-w-2xl mx-auto p-6">
-            <h1 className="text-4xl font-bold mb-4 w-full">
-                Chỉnh sửa thông tin
-            </h1>
-            <form
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    handleUpdateTransaction();
-                }}
-                className="flex flex-wrap w-full"
-            >
-                <div className="flex flex-wrap w-full">
-                    <div className="mb-4 w-full px-2">
-                        <label className={labelCssStyles}>Staff Name</label>
-                        <Autocomplete
-                        aria-required
-                            size="small"
-                            options={availableStaffs}
-                            getOptionLabel={(options) => options.name}
-                            value={
-                                staffList.find(
-                                    (staff) =>
-                                        staff.staff_id ===
-                                        updatedTransaction.staff_id
-                                ) || null
-                            } // Show existing staff name
-                            renderInput={(params) => <TextField {...params} />}
-                            className="block w-full mb-2 border-gray-500 border-2 rounded-md text-zinc-800 bg-zinc-50"
-                            disabled
-                        />
-                    </div>
-                    <div className="mb-4 w-full px-2">
-                        <label className={labelCssStyles}>Provider Name</label>
-                        <Autocomplete
-                            aria-required
-                            size="small"
-                            options={availableProviders}
-                            getOptionLabel={(options) => options.name}
-                            value={
-                                providerList.find(
-                                    (provider) =>
-                                        provider.provider_id ===
-                                        updatedTransaction.providers_id
-                                ) || null
-                            } // Show existing provider name
-                            renderInput={(params) => <TextField {...params} />}
-                            className="block w-full mb-2 border-gray-500 border-2 rounded-md text-zinc-800 bg-zinc-50"
-                            disabled
-                        />
-                    </div>
-                    <div className="mb-4 w-full px-2">
-                        <label className={labelCssStyles}>Product</label>
-                        <Autocomplete
-                            size="small"
-                            options={availableProducts}
-                            getOptionLabel={(options) => options.name}
-                            value={
-                                productList.find(
-                                    (product) =>
-                                        product.product_id ===
-                                        updatedTransaction.products_id
-                                ) || null
-                            } // Show existing product name
-                            renderInput={(params) => <TextField {...params} />}
-                            className="block w-full mb-2 border-gray-500 border-2 rounded-md text-zinc-800 bg-zinc-50"
-                            disabled
-                        />
-                    </div>
-                    <div className="mb-4 w-full px-2">
-                        <label
-                            className={labelCssStyles}
-                            htmlFor="status"
-                        >
-                            Status
-                        </label>
-                        <select
-                            name="status"
-                            id="status"
-                            value={updatedTransaction.status}
-                            onChange={handleInputChange}
-                            className={inputCssStyles}
-                            required
-                        >
-                            <option
-                                value=""
-                                className="text-zinc-800 hidden"
-                            >
-                                Choose category
-                            </option>
-                            <option
-                                value="Đang chờ"
-                                className="text-zinc-800"
-                            >
-                                Đang chờ
-                            </option>
-                            <option
-                                value="Hoàn thành"
-                                className="text-zinc-800"
-                            >
-                                Hoàn thành
-                            </option>
-                            <option
-                                value="Đã huỷ"
-                                className="text-zinc-800"
-                            >
-                                Đã huỷ
-                            </option>
-                        </select>
-                    </div>
-
-                    <div className="mb-4 w-1/2 px-2">
-                        <label
-                            className={labelCssStyles}
-                            htmlFor="name"
-                        >
-                            Name
-                        </label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            value={updatedTransaction.name}
-                            onChange={handleInputChange}
-                            className={inputCssStyles}
-                            required
-                            pattern="[a-zA-Z\s]+"
-                            title="Tên không được chứa ký tự đặc biệt"
-                        />
-                        {isSubmitted && errorMessage.name && (
-                            <p className="text-red-500 text-xs mt-1">
-                                {isSubmitted && errorMessage.name}
-                            </p>
-                        )}
-                    </div>
-                    <div className="mb-4 w-1/2 px-2">
-                        <label
-                            className={labelCssStyles}
-                            htmlFor="quantity"
-                        >
-                            Quantity
-                        </label>
-                        <input
-                            type="text"
-                            id="quantity"
-                            name="quantity"
-                            value={updatedTransaction.quantity}
-                            onChange={handleInputChange}
-                            className={inputCssStyles}
-                            required
-                            min="1"
-                            step="1"
-                        />
-                        {isSubmitted && errorMessage.quantity && (
-                            <p className="text-red-500 text-xs mt-1">
-                                {isSubmitted && errorMessage.quantity}
-                            </p>
-                        )}
-                    </div>
-
-                    <div className="mb-4 w-1/2 px-2">
-                        <label
-                            className={labelCssStyles}
-                            htmlFor="unit"
-                        >
-                            Unit
-                        </label>
-                        <input
-                            type="text"
-                            id="unit"
-                            name="unit"
-                            value={updatedTransaction.unit}
-                            onChange={handleInputChange}
-                            className={inputCssStyles}
-                            disabled
-                        />
-                        {isSubmitted && errorMessage.unit && (
-                            <p className="text-red-500 text-xs mt-1">
-                                {isSubmitted && errorMessage.unit}
-                            </p>
-                        )}
-                    </div>
-                    <div className="mb-4 w-1/2 px-2">
-                        <label
-                            className={labelCssStyles}
-                            htmlFor="price"
-                        >
-                            Price
-                        </label>
-                        <input
-                            type="text"
-                            id="price"
-                            name="price"
-                            value={updatedTransaction.price}
-                            onChange={handleInputChange}
-                            className={inputCssStyles}
-                            required
-                            pattern="[0-9]+"
-                            title="Giá phải có định dạng số"
-                        />
-                        {isSubmitted && errorMessage.price && (
-                            <p className="text-red-500 text-xs mt-1">
-                                {isSubmitted && errorMessage.price}
-                            </p>
-                        )}
-                    </div>
-                </div>
-                <div className="w-full px-2">
-                    <label
-                        className={labelCssStyles}
-                        htmlFor="description"
-                    >
-                        Description
-                    </label>
-                    <textarea
-                        id="description"
-                        name="description"
-                        value={updatedTransaction.description}
-                        onChange={handleInputChange}
-                        className={inputCssStyles}
-                        required
-                        maxLength= {255}
-                    />
-                    {isSubmitted && errorMessage.description && (
-                            <p className="text-red-500 text-xs mt-1">
-                                {isSubmitted && errorMessage.description}
-                            </p>
-                        )}
-                </div>
-
-                <button
-                    type="submit"
-                    className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
-                    //disabled={!isFormValid || updateTransactionMutation.isPending}
+      <div className="flex flex-wrap max-w-2xl mx-auto p-6">
+        <h1 className="text-4xl font-bold mb-4 w-full">Chỉnh sửa thông tin</h1>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleUpdateTransaction();
+          }}
+          className="flex flex-wrap w-full"
+        >
+          <div className="flex flex-wrap w-full">
+            <div className="mb-4 w-full px-2">
+              <label className={labelCssStyles}>Staff Name</label>
+              <Autocomplete
+                aria-required
+                size="small"
+                options={availableStaffs}
+                getOptionLabel={(options) => options.name}
+                value={
+                  staffList.find(
+                    (staff) => staff.staff_id === updatedTransaction.staff_id
+                  ) || null
+                } // Show existing staff name
+                renderInput={(params) => <TextField {...params} />}
+                className="block w-full mb-2 border-gray-500 border-2 rounded-md text-zinc-800 bg-zinc-50"
+                disabled
+              />
+              {isSubmitted && errorMessage.staff_id && (
+                <p className="text-red-500 text-xs mt-1">
+                  {isSubmitted && errorMessage.staff_id}
+                </p>
+              )}
+            </div>
+            <div className="mb-4 w-full px-2">
+              <label className={labelCssStyles}>Provider Name</label>
+              <Autocomplete
+                aria-required
+                size="small"
+                options={availableProviders}
+                getOptionLabel={(options) => options.name}
+                value={
+                  providerList.find(
+                    (provider) =>
+                      provider.provider_id === updatedTransaction.providers_id
+                  ) || null
+                } // Show existing provider name
+                renderInput={(params) => <TextField {...params} />}
+                className="block w-full mb-2 border-gray-500 border-2 rounded-md text-zinc-800 bg-zinc-50"
+                disabled
+              />
+              {isSubmitted && errorMessage.providers_id && (
+                <p className="text-red-500 text-xs mt-1">
+                  {isSubmitted && errorMessage.providers_id}
+                </p>
+              )}
+            </div>
+            <div className="mb-4 w-full px-2">
+              <label className={labelCssStyles}>Product</label>
+              <Autocomplete
+                size="small"
+                options={availableProducts}
+                getOptionLabel={(options) => options.name}
+                value={
+                  productList.find(
+                    (product) =>
+                      product.product_id === updatedTransaction.products_id
+                  ) || null
+                } // Show existing product name
+                renderInput={(params) => <TextField {...params} />}
+                className="block w-full mb-2 border-gray-500 border-2 rounded-md text-zinc-800 bg-zinc-50"
+                disabled
+              />
+              {isSubmitted && errorMessage.products_id && (
+                <p className="text-red-500 text-xs mt-1">
+                  {isSubmitted && errorMessage.products_id}
+                </p>
+              )}
+            </div>
+            <div className="mb-4 w-full px-2">
+              <label
+                className={labelCssStyles}
+                htmlFor="status"
+              >
+                Status
+              </label>
+              <select
+                name="status"
+                id="status"
+                value={updatedTransaction.status}
+                onChange={handleInputChange}
+                className={inputCssStyles}
+                required
+              >
+                <option
+                  value=""
+                  className="text-zinc-800 hidden"
                 >
-                    {updateTransactionMutation.isPending
-                        ? "Updating"
-                        : "Update transaction"}
-                </button>
-            </form>
-            <Dialog open={isSuccessDialogOpen}>
-                <DialogTitle>Edit Successful</DialogTitle>
-                <DialogContent>
-                    <p>
-                        The selected transactions have been successfully edited.
-                    </p>
-                </DialogContent>
-                <DialogActions>
-                    <Button
-                        onClick={handleCloseSuccessDialog}
-                        color="primary"
-                    >
-                        Close
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </div>
+                  Choose category
+                </option>
+                <option
+                  value="Đang chờ"
+                  className="text-zinc-800"
+                >
+                  Đang chờ
+                </option>
+                <option
+                  value="Hoàn thành"
+                  className="text-zinc-800"
+                >
+                  Hoàn thành
+                </option>
+                <option
+                  value="Đã huỷ"
+                  className="text-zinc-800"
+                >
+                  Đã huỷ
+                </option>
+              </select>
+              {isSubmitted && errorMessage.status && (
+                <p className="text-red-500 text-xs mt-1">
+                  {isSubmitted && errorMessage.status}
+                </p>
+              )}
+            </div>
+
+            <div className="mb-4 w-1/2 px-2">
+              <label
+                className={labelCssStyles}
+                htmlFor="name"
+              >
+                Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={updatedTransaction.name}
+                onChange={handleInputChange}
+                className={inputCssStyles}
+                required
+                pattern="[a-zA-Z\s]+"
+                title="Tên không được chứa ký tự đặc biệt"
+              />
+              {isSubmitted && errorMessage.name && (
+                <p className="text-red-500 text-xs mt-1">
+                  {isSubmitted && errorMessage.name}
+                </p>
+              )}
+            </div>
+            <div className="mb-4 w-1/2 px-2">
+              <label
+                className={labelCssStyles}
+                htmlFor="quantity"
+              >
+                Quantity
+              </label>
+              <input
+                type="text"
+                id="quantity"
+                name="quantity"
+                value={updatedTransaction.quantity}
+                onChange={handleInputChange}
+                className={inputCssStyles}
+                required
+                min="1"
+                step="1"
+              />
+              {isSubmitted && errorMessage.quantity && (
+                <p className="text-red-500 text-xs mt-1">
+                  {isSubmitted && errorMessage.quantity}
+                </p>
+              )}
+            </div>
+
+            <div className="mb-4 w-1/2 px-2">
+              <label
+                className={labelCssStyles}
+                htmlFor="unit"
+              >
+                Unit
+              </label>
+              <input
+                type="text"
+                id="unit"
+                name="unit"
+                value={updatedTransaction.unit}
+                onChange={handleInputChange}
+                className={inputCssStyles}
+                disabled
+              />
+              {isSubmitted && errorMessage.unit && (
+                <p className="text-red-500 text-xs mt-1">
+                  {isSubmitted && errorMessage.unit}
+                </p>
+              )}
+            </div>
+            <div className="mb-4 w-1/2 px-2">
+              <label
+                className={labelCssStyles}
+                htmlFor="price"
+              >
+                Price
+              </label>
+              <input
+                type="text"
+                id="price"
+                name="price"
+                value={updatedTransaction.price}
+                onChange={handleInputChange}
+                className={inputCssStyles}
+                required
+                pattern="[0-9]+"
+                title="Giá phải có định dạng số"
+              />
+              {isSubmitted && errorMessage.price && (
+                <p className="text-red-500 text-xs mt-1">
+                  {isSubmitted && errorMessage.price}
+                </p>
+              )}
+            </div>
+          </div>
+          <div className="w-full px-2">
+            <label
+              className={labelCssStyles}
+              htmlFor="description"
+            >
+              Description
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              value={updatedTransaction.description}
+              onChange={handleInputChange}
+              className={inputCssStyles}
+              required
+              maxLength={255}
+            />
+          </div>
+
+          <button
+            onClick={handleUpdateTransaction}
+            type="button"
+            className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
+            //disabled={!isFormValid || updateTransactionMutation.isPending}
+          >
+            {updateTransactionMutation.isPending
+              ? "Updating"
+              : "Update transaction"}
+          </button>
+        </form>
+        <Dialog open={isSuccessDialogOpen}>
+          <DialogTitle>Edit Successful</DialogTitle>
+          <DialogContent>
+            <p>The selected transactions have been successfully edited.</p>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={handleCloseSuccessDialog}
+              color="primary"
+            >
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
     );
 }

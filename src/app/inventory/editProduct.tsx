@@ -81,40 +81,61 @@ export default function EditProduct({
     };
 
     const validateForm = () => {
-        const newErrors: typeof errorMessage = {};
-    
-        // Kiểm tra tên sản phẩm
-        if (!updatedProduct.name?.trim() || !/^[a-zA-Z0-9\s]+$/.test(updatedProduct.name ?? "")) {
-            newErrors.name = "Tên sản phẩm không hợp lệ. Vui lòng chỉ sử dụng chữ cái, số và khoảng trắng.";
-        }
-    
-        // Kiểm tra màu sắc
-        if (updatedProduct.color && !/^[a-zA-Z0-9\s]+$/.test(updatedProduct.color ?? "")) {
-            newErrors.color = "Màu sắc không hợp lệ. Vui lòng chỉ sử dụng chữ cái, số và khoảng trắng.";
-        }
-    
-        // Kiểm tra số lượng
-        if (!updatedProduct.quantity?.trim() || !/^[1-9][0-9]*$/.test(updatedProduct.quantity ?? "")) {
-            newErrors.quantity = "Số lượng không hợp lệ. Vui lòng nhập số nguyên dương.";
-        }
-    
-        // Kiểm tra danh mục
-        if (!updatedProduct.category?.trim()) {
-            newErrors.category = "Danh mục không thể để trống.";
-        }
-    
-        // Kiểm tra đơn vị
-        if (updatedProduct.unit && !/^[a-zA-Z0-9\s]+$/.test(updatedProduct.unit ?? "")) {
-            newErrors.unit = "Đơn vị không hợp lệ. Vui lòng chỉ sử dụng chữ cái, số và khoảng trắng.";
-        }
-    
-        // Kiểm tra giá
-        if (updatedProduct.customer_price && !/^[0-9]+(\.[0-9]{1,2})?$/.test(updatedProduct.customer_price ?? "") || parseFloat(updatedProduct.customer_price ?? "0") < 0) {
-            newErrors.customer_price = "Giá không hợp lệ. Vui lòng nhập giá hợp lệ và lớn hơn hoặc bằng 0.";
-        }
-    
-        setErrorMessage(newErrors);
-        return Object.keys(newErrors).length === 0;
+      const newErrors: typeof errorMessage = {};
+
+      // Kiểm tra tên sản phẩm
+      if (
+        !updatedProduct.name?.trim() ||
+        !/^[\p{L}0-9\s]+$/u.test(updatedProduct.name ?? "")
+      ) {
+        newErrors.name =
+          "Tên sản phẩm không hợp lệ. Vui lòng chỉ sử dụng chữ cái, số và khoảng trắng.";
+      }
+
+      // Kiểm tra màu sắc (cho phép rỗng hoặc hợp lệ)
+      if (
+        !updatedProduct.color?.trim() &&
+        !/^[\p{L}\s]+$/u.test(updatedProduct.color ?? "")
+      ) {
+        newErrors.color =
+          "Màu sắc không hợp lệ. Vui lòng chỉ sử dụng chữ cái, số và khoảng trắng.";
+      }
+
+      // Kiểm tra số lượng (chỉ số nguyên dương)
+      if (
+        !updatedProduct.quantity ||
+        !/^[1-9][0-9]*$/.test(updatedProduct.quantity ?? "")
+      ) {
+        newErrors.quantity =
+          "Số lượng không hợp lệ. Vui lòng nhập số nguyên dương.";
+      }
+
+      // Kiểm tra danh mục (không để trống)
+      if (
+        !updatedProduct.category?.trim() &&
+        !/^[\p{L}\s]+$/u.test(updatedProduct.category ?? "")
+      ) {
+        newErrors.category = "Vui lòng chọn một danh mục.";
+      }
+
+      // Kiểm tra đơn vị (cho phép rỗng hoặc hợp lệ)
+      if (!updatedProduct.unit?.trim() && !/^[\p{L}\s]+$/u.test(updatedProduct.unit ?? "")) {
+        newErrors.unit =
+          "Đơn vị không hợp lệ. Vui lòng chỉ sử dụng chữ cái và khoảng trắng.";
+      }
+
+      // Kiểm tra giá khách hàng (cho phép rỗng hoặc phải là số dương, tối đa 2 chữ số sau dấu chấm)
+      if (
+        !updatedProduct.customer_price &&
+        (!/^\d+(\.\d{1,3})?$/.test(updatedProduct.customer_price ?? "") ||
+          Number(updatedProduct.customer_price ?? 0) < 0)
+      ) {
+        newErrors.customer_price =
+          "Giá không hợp lệ. Vui lòng nhập số dương và tối đa 2 chữ số sau dấu phẩy.";
+      }
+
+      setErrorMessage(newErrors);
+      return Object.keys(newErrors).length === 0;
     };
     
 
@@ -368,7 +389,8 @@ export default function EditProduct({
                 </div>
 
                 <button
-                    type="submit"
+                    onClick={handleUpdateProduct}
+                    type="button"
                     //disabled={!isFormValid || updateProductMutation.isPending} // disable form 
                     className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
                 >

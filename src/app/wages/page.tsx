@@ -11,7 +11,7 @@ import { getStaffWorkTime } from "../../../api/CDApi/staffworktime.api";
 import {
   StaffWork
 } from "../../../interfaces/CDInterface/staffworktime.interface";
-import { CreateShiftForStaffSuccessDialog, DeleteShiftForStaffSuccessDialog } from "./parts/dialogs";
+import { CreateShiftForStaffSuccessDialog, DeleteShiftForStaffSuccessDialog, NoMatchShiftForStaffDialog } from "./parts/dialogs";
 import ShiftForStaffModals from "./parts/modals";
 import { Schedule, createStaffSchedule } from "./parts/scheduleUtils";
 import ShiftTable from "./parts/shiftTable";
@@ -82,7 +82,9 @@ const ReportShift = () => {
   const closeCreateShiftForStaff = () => setIsCreateShiftForStaffOpen(false);
   const closeDeleteShiftForStaff = () => setIsDeleteShiftForStaffOpen(false);
   const closeAddRollCall = () => setIsAddRollCallOpen(false);
-  const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
+  const [isCreateSuccessDialogOpen, setIsCreateSuccessDialogOpen] = useState(false);
+  const [isDeleteSuccessDialogOpen, setIsDeleteSuccessDialogOpen] =
+    useState(false);
   const [shouldResetForm, setShouldResetForm] = useState(false);
 
   // Filter staffWorkTimes to include only shifts in the current week
@@ -144,15 +146,20 @@ const ReportShift = () => {
     return [headers, ...rows];
   };
 
-  const handleShiftForStaffCreated = () => setIsSuccessDialogOpen(true);
+  const handleShiftForStaffCreated = () => setIsCreateSuccessDialogOpen(true);
   const handleCreateMore = () => {
-    setIsSuccessDialogOpen(false);
+    setIsCreateSuccessDialogOpen(false);
     setShouldResetForm(true);
   };
 
+  const handleShiftForStaffDeleted = () => setIsDeleteSuccessDialogOpen(true);
+
   const handleCancel = () => {
-    setIsSuccessDialogOpen(false);
+    setIsCreateSuccessDialogOpen(false);
+    setIsDeleteSuccessDialogOpen(false);
+    setIsDeleteShiftForStaffOpen(false);
     setIsCreateShiftForStaffOpen(false);
+    
   };
 
   return (
@@ -218,18 +225,23 @@ const ReportShift = () => {
         closeDeleteShiftForStaff={closeDeleteShiftForStaff}
         closeAddRollCall={closeAddRollCall}
         handleShiftForStaffCreated={handleShiftForStaffCreated}
+        handleShiftForStaffDeleted={handleShiftForStaffDeleted}
         shouldResetForm={shouldResetForm}
         setShouldResetForm={setShouldResetForm}
       />
       <CreateShiftForStaffSuccessDialog
-        open={isSuccessDialogOpen}
+        open={isCreateSuccessDialogOpen}
         onCreateMore={handleCreateMore}
         onCancel={handleCancel}
       />
       <DeleteShiftForStaffSuccessDialog
-        open={isSuccessDialogOpen}
+        open={isDeleteSuccessDialogOpen}
         onClose={handleCancel}
       />
+      {/* <NoMatchShiftForStaffDialog
+        open={isNoMatchShiftForStaffDialogOpen}
+        onClose={handleCancel}
+      /> */}
     </div>
   );
 };

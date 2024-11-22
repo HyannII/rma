@@ -7,7 +7,15 @@ import {
 import { createStaffWorkTimeBody } from "../../../interfaces/CDInterface/staffworktime.interface";
 import { getAllStaffsApi } from "../../../api/staff.api";
 import { getAllShift } from "../../../api/CDApi/shift.api";
-import { Autocomplete, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 
@@ -27,8 +35,37 @@ export default function CreateShiftForStaff({
     shift_id: 0,
     date: "",
   });
-    
-    const queryClient = useQueryClient();
+
+  const queryClient = useQueryClient();
+
+  const [errorMessage, setErrorMessage] = useState<{
+    staff_id?: string;
+    shift_id?: string;
+    date?: string;
+  }>({});
+
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  const validateForm = () => {
+    const newError: typeof errorMessage = {};
+
+    if (!staffWorkData.staff_id) {
+      newError.staff_id = "Vui lòng chọn nhân viên.";
+    }
+    if (!staffWorkData.shift_id) {
+      newError.shift_id = "Vui lòng chọn ca làm việc.";
+    }
+    if (!staffWorkData.date) {
+      newError.date = "Vui lòng chọn ngày.";
+    }
+    setErrorMessage(newError);
+    return Object.keys(newError).length === 0;
+  };
+
+  useEffect(() => {
+    setIsFormValid(validateForm());
+  }, [staffWorkData]);
 
   const { data: staffData } = useQuery({
     queryKey: ["all-staffs"],
@@ -88,12 +125,13 @@ export default function CreateShiftForStaff({
   }, [shouldResetForm, setShouldResetForm]);
 
   const createStaffWorkTimeMutation = useMutation({
-    mutationFn: (body: [staff_id: number, shift_id: number, date: string]) => createStaffWorkTime(body),
+    mutationFn: (body: [staff_id: number, shift_id: number, date: string]) =>
+      createStaffWorkTime(body),
 
     onSuccess: (data) => {
-        console.log("Create dish product success", data);
-        queryClient.invalidateQueries();
-        
+      console.log("Create dish product success", data);
+      // queryClient.invalidateQueries();
+      onShiftForStaffCreated();
     },
     onError: (error) => {
       console.log("Error creating dish:", error);
@@ -118,38 +156,18 @@ export default function CreateShiftForStaff({
   };
 
   const handleCreateShiftForStaff = async () => {
-    // Kiểm tra giá trị của staffWorkData
-    console.log("Current staffWorkData:", staffWorkData);
-
-    // Kiểm tra từng trường và thông báo nếu trường đó thiếu
-    if (!staffWorkData.staff_id) {
-      console.log("Missing staff_id. Current value:", staffWorkData.staff_id);
-    }
-
-    if (!staffWorkData.shift_id) {
-      console.log("Missing shift_id. Current value:", staffWorkData.shift_id);
-    }
-
-    if (!staffWorkData.date) {
-      console.log("Missing date. Current value:", staffWorkData.date);
-    }
-
-    // Kiểm tra nếu tất cả các trường đều hợp lệ, thì tiến hành mutate
-    if (
-      staffWorkData.staff_id &&
-      staffWorkData.shift_id &&
-      staffWorkData.date
-    ) {
+    setIsSubmitted(true);
+    if (!validateForm()) return;
+    try {
       createStaffWorkTimeMutation.mutate([
         staffWorkData.staff_id,
         staffWorkData.shift_id,
         staffWorkData.date,
       ]);
-    } else {
-      console.log("One or more required fields are missing.");
+    } catch (error) {
+      console.error("Error creating staff shift", error);
     }
   };
-
 
   const labelCssStyles = "block text-sm font-medium text-gray-700";
   const inputCssStyles =
@@ -185,6 +203,11 @@ export default function CreateShiftForStaff({
                 "block w-full mb-2 border-gray-500 border-2 rounded-md text-zinc-800 bg-zinc-50"
               }
             ></Autocomplete>
+            {isSubmitted && errorMessage.staff_id && (
+              <p className="text-red-500 text-xs mt-1">
+                {isSubmitted && errorMessage.staff_id}
+              </p>
+            )}
           </div>
           <div className="mb-4 w-full px-2">
             <label className={labelCssStyles}>Shift Name</label>
@@ -206,13 +229,18 @@ export default function CreateShiftForStaff({
                 "block w-full mb-2 border-gray-500 border-2 rounded-md text-zinc-800 bg-zinc-50"
               }
             ></Autocomplete>
+            {isSubmitted && errorMessage.shift_id && (
+              <p className="text-red-500 text-xs mt-1">
+                {isSubmitted && errorMessage.shift_id}
+              </p>
+            )}
           </div>
           <div className="mb-4 w-full px-2">
             <label
               className={labelCssStyles}
-              htmlFor="dateOfBirth"
+              htmlFor="date"
             >
-              Date of Birth
+              Date
             </label>
             <DatePicker
               value={value}
@@ -245,10 +273,16 @@ export default function CreateShiftForStaff({
                 },
               }}
             />
+            {isSubmitted && errorMessage.date && (
+              <p className="text-red-500 text-xs mt-1">
+                {isSubmitted && errorMessage.date}
+              </p>
+            )}
           </div>
         </div>
         <button
-          type="submit"
+          onClick={handleCreateShiftForStaff}
+          type="button"
           className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
         >
           {createStaffWorkTimeMutation.isPending

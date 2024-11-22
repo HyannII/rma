@@ -285,7 +285,8 @@ export default function CreateProvider({
                 </div>
 
                 <button
-                    type="submit"
+                    onClick={handleCreateProvider}
+                    type="button"
                     className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
                 >
                     {createProviderMutation.isPending

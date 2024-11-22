@@ -80,16 +80,15 @@ export default function CreateStaff({
         const newErrors: typeof errorMessage = {};
     
         // Kiểm tra tên nhân viên
-        if (!staffData.name.trim() || !/^[a-zA-Z\s]+$/.test(staffData.name)) {
-            newErrors.name = "Tên nhân viên không hợp lệ. Vui lòng chỉ sử dụng chữ cái và khoảng trắng.";
+        if (!staffData.name.trim() || !/^[\p{L}\s]+$/u.test(staffData.name)) {
+          newErrors.name =
+            "Tên nhân viên không hợp lệ. Vui lòng chỉ sử dụng chữ cái và khoảng trắng.";
         }
     
         // Kiểm tra giới tính
-        if (
-            !staffData.gender.trim() ||
-            (staffData.gender !== "Male" && staffData.gender !== "Female")
-        ) {
-            newErrors.gender = "Giới tính không hợp lệ. Vui lòng chọn 'Male' hoặc 'Female'.";
+        if (!staffData.gender.trim() || !/^[\p{L}\s]+$/u.test(staffData.gender)) {
+          newErrors.gender =
+            "Giới tính không hợp lệ. Vui lòng chọn 'Male' hoặc 'Female'.";
         }
     
         // Kiểm tra ngày sinh
@@ -224,9 +223,9 @@ export default function CreateStaff({
                             className={inputCssStyles}
                             required
                         />
-                        {isSubmitted && errorMessage.name && (
+                        {isSubmitted && errorMessage.gender && (
                             <p className="text-red-500 text-xs mt-1">
-                                {errorMessage.name}
+                                {errorMessage.gender}
                             </p>
                         )}
                     </div>
@@ -406,7 +405,8 @@ export default function CreateStaff({
                 </div>
 
                 <button
-                    type="submit"
+                    onClick={handleCreateStaff}
+                    type="button"
                     className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
                 >
                     {createStaffMutation.isPending

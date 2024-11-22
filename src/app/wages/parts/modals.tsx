@@ -28,6 +28,7 @@ const ShiftForStaffModals = ({
   closeCreateShiftForStaff,
   closeAddRollCall,
   handleShiftForStaffCreated,
+  handleShiftForStaffDeleted,
   shouldResetForm,
   setShouldResetForm,
 }: {
@@ -38,6 +39,7 @@ const ShiftForStaffModals = ({
   closeDeleteShiftForStaff: () => void;
   closeAddRollCall: () => void;
   handleShiftForStaffCreated: () => void;
+  handleShiftForStaffDeleted: () => void;
   shouldResetForm: boolean;
   setShouldResetForm: (value: boolean) => void;
 }): JSX.Element => (
@@ -69,9 +71,7 @@ const ShiftForStaffModals = ({
             <X />
           </button>
           <DeleteShiftForStaff
-          // // onShiftForStaffCreated={handleShiftForStaffCreated}
-          // shouldResetForm={shouldResetForm}
-          // setShouldResetForm={setShouldResetForm}
+            onShiftForStaffDeleted={handleShiftForStaffDeleted}
           />
         </div>
       </div>
@@ -85,11 +85,7 @@ const ShiftForStaffModals = ({
           >
             <X />
           </button>
-          <AddRollCall
-          // // onShiftForStaffCreated={handleShiftForStaffCreated}
-          // shouldResetForm={shouldResetForm}
-          // setShouldResetForm={setShouldResetForm}
-          />
+          <AddRollCall onRollCallAdded={handleShiftForStaffCreated} />
         </div>
       </div>
     )}
