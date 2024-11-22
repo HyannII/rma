@@ -31,6 +31,20 @@ export default function CreateTransaction({
             description: "",
         });
 
+    const [errorMessage, setErrorMessage] = useState<{
+        staff_id?: string
+        providers_id?: string
+        products_id?: string
+        status?: string
+        name?: string
+        quantity?: string
+        unit?: string
+        price?: string
+        description?: string
+    }>({})
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isFormValid, setIsFormValid] = useState(false);
+
     const { data: staffData } = useQuery({
         queryKey: ["all-staffs"],
         queryFn: () => getAllStaffsApi(),
@@ -44,8 +58,6 @@ export default function CreateTransaction({
             staff_id: staffs.staff_id,
             name: staffs.name,
         })) ?? [];
-
-    const [isFormValid, setIsFormValid] = useState(false);
 
     const [selectedStaffs, setSelectedStaffs] = useState<
         { staff_id: number; name: string }[]
@@ -153,50 +165,70 @@ export default function CreateTransaction({
         }
     };
 
-    const validateForm = (): boolean => {
-        const nameValid =
-            transactionData.name.trim() !== "" &&
-            /^[a-zA-Z\s]+$/.test(transactionData.name); // Không rỗng, chỉ chứa chữ cái và khoảng trắng
+    const validateForm = () => {
+        const newErrors: typeof errorMessage = {};
     
-        const quantityValid =
-            transactionData.quantity.trim() !== "" &&
-            /^[0-9]+$/.test(transactionData.quantity); // Không rỗng, phải là số
+        // Kiểm tra tên giao dịch
+        if (!transactionData.name.trim() || !/^[a-zA-Z\s]+$/.test(transactionData.name)) {
+            newErrors.name = "Tên giao dịch không hợp lệ. Vui lòng chỉ sử dụng chữ cái và khoảng trắng.";
+        }
     
-        const priceValid =
-            transactionData.price.trim() !== "" &&
-            /^[0-9]+$/.test(transactionData.price); // Không rỗng, phải là số
+        // Kiểm tra số lượng
+        if (!transactionData.quantity.trim() || !/^[0-9]+$/.test(transactionData.quantity)) {
+            newErrors.quantity = "Số lượng không hợp lệ. Vui lòng chỉ sử dụng số.";
+        }
     
-        const statusValid = transactionData.status.trim() !== ""; // Không được để trống
+        // Kiểm tra giá tiền
+        if (!transactionData.price.trim() || !/^[0-9]+$/.test(transactionData.price)) {
+            newErrors.price = "Giá không hợp lệ. Vui lòng chỉ sử dụng số.";
+        }
     
-        const descriptionValid =
-            transactionData.description.trim() === "" ||
-            transactionData.description.length <= 255; // Mô tả có thể rỗng hoặc tối đa 255 ký tự
+        // Kiểm tra trạng thái
+        if (!transactionData.status.trim()) {
+            newErrors.status = "Trạng thái không thể để trống.";
+        }
     
-        const staffValid = transactionData.staff_id > 0; // staff_id phải lớn hơn 0
+        // Kiểm tra mô tả
+        if (
+            transactionData.description.trim() !== "" &&
+            transactionData.description.length > 255
+        ) {
+            newErrors.description = "Mô tả không hợp lệ. Vui lòng nhập tối đa 255 ký tự.";
+        }
     
-        const providerValid = transactionData.providers_id > 0; // providers_id phải lớn hơn 0
+        // Kiểm tra staff_id
+        if (transactionData.staff_id <= 0) {
+            newErrors.staff_id = "ID nhân viên không hợp lệ. Vui lòng nhập ID lớn hơn 0.";
+        }
     
-        const productValid = transactionData.products_id > 0; // products_id phải lớn hơn 0
+        // Kiểm tra provider_id
+        if (transactionData.providers_id <= 0) {
+            newErrors.providers_id = "ID nhà cung cấp không hợp lệ. Vui lòng nhập ID lớn hơn 0.";
+        }
     
-        // Kiểm tra tất cả các trường hợp lệ
-        return (
-            nameValid &&
-            quantityValid &&
-            priceValid &&
-            statusValid &&
-            descriptionValid &&
-            staffValid &&
-            providerValid &&
-            productValid
-        );
+        // Kiểm tra product_id
+        if (transactionData.products_id <= 0) {
+            newErrors.products_id = "ID sản phẩm không hợp lệ. Vui lòng nhập ID lớn hơn 0.";
+        }
+    
+        setErrorMessage(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
+    
     
     useEffect(() => {
         setIsFormValid(validateForm());
     }, [transactionData]);
 
     const handleCreateTransaction = () => {
-        createTransactionMutation.mutate(transactionData);
+        setIsSubmitted(true)
+        if(!validateForm()) return
+        try {
+            createTransactionMutation.mutate(transactionData);
+        }
+        catch (error) {
+            console.error("Error creating transaction", error)
+        }
     };
     useEffect(() => {
         if (shouldResetForm) {
@@ -366,6 +398,11 @@ export default function CreateTransaction({
                             pattern="[a-zA-Z\s]+"
                             title="Tên không được chứa ký tự đặc biệt"
                         />
+                        {isSubmitted && errorMessage.name && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {isSubmitted && errorMessage.name}
+                            </p>
+                        )}
                     </div>
                     <div className="mb-4 w-1/2 px-2">
                         <label
@@ -385,6 +422,11 @@ export default function CreateTransaction({
                             min="1"
                             step="1"
                         />
+                        {isSubmitted && errorMessage.quantity && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {isSubmitted && errorMessage.quantity}
+                            </p>
+                        )}
                     </div>
 
                     <div className="mb-4 w-1/2 px-2">
@@ -403,6 +445,11 @@ export default function CreateTransaction({
                             className={inputCssStyles}
                             disabled
                         />
+                        {isSubmitted && errorMessage.unit && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {isSubmitted && errorMessage.unit}
+                            </p>
+                        )}
                     </div>
                     <div className="mb-4 w-1/2 px-2">
                         <label
@@ -422,6 +469,11 @@ export default function CreateTransaction({
                             pattern="[0-9]+"
                             title="Giá phải có định dạng số"
                         />
+                        {isSubmitted && errorMessage.price && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {isSubmitted && errorMessage.price}
+                            </p>
+                        )}
                     </div>
                 </div>
                 <div className="w-full px-2">
@@ -440,6 +492,11 @@ export default function CreateTransaction({
                         required
                         maxLength= {255}
                     />
+                    {isSubmitted && errorMessage.description && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {isSubmitted && errorMessage.description}
+                            </p>
+                        )}
                 </div>
                 <button
                     type="submit"

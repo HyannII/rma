@@ -42,6 +42,18 @@ export default function EditTransaction({
             description: transaction.description,
         });
 
+        const [errorMessage, setErrorMessage] = useState<{
+            staff_id?: string
+            providers_id?: string
+            products_id?: string
+            status?: string
+            name?: string
+            quantity?: string
+            unit?: string
+            price?: string
+            description?: string
+        }>({})
+
     const { data: staffData } = useQuery({
         queryKey: ["all-staffs"],
         queryFn: () => getAllStaffsApi(),
@@ -61,6 +73,7 @@ export default function EditTransaction({
     >([]);
 
     const [isFormValid, setIsFormValid] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
 
     const availableStaffs = staffList.filter(
         (staffs) =>
@@ -160,50 +173,70 @@ export default function EditTransaction({
         }
     };
 
-    const validateForm = () : boolean => {
-        const nameValid =
-            updatedTransaction.name?.trim() !== "" &&
-            /^[a-zA-Z\s]+$/.test(updatedTransaction.name ?? ""); // Không rỗng, chỉ chứa chữ cái và khoảng trắng
+    const validateForm = () => {
+        const newErrors: typeof errorMessage = {};
     
-        const quantityValid =
-            updatedTransaction.quantity?.trim() !== "" &&
-            /^[0-9]+$/.test(updatedTransaction.quantity ?? ""); // Không rỗng, phải là số
+        // Kiểm tra tên giao dịch
+        if (!updatedTransaction.name?.trim() || !/^[a-zA-Z\s]+$/.test(updatedTransaction.name ?? "")) {
+            newErrors.name = "Tên giao dịch không hợp lệ. Vui lòng chỉ sử dụng chữ cái và khoảng trắng.";
+        }
     
-        const priceValid =
-            updatedTransaction.price?.trim() !== "" &&
-            /^[0-9]+$/.test(updatedTransaction.price ?? ""); // Không rỗng, phải là số
+        // Kiểm tra số lượng
+        if (!updatedTransaction.quantity?.trim() || !/^[0-9]+$/.test(updatedTransaction.quantity ?? "")) {
+            newErrors.quantity = "Số lượng không hợp lệ. Vui lòng nhập một số nguyên dương.";
+        }
     
-        const statusValid = updatedTransaction.status?.trim() !== ""; // Không được để trống
+        // Kiểm tra giá
+        if (!updatedTransaction.price?.trim() || !/^[0-9]+$/.test(updatedTransaction.price ?? "")) {
+            newErrors.price = "Giá không hợp lệ. Vui lòng nhập một số nguyên dương.";
+        }
     
-        const descriptionValid =
-            updatedTransaction.description?.trim() === "" ||
-            (updatedTransaction.description?.length ?? 0) <= 255; // Mô tả có thể rỗng hoặc tối đa 255 ký tự
+        // Kiểm tra trạng thái
+        if (!updatedTransaction.status?.trim()) {
+            newErrors.status = "Trạng thái không thể để trống.";
+        }
     
-        const staffValid = updatedTransaction.staff_id != null && updatedTransaction.staff_id > 0; // staff_id phải lớn hơn 0
+        // Kiểm tra mô tả
+        if (
+            updatedTransaction.description?.trim() !== "" &&
+            (updatedTransaction.description?.length ?? 0) > 255
+        ) {
+            newErrors.description = "Mô tả không hợp lệ. Vui lòng nhập tối đa 255 ký tự.";
+        }
     
-        const providerValid = updatedTransaction.providers_id != null && updatedTransaction.providers_id > 0; // providers_id phải lớn hơn 0
+        // Kiểm tra staff_id
+        if (updatedTransaction.staff_id == null || updatedTransaction.staff_id <= 0) {
+            newErrors.staff_id = "ID nhân viên không hợp lệ. Vui lòng nhập ID lớn hơn 0.";
+        }
     
-        const productValid = updatedTransaction.products_id != null &&updatedTransaction.products_id > 0; // products_id phải lớn hơn 0
+        // Kiểm tra provider_id
+        if (updatedTransaction.providers_id == null || updatedTransaction.providers_id <= 0) {
+            newErrors.providers_id = "ID nhà cung cấp không hợp lệ. Vui lòng nhập ID lớn hơn 0.";
+        }
     
-        // Kiểm tra tất cả các trường hợp lệ
-        return (
-            nameValid &&
-            quantityValid &&
-            priceValid &&
-            statusValid &&
-            descriptionValid &&
-            staffValid &&
-            providerValid &&
-            productValid
-        );
-    }
+        // Kiểm tra product_id
+        if (updatedTransaction.products_id == null || updatedTransaction.products_id <= 0) {
+            newErrors.products_id = "ID sản phẩm không hợp lệ. Vui lòng nhập ID lớn hơn 0.";
+        }
+    
+        setErrorMessage(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+    
 
     useEffect(() => {
         setIsFormValid(validateForm());
     }, [updatedTransaction]);
 
     const handleUpdateTransaction = () => {
-        updateTransactionMutation.mutate(updatedTransaction);
+        setIsSubmitted(true)
+        if(!validateForm()) return
+        try {
+            updateTransactionMutation.mutate(updatedTransaction);
+        }
+        catch (error) {
+            console.error("Error updating transaction", error)
+        }
     };
 
     const handleCloseSuccessDialog = () => {
@@ -344,6 +377,11 @@ export default function EditTransaction({
                             pattern="[a-zA-Z\s]+"
                             title="Tên không được chứa ký tự đặc biệt"
                         />
+                        {isSubmitted && errorMessage.name && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {isSubmitted && errorMessage.name}
+                            </p>
+                        )}
                     </div>
                     <div className="mb-4 w-1/2 px-2">
                         <label
@@ -363,6 +401,11 @@ export default function EditTransaction({
                             min="1"
                             step="1"
                         />
+                        {isSubmitted && errorMessage.quantity && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {isSubmitted && errorMessage.quantity}
+                            </p>
+                        )}
                     </div>
 
                     <div className="mb-4 w-1/2 px-2">
@@ -381,6 +424,11 @@ export default function EditTransaction({
                             className={inputCssStyles}
                             disabled
                         />
+                        {isSubmitted && errorMessage.unit && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {isSubmitted && errorMessage.unit}
+                            </p>
+                        )}
                     </div>
                     <div className="mb-4 w-1/2 px-2">
                         <label
@@ -400,6 +448,11 @@ export default function EditTransaction({
                             pattern="[0-9]+"
                             title="Giá phải có định dạng số"
                         />
+                        {isSubmitted && errorMessage.price && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {isSubmitted && errorMessage.price}
+                            </p>
+                        )}
                     </div>
                 </div>
                 <div className="w-full px-2">
@@ -418,12 +471,17 @@ export default function EditTransaction({
                         required
                         maxLength= {255}
                     />
+                    {isSubmitted && errorMessage.description && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {isSubmitted && errorMessage.description}
+                            </p>
+                        )}
                 </div>
 
                 <button
                     type="submit"
                     className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
-                    disabled={!isFormValid || updateTransactionMutation.isPending}
+                    //disabled={!isFormValid || updateTransactionMutation.isPending}
                 >
                     {updateTransactionMutation.isPending
                         ? "Updating"
