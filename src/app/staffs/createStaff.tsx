@@ -28,8 +28,20 @@ export default function CreateStaff({
         email: "",
     });
 
-    const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [errorMessage, setErrorMessage] = useState<{
+        name?: string
+        gender?: string
+        birthday?: string
+        phone?: string
+        citizen_id?: string
+        role?: string
+        email?: string
+    }>({})
+
     const [isFormValid, setIsFormValid] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
+
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
     const queryClient = useQueryClient();
 
     // mutation
@@ -64,34 +76,51 @@ export default function CreateStaff({
         }
     };
 
-    const validateForm = () : boolean =>  {
-        const nameValid =
-        staffData.name.trim() !== "" && /^[a-zA-Z\s]+$/.test(staffData.name); // Không rỗng, chỉ chứa chữ cái và khoảng trắng
-
-        const genderValid =
-            staffData.gender.trim() !== "" &&
-            (staffData.gender === "Male" || staffData.gender === "Female"); // Chỉ chấp nhận Male hoặc Female
-
-        const birthdayValid =
-            staffData.birthday.trim() !== "" &&
-            /^\d{4}-\d{2}-\d{2}$/.test(staffData.birthday); // Định dạng ngày YYYY-MM-DD
-
-        const phoneValid =
-            staffData.phone.trim() !== "" &&
-            /^[0-9]{10,11}$/.test(staffData.phone); // Số điện thoại 10-11 chữ số
-
-        const citizenIdValid =
-            staffData.citizen_id.trim() !== "" &&
-            /^[0-9]{9,12}$/.test(staffData.citizen_id); // Chỉ chấp nhận số từ 9-12 ký tự
-
-        const roleValid = staffData.role.trim() !== ""; // Không được để trống
-
-        const emailValid =
-            staffData.email.trim() !== "" &&
-            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(staffData.email);
-        
-        return nameValid && genderValid && birthdayValid && phoneValid && citizenIdValid && roleValid && emailValid 
-    }
+    const validateForm = () => {
+        const newErrors: typeof errorMessage = {};
+    
+        // Kiểm tra tên nhân viên
+        if (!staffData.name.trim() || !/^[a-zA-Z\s]+$/.test(staffData.name)) {
+            newErrors.name = "Tên nhân viên không hợp lệ. Vui lòng chỉ sử dụng chữ cái và khoảng trắng.";
+        }
+    
+        // Kiểm tra giới tính
+        if (
+            !staffData.gender.trim() ||
+            (staffData.gender !== "Male" && staffData.gender !== "Female")
+        ) {
+            newErrors.gender = "Giới tính không hợp lệ. Vui lòng chọn 'Male' hoặc 'Female'.";
+        }
+    
+        // Kiểm tra ngày sinh
+        if (!staffData.birthday.trim() || !/^\d{4}-\d{2}-\d{2}$/.test(staffData.birthday)) {
+            newErrors.birthday = "Ngày sinh không hợp lệ. Vui lòng nhập theo định dạng YYYY-MM-DD.";
+        }
+    
+        // Kiểm tra số điện thoại
+        if (!staffData.phone.trim() || !/^[0-9]{10,11}$/.test(staffData.phone)) {
+            newErrors.phone = "Số điện thoại không hợp lệ. Vui lòng nhập từ 10-11 chữ số.";
+        }
+    
+        // Kiểm tra số CMND/CCCD
+        if (!staffData.citizen_id.trim() || !/^[0-9]{9,12}$/.test(staffData.citizen_id)) {
+            newErrors.citizen_id = "Số CMND/CCCD không hợp lệ. Vui lòng nhập từ 9-12 chữ số.";
+        }
+    
+        // Kiểm tra vai trò
+        if (!staffData.role.trim()) {
+            newErrors.role = "Vai trò không thể để trống.";
+        }
+    
+        // Kiểm tra email
+        if (!staffData.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(staffData.email)) {
+            newErrors.email = "Email không hợp lệ. Vui lòng nhập đúng định dạng.";
+        }
+    
+        setErrorMessage(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+    
 
     useEffect(() => {
         setIsFormValid(validateForm());
@@ -115,7 +144,14 @@ export default function CreateStaff({
     };
 
     const handleCreateStaff = () => {
-        createStaffMutation.mutate(staffData);
+        setIsSubmitted(true)
+        if(!validateForm()) return
+        try{
+            createStaffMutation.mutate(staffData);
+        }
+        catch (error) {
+            console.error("Error creating Staff", error)
+        }
     };
     useEffect(() => {
         if (shouldResetForm) {
@@ -165,6 +201,11 @@ export default function CreateStaff({
                             pattern="[a-zA-Z\s]+"
                             title="Tên nhân viên không được bao gồm kí tự đặc biệt"
                         />
+                        {isSubmitted && errorMessage.name && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errorMessage.name}
+                            </p>
+                        )}
                     </div>
 
                     <div className="mb-4 w-1/2 px-2">
@@ -183,6 +224,11 @@ export default function CreateStaff({
                             className={inputCssStyles}
                             required
                         />
+                        {isSubmitted && errorMessage.name && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errorMessage.name}
+                            </p>
+                        )}
                     </div>
                     <div className="mb-4 w-1/2 px-2">
                         <label
@@ -222,6 +268,11 @@ export default function CreateStaff({
                                 },
                             }}
                         />
+                        {isSubmitted && errorMessage.birthday && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errorMessage.birthday}
+                            </p>
+                        )}
                     </div>
                     <div className="mb-4 w-1/2 px-2">
                         <label
@@ -241,6 +292,11 @@ export default function CreateStaff({
                             pattern="[a-zA-Z\s]+"
                             title="Vai trò nhân viên không được bao gồm kí tự đặc biệt"
                         />
+                        {isSubmitted && errorMessage.role && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errorMessage.role}
+                            </p>
+                        )}
                     </div>
 
                     <div className="mb-4 w-1/2 px-2">
@@ -261,6 +317,11 @@ export default function CreateStaff({
                             pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
                             title="Email nhân viên sai định dạng"
                         />
+                        {isSubmitted && errorMessage.email && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errorMessage.email}
+                            </p>
+                        )}
                     </div>
                     <div className="mb-4 w-full px-2">
                         <label
@@ -280,6 +341,11 @@ export default function CreateStaff({
                             pattern="[0-9]{10,11}"
                             title="Số điện thoại chưa đúng định dạng"
                         />
+                        {isSubmitted && errorMessage.phone && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errorMessage.phone}
+                            </p>
+                        )}
                     </div>
                 </div>
 
@@ -312,6 +378,11 @@ export default function CreateStaff({
                         pattern="[0-9]{9,12}"
                         title="Id không đúng định dạng"
                     />
+                    {isSubmitted && errorMessage.citizen_id && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errorMessage.citizen_id}
+                            </p>
+                        )}
                 </div>
                 <div className="mb-4 w-1/3 px-2">
                     <label className="block text-sm font-medium invisible">

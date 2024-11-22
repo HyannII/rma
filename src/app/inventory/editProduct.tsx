@@ -32,8 +32,20 @@ export default function EditProduct({
         description: product.description,
     });
 
+    const [errorMessage, setErrorMessage] = useState<{
+        name?: string;
+        color?: string;
+        quantity?: string;
+        category?: string;
+        weight?: string;
+        unit?: string;
+        customer_price?: string;
+        description?: string;
+      }>({});
+    
     const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
     const [isFormValid, setIsFormValid] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
     const queryClient = useQueryClient();
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -68,31 +80,57 @@ export default function EditProduct({
         }
     };
 
-    const validateForm = (): boolean => {
-        const nameValid =
-        (updatedProduct.name?.trim() ?? "") !== "" && /^[a-zA-Z0-9\s]+$/.test(updatedProduct.name ?? "");
-        const colorValid =
-            (updatedProduct.color ?? "") === "" || /^[a-zA-Z0-9\s]+$/.test(updatedProduct.color ?? "");
-        const quantityValid =
-            (updatedProduct.quantity ?? "").trim() !== "" &&
-            /^[1-9][0-9]*$/.test(updatedProduct.quantity ?? ""); // Số nguyên dương
-        const categoryValid = (updatedProduct.category?.trim() ?? "") !== "";
-        const unitValid =
-            (updatedProduct.unit ?? "") === "" || /^[a-zA-Z0-9\s]+$/.test(updatedProduct.unit ?? "");
-        const priceValid =
-            (updatedProduct.customer_price ?? "") === "" ||
-            (/^[0-9]+(\.[0-9]{1,2})?$/.test(updatedProduct.customer_price ?? "") &&
-                parseFloat(updatedProduct.customer_price ?? "0") >= 0);
+    const validateForm = () => {
+        const newErrors: typeof errorMessage = {};
     
-        return nameValid && colorValid && quantityValid && categoryValid && unitValid && priceValid;
+        // Kiểm tra tên sản phẩm
+        if (!updatedProduct.name?.trim() || !/^[a-zA-Z0-9\s]+$/.test(updatedProduct.name ?? "")) {
+            newErrors.name = "Tên sản phẩm không hợp lệ. Vui lòng chỉ sử dụng chữ cái, số và khoảng trắng.";
+        }
+    
+        // Kiểm tra màu sắc
+        if (updatedProduct.color && !/^[a-zA-Z0-9\s]+$/.test(updatedProduct.color ?? "")) {
+            newErrors.color = "Màu sắc không hợp lệ. Vui lòng chỉ sử dụng chữ cái, số và khoảng trắng.";
+        }
+    
+        // Kiểm tra số lượng
+        if (!updatedProduct.quantity?.trim() || !/^[1-9][0-9]*$/.test(updatedProduct.quantity ?? "")) {
+            newErrors.quantity = "Số lượng không hợp lệ. Vui lòng nhập số nguyên dương.";
+        }
+    
+        // Kiểm tra danh mục
+        if (!updatedProduct.category?.trim()) {
+            newErrors.category = "Danh mục không thể để trống.";
+        }
+    
+        // Kiểm tra đơn vị
+        if (updatedProduct.unit && !/^[a-zA-Z0-9\s]+$/.test(updatedProduct.unit ?? "")) {
+            newErrors.unit = "Đơn vị không hợp lệ. Vui lòng chỉ sử dụng chữ cái, số và khoảng trắng.";
+        }
+    
+        // Kiểm tra giá
+        if (updatedProduct.customer_price && !/^[0-9]+(\.[0-9]{1,2})?$/.test(updatedProduct.customer_price ?? "") || parseFloat(updatedProduct.customer_price ?? "0") < 0) {
+            newErrors.customer_price = "Giá không hợp lệ. Vui lòng nhập giá hợp lệ và lớn hơn hoặc bằng 0.";
+        }
+    
+        setErrorMessage(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
+    
 
     useEffect(() => {
         setIsFormValid(validateForm());
     }, [updatedProduct]);
 
     const handleUpdateProduct = () => {
-        updateProductMutation.mutate(updatedProduct);
+        setIsSubmitted(true)
+        if(!validateForm()) return
+        try {
+            updateProductMutation.mutate(updatedProduct);
+        }
+        catch (error) {
+            console.error("Error updating product", error)
+        }
     };
 
     const handleCloseSuccessDialog = () => {
@@ -135,6 +173,11 @@ export default function EditProduct({
                             pattern="[a-zA-Z0-9\s]+"
                             title="Tên sản phẩm không được bao gồm kí tự đặc biệt"
                         />
+                        {isSubmitted && errorMessage.name && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errorMessage.name}
+                            </p>
+                        )}
                     </div>
 
                     <div className="mb-4 w-1/2 px-2">
@@ -155,6 +198,11 @@ export default function EditProduct({
                             pattern="[a-zA-Z0-9\s]+"
                             title="Tên màu không được bao gồm kí tự đặc biệt"
                         />
+                        {isSubmitted && errorMessage.color && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errorMessage.color}
+                            </p>
+                        )}
                     </div>
                     <div className="mb-4 w-1/2 px-2">
                         <label
@@ -175,6 +223,11 @@ export default function EditProduct({
                             step = "1"
                             title="Số lượng phải lớn hơn 0"
                         />
+                        {isSubmitted && errorMessage.quantity && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errorMessage.quantity}
+                            </p>
+                        )}
                     </div>
                 </div>
 
@@ -264,6 +317,11 @@ export default function EditProduct({
                         pattern="[a-zA-Z0-9\s]+"
                         title="Đơn vị không được bao gồm kí tự đặc biệt"    
                     />
+                    {isSubmitted && errorMessage.unit && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errorMessage.unit}
+                            </p>
+                        )}
                 </div>
 
                 <div className="mb-4 w-1/2 px-2">
@@ -281,6 +339,11 @@ export default function EditProduct({
                         onChange={handleInputChange}
                         className={inputCssStyles}
                     />
+                    {isSubmitted && errorMessage.customer_price && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errorMessage.customer_price}
+                            </p>
+                        )}
                 </div>
 
                 <div className="mb-4 w-full px-2">
@@ -297,11 +360,16 @@ export default function EditProduct({
                         onChange={handleInputChange}
                         className={inputCssStyles}
                     />
+                    {isSubmitted && errorMessage.description && (
+                        <p className="text-red-500 text-xs mt-1">
+                                            {errorMessage.description}
+                        </p>
+                    )}
                 </div>
 
                 <button
                     type="submit"
-                    disabled={!isFormValid || updateProductMutation.isPending} // disable form 
+                    //disabled={!isFormValid || updateProductMutation.isPending} // disable form 
                     className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
                 >
                     {updateProductMutation.isPending

@@ -31,8 +31,16 @@ export default function EditProvider({
         }
     );
 
+    const [errorMessage, setErrorMessage] = useState<{
+        name?: string
+        address?:string
+        phone?: string
+        email?: string
+    }>({})
+    
     const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
     const [isFormValid, setIsFormValid] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
     const queryClient = useQueryClient();
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [imageFile, setImageFile] = useState();
@@ -66,20 +74,47 @@ export default function EditProvider({
         }
     };
 
-    const validateForm = () : boolean => {
-        const nameValid = updatedProvider.name?.trim() !== "" && /^[a-zA-Z\s]+$/.test(updatedProvider.name ?? "")
-        const addressValid = updatedProvider.address?.trim() !== "" && /^[a-zA-Z0-9\s]+$/.test(updatedProvider.address ?? "")
-        const phoneValid = updatedProvider.phone?.trim() !== "" && /^[0-9]{10,11}$/.test(updatedProvider.phone ?? "")
-        const emailValid = updatedProvider.email?.trim() !== "" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(updatedProvider.email ?? "")
-        return nameValid && addressValid && phoneValid && emailValid
-    }
+    const validateForm = () => {
+        const newErrors: typeof errorMessage = {};
+    
+        // Kiểm tra tên nhà cung cấp
+        if (!updatedProvider.name?.trim() || !/^[a-zA-Z\s]+$/.test(updatedProvider.name ?? "")) {
+            newErrors.name = "Tên nhà cung cấp không hợp lệ. Vui lòng chỉ sử dụng chữ cái và khoảng trắng.";
+        }
+    
+        // Kiểm tra địa chỉ
+        if (!updatedProvider.address?.trim() || !/^[a-zA-Z0-9\s]+$/.test(updatedProvider.address ?? "")) {
+            newErrors.address = "Địa chỉ không hợp lệ. Vui lòng sử dụng chữ cái, số và khoảng trắng.";
+        }
+    
+        // Kiểm tra số điện thoại
+        if (!updatedProvider.phone?.trim() || !/^[0-9]{10,11}$/.test(updatedProvider.phone ?? "")) {
+            newErrors.phone = "Số điện thoại không hợp lệ. Vui lòng nhập từ 10-11 chữ số.";
+        }
+    
+        // Kiểm tra email
+        if (!updatedProvider.email?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(updatedProvider.email ?? "")) {
+            newErrors.email = "Email không hợp lệ. Vui lòng nhập đúng định dạng.";
+        }
+    
+        setErrorMessage(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+    
 
     useEffect(() => {
         setIsFormValid(validateForm());
     }, [updatedProvider]);
 
     const handleUpdateProvider = () => {
-        updateProviderMutation.mutate(updatedProvider);
+        setIsSubmitted(true)
+        if(!validateForm() ) return
+        try {
+            updateProviderMutation.mutate(updatedProvider);
+        }
+        catch (error) {
+            console.error("Error updating provider", error)
+        }
     };
 
     const handleCloseSuccessDialog = () => {
@@ -122,6 +157,11 @@ export default function EditProvider({
                             pattern="[a-zA-Z\s]+"
                             title="Tên nhà cung cấp không được bao gồm kí tự đặc biệt"
                         />
+                        {isSubmitted && errorMessage.name && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errorMessage.name}
+                            </p>
+                        )}
                     </div>
 
                     <div className="mb-4 w-1/2 px-2">
@@ -161,6 +201,9 @@ export default function EditProvider({
                             pattern="[0-9]{10,11}"
                             title="Số điện thoại chưa đúng định dạng"
                         />
+                        {isSubmitted && errorMessage.phone && (
+                            <p className="text-red-500 text-xs mt-1">{errorMessage.phone}</p>
+                        )}
                     </div>
                 </div>
 
@@ -193,6 +236,9 @@ export default function EditProvider({
                             pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
                             title="Email nhân viên sai định dạng"
                     />
+                    {isSubmitted && errorMessage.email && (
+                        <p className="text-red-500 text-xs mt-1">{errorMessage.email}</p>
+                    )}
                 </div>
                 <div className="mb-4 w-1/3 px-2">
                     <label className="block text-sm font-medium invisible">
@@ -235,7 +281,7 @@ export default function EditProvider({
                 <button
                     type="submit"
                     className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
-                    disabled={!isFormValid || updateProviderMutation.isPending}
+                    //disabled={!isFormValid || updateProviderMutation.isPending}
                 >
                     {updateProviderMutation.isPending
                         ? "Changing..."

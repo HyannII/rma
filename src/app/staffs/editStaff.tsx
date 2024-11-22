@@ -33,8 +33,19 @@ export default function EditStaff({
         email: staff.email,
     });
 
+    const [errorMessage, setErrorMessage] = useState<{
+        name?: string
+        gender?: string
+        birthday?: string
+        phone?: string
+        citizen_id?: string
+        role?: string
+        email?: string
+    }>({})
+
     const [isSuccessDialogOpen, setIsSuccessDialogOpen] = useState(false);
     const [isFormValid, setIsFormValid] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
     const queryClient = useQueryClient();
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [imageFile, setImageFile] = useState();
@@ -70,35 +81,51 @@ export default function EditStaff({
         }
     };
 
-    const validateForm = () : boolean => {
-        const nameValid =
-        updatedStaff.name?.trim() !== "" &&
-        /^[a-zA-Z\s]+$/.test(updatedStaff.name ?? ""); // Không rỗng, chỉ chứa chữ cái và khoảng trắng
-
-        const genderValid =
-            updatedStaff.gender?.trim() !== "" &&
-            (updatedStaff.gender === "Male" || updatedStaff.gender === "Female"); // Chỉ chấp nhận Male hoặc Female
-
-        const birthdayValid =
-            updatedStaff.birthday?.trim() !== "" &&
-            /^\d{4}-\d{2}-\d{2}$/.test(updatedStaff.birthday ?? ""); // Định dạng ngày YYYY-MM-DD
-
-        const phoneValid =
-            updatedStaff.phone?.trim() !== "" &&
-            /^[0-9]{10,11}$/.test(updatedStaff.phone ?? ""); // Số điện thoại 10-11 chữ số
-
-        const citizenIdValid =
-            updatedStaff.citizen_id?.trim() !== "" &&
-            /^[0-9]{9,12}$/.test(updatedStaff.citizen_id ?? ""); // Chỉ chấp nhận số từ 9-12 ký tự
-
-        const roleValid = updatedStaff.role?.trim() !== ""; // Không được để trống
-
-        const emailValid =
-            updatedStaff.email?.trim() !== "" &&
-            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(updatedStaff.email ?? ""); // Định dạng email hợp lệ
-        
-        return nameValid && genderValid && birthdayValid && phoneValid && citizenIdValid && roleValid && emailValid
-    }    
+    const validateForm = () => {
+        const newErrors: typeof errorMessage = {};
+    
+        // Kiểm tra tên nhân viên
+        if (!updatedStaff.name?.trim() || !/^[a-zA-Z\s]+$/.test(updatedStaff.name ?? "")) {
+            newErrors.name = "Tên nhân viên không hợp lệ. Vui lòng chỉ sử dụng chữ cái và khoảng trắng.";
+        }
+    
+        // Kiểm tra giới tính
+        if (
+            !updatedStaff.gender?.trim() ||
+            (updatedStaff.gender !== "Male" && updatedStaff.gender !== "Female")
+        ) {
+            newErrors.gender = "Giới tính không hợp lệ. Vui lòng chọn 'Male' hoặc 'Female'.";
+        }
+    
+        // Kiểm tra ngày sinh
+        if (!updatedStaff.birthday?.trim() || !/^\d{4}-\d{2}-\d{2}$/.test(updatedStaff.birthday ?? "")) {
+            newErrors.birthday = "Ngày sinh không hợp lệ. Vui lòng nhập theo định dạng YYYY-MM-DD.";
+        }
+    
+        // Kiểm tra số điện thoại
+        if (!updatedStaff.phone?.trim() || !/^[0-9]{10,11}$/.test(updatedStaff.phone ?? "")) {
+            newErrors.phone = "Số điện thoại không hợp lệ. Vui lòng nhập từ 10-11 chữ số.";
+        }
+    
+        // Kiểm tra số CMND/CCCD
+        if (!updatedStaff.citizen_id?.trim() || !/^[0-9]{9,12}$/.test(updatedStaff.citizen_id ?? "")) {
+            newErrors.citizen_id = "Số CMND/CCCD không hợp lệ. Vui lòng nhập từ 9-12 chữ số.";
+        }
+    
+        // Kiểm tra vai trò
+        if (!updatedStaff.role?.trim()) {
+            newErrors.role = "Vai trò không thể để trống.";
+        }
+    
+        // Kiểm tra email
+        if (!updatedStaff.email?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(updatedStaff.email ?? "")) {
+            newErrors.email = "Email không hợp lệ. Vui lòng nhập đúng định dạng.";
+        }
+    
+        setErrorMessage(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+    
 
     useEffect(() => {
         setIsFormValid(validateForm());
@@ -122,7 +149,14 @@ export default function EditStaff({
     };
 
     const handleUpdateStaff = () => {
-        updateStaffMutation.mutate(updatedStaff);
+        setIsSubmitted(true)
+        if(!validateForm()) return
+        try {
+            updateStaffMutation.mutate(updatedStaff);
+        }
+        catch(error) {
+            console.error("Error updating staff", error)
+        }
     };
 
     const handleCloseSuccessDialog = () => {
@@ -165,6 +199,11 @@ export default function EditStaff({
                             pattern="[a-zA-Z\s]+"
                             title="Tên nhân viên không được bao gồm kí tự đặc biệt"
                         />
+                        {isSubmitted && errorMessage.name && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errorMessage.name}
+                            </p>
+                        )}
                     </div>
 
                     <div className="mb-4 w-1/2 px-2">
@@ -183,6 +222,11 @@ export default function EditStaff({
                             className={inputCssStyles}
                             required
                         />
+                        {isSubmitted && errorMessage.name && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errorMessage.name}
+                            </p>
+                        )}
                     </div>
                     <div className="mb-4 w-1/2 px-2">
                         <label
@@ -222,6 +266,11 @@ export default function EditStaff({
                                 },
                             }}
                         />
+                        {isSubmitted && errorMessage.birthday && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errorMessage.birthday}
+                            </p>
+                        )}
                     </div>
                     <div className="mb-4 w-1/2 px-2">
                         <label
@@ -237,8 +286,12 @@ export default function EditStaff({
                             value={updatedStaff.role}
                             onChange={handleInputChange}
                             className={inputCssStyles}
-
                         />
+                        {isSubmitted && errorMessage.role && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errorMessage.role}
+                            </p>
+                        )}
                     </div>
 
                     <div className="mb-4 w-1/2 px-2">
@@ -259,6 +312,11 @@ export default function EditStaff({
                             pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
                             title="Email nhân viên sai định dạng"
                         />
+                        {isSubmitted && errorMessage.email && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errorMessage.email}
+                            </p>
+                        )}
                     </div>
                     <div className="mb-4 w-full px-2">
                         <label
@@ -278,6 +336,11 @@ export default function EditStaff({
                             pattern="[0-9]{10,11}"
                             title="Số điện thoại chưa đúng định dạng"
                         />
+                        {isSubmitted && errorMessage.phone && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errorMessage.phone}
+                            </p>
+                        )}
                     </div>
                 </div>
 
@@ -308,6 +371,11 @@ export default function EditStaff({
                         pattern="[0-9]{9,12}"
                         title="Id không đúng định dạng"
                     />
+                    {isSubmitted && errorMessage.citizen_id && (
+                            <p className="text-red-500 text-xs mt-1">
+                                {errorMessage.citizen_id}
+                            </p>
+                        )}
                 </div>
                 <div className="mb-4 w-1/3 px-2">
                     <label className="block text-sm font-medium invisible">
@@ -333,7 +401,7 @@ export default function EditStaff({
                 <button
                     type="submit"
                     className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
-                    disabled={!isFormValid || updateStaffMutation.isPending}
+                    //disabled={!isFormValid || updateStaffMutation.isPending}
                 >
                     {updateStaffMutation.isPending
                         ? "Updating"
