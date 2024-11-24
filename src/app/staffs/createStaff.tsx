@@ -5,6 +5,7 @@ import Image from "next/legacy/image";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { createStaffApi } from "../../../api/staff.api";
 import { ICreateStaffBody } from "../../../interfaces/staff.interface";
+import { toast } from "react-toastify";
 
 interface CreateStaffProps {
     onStaffCreated: () => void;
@@ -144,12 +145,17 @@ export default function CreateStaff({
 
     const handleCreateStaff = () => {
         setIsSubmitted(true)
-        if(!validateForm()) return
+        if (!validateForm()) {
+            toast.error("Form không hợp lệ. Vui lòng kiểm tra lại!");
+            return;
+          }
         try{
             createStaffMutation.mutate(staffData);
+            toast.success("Tạo nhân viên thành công!")
         }
         catch (error) {
             console.error("Error creating Staff", error)
+            toast.error("Đã xảy ra lỗi khi tạo nhân viên. Vui lòng thử lại!")
         }
     };
     useEffect(() => {

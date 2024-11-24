@@ -14,6 +14,7 @@ import {
   IStaffResponse,
   IUpdateStaffBody,
 } from "../../../interfaces/staff.interface";
+import { toast } from "react-toastify";
 
 export default function EditStaff({
   staff,
@@ -169,11 +170,16 @@ export default function EditStaff({
 
   const handleUpdateStaff = () => {
     setIsSubmitted(true);
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      toast.error("Form không hợp lệ. Vui lòng kiểm tra lại!");
+      return;
+    }
     try {
       updateStaffMutation.mutate(updatedStaff);
+      toast.success("Cập nhật nhân viên thành công!")
     } catch (error) {
       console.error("Error updating staff", error);
+      toast.error("Đã xảy ra lỗi khi cập nhât nhân viên. Vui lòng thử lại!")
     }
   };
 

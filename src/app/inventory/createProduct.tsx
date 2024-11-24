@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Image from "next/legacy/image";
+import { toast } from "react-toastify";
 import {
   ChangeEvent,
   SetStateAction,
@@ -155,11 +156,16 @@ export default function CreateProduct({
 
   const handleCreateProduct = () => {
     setIsSubmitted(true);
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      toast.error("Form không hợp lệ. Vui lòng kiểm tra lại!");
+      return;
+    }
     try {
       createProductMutation.mutate(productData);
+      toast.success("Tạo sản phẩm thành công")
     } catch (error) {
       console.error("Error creating product", error);
+      toast.error("Đã xảy ra lỗi khi tạo món ăn. Vui lòng thử lại!")
     }
   };
   useEffect(() => {

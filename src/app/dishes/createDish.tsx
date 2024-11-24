@@ -7,6 +7,8 @@ import { createDishApi } from "../../../api/dish.api";
 import { getProductByCategoryApi } from "../../../api/product.api";
 import { ICreateDish_ProductsBody } from "../../../interfaces/dish-products.interface";
 import { ICreateDishBody } from "../../../interfaces/dish.interface";
+import { toast } from "react-toastify";
+import { error } from "console";
 
 interface CreateDishProps {
   onDishCreated: () => void;
@@ -169,7 +171,10 @@ export default function CreateDish({
 
   const handleCreateDishAndProduct = async () => {
     setIsSubmitted(true);
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      toast.error("Form không hợp lệ. Vui lòng kiểm tra lại!");
+      return;
+    }
     // Create new dish
     try {
       const { items_id } = await createDishMutation.mutateAsync(dishData);
@@ -185,8 +190,10 @@ export default function CreateDish({
         });
 
       await createDishProductMutation.mutateAsync(createDishProductsBody);
+      toast.success("Tạo món ăn thành công!");
     } catch (error) {
       console.error("Error creating dish: ", error);
+      toast.error("Đã xảy ra lỗi khi tạo món ăn. Vui lòng thử lại!");
     }
   };
 
@@ -203,9 +210,16 @@ export default function CreateDish({
   };
 
   const handleRemoveIngredient = (products_id: number) => {
-    setSelectedIngredients((prev) =>
-      prev.filter((ingredient) => ingredient.products_id !== products_id)
-    );
+    try {
+      setSelectedIngredients((prev) =>
+        prev.filter((ingredient) => ingredient.products_id !== products_id)
+      );
+      toast.success("Đã xóa nguyên liệu")
+    }
+    catch {
+      console.error("Error removing ingredient", error)
+      toast.error("Lỗi khi xóa nguyên liệu. Vui lòng thử lại!")
+    }
   };
 
   useEffect(() => {

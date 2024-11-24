@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Image from "next/legacy/image";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 import { createProviderApi } from "../../../api/provider.api";
 import { ICreateProviderBody } from "../../../interfaces/provider.interface";
 
@@ -102,13 +103,17 @@ export default function CreateProvider({
 
     const handleCreateProvider = () => {
         setIsSubmitted(true)
-        if(!validateForm()) return
+        if (!validateForm()) {
+            toast.error("Form không hợp lệ. Vui lòng kiểm tra lại!");
+            return;
+          }
         try {
-
             createProviderMutation.mutate(providerData);
+            toast.success("Tạo nhà cung cấp thành công!")
         }
         catch (error) {
             console.error("Error creating provider", error)
+            toast.error("Đã xảy ra lỗi khi tạo nhà cung cấp. Vui lòng thử lại!")
         }
     };
     useEffect(() => {

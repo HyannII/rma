@@ -21,6 +21,7 @@ import {
     ITransactionResponse,
     IUpdateTransactionBody,
 } from "../../../interfaces/transaction.interface";
+import { toast } from "react-toastify";
 
 export default function EditTransaction({
     transaction,
@@ -226,12 +227,17 @@ export default function EditTransaction({
 
     const handleUpdateTransaction = () => {
         setIsSubmitted(true)
-        if(!validateForm()) return
+        if (!validateForm()) {
+          toast.error("Form không hợp lệ. Vui lòng kiểm tra lại!");
+          return;
+        }
         try {
             updateTransactionMutation.mutate(updatedTransaction);
+            toast.success("Cập nhật giao dịch thành công!")
         }
         catch (error) {
             console.error("Error updating transaction", error)
+            toast.error("Đã xảy ra lỗi khi cập nhật giao dịch. Vui lòng kiểm tra lại!")
         }
     };
 
