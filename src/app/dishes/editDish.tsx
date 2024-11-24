@@ -7,6 +7,7 @@ import {
 } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 import { updateDishApi } from "../../../api/dish.api";
 import {
   IDishResponse,
@@ -148,11 +149,16 @@ export default function EditDish({
 
   const handleUpdateDish = () => {
     setIsSubmitted(true);
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      toast.error("Form không hợp lệ. Vui lòng kiểm tra lại!");
+      return;
+    }
     try {
       updateDishMutation.mutate(updatedDish);
+      toast.success("Cập nhật món  thành công")
     } catch (error) {
       console.error("Error updating dish: ", error);
+      toast.error("Đã xảy ra lỗi khi cập nhật món ăn. Vui lòng thử lại!")
     }
   };
 

@@ -7,6 +7,7 @@ import {
 } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 import { updateProductApi } from "../../../api/product.api";
 import {
     IProductResponse,
@@ -145,12 +146,17 @@ export default function EditProduct({
 
     const handleUpdateProduct = () => {
         setIsSubmitted(true)
-        if(!validateForm()) return
+        if (!validateForm()) {
+            toast.error("Form không hợp lệ. Vui lòng kiểm tra lại!");
+            return;
+          }
         try {
             updateProductMutation.mutate(updatedProduct);
+            toast.success("Cập nhật sản phẩm thành công!")
         }
         catch (error) {
             console.error("Error updating product", error)
+            toast.error("Đã xảy ra lỗi khi cập nhật sản phẩm. Vui lòng thử lại!")
         }
     };
 

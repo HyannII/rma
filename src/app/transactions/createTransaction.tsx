@@ -6,6 +6,7 @@ import { getAllProvidersApi } from "../../../api/provider.api";
 import { getAllStaffsApi } from "../../../api/staff.api";
 import { createTransactionApi } from "../../../api/transaction.api";
 import { ICreateTransactionBody } from "../../../interfaces/transaction.interface";
+import { toast } from "react-toastify";
 
 interface CreateTransactionProps {
   onTransactionCreated: () => void;
@@ -215,11 +216,16 @@ export default function CreateTransaction({
 
   const handleCreateTransaction = () => {
     setIsSubmitted(true);
-    if (!validateForm()) return;
+    if (!validateForm()) {
+      toast.error("Form không hợp lệ. Vui lòng kiểm tra lại!");
+      return;
+    }
     try {
       createTransactionMutation.mutate(transactionData);
+      toast.success("Tạo giao dịch thành công!")
     } catch (error) {
       console.error("Error creating transaction", error);
+      toast.error("Đã xảy ra lỗi khi tạo giao dịch. Vui lòng kiểm tra lại!")
     }
   };
   useEffect(() => {

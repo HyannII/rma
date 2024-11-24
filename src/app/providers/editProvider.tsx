@@ -12,6 +12,7 @@ import {
     IProviderResponse,
     IUpdateProviderBody,
 } from "../../../interfaces/provider.interface";
+import { toast } from "react-toastify";
 
 export default function EditProvider({
     provider,
@@ -116,12 +117,17 @@ export default function EditProvider({
 
     const handleUpdateProvider = () => {
         setIsSubmitted(true)
-        if(!validateForm() ) return
+        if (!validateForm()) {
+          toast.error("Form không hợp lệ. Vui lòng kiểm tra lại!");
+          return;
+        }
         try {
             updateProviderMutation.mutate(updatedProvider);
+            toast.success("Cập nhật nhà cung cấp thành công!")
         }
         catch (error) {
             console.error("Error updating provider", error)
+            toast.error("Đã xảy ra lỗi khi cập nhật nhà cung cấp. Vui lòng thử lại!")
         }
     };
 
