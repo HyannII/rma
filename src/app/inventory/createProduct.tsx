@@ -157,12 +157,12 @@ export default function CreateProduct({
   const handleCreateProduct = () => {
     setIsSubmitted(true);
     if (!validateForm()) {
-      toast.error("Form không hợp lệ. Vui lòng kiểm tra lại!");
+      // toast.error("Form không hợp lệ. Vui lòng kiểm tra lại!");
       return;
     }
     try {
       createProductMutation.mutate(productData);
-      toast.success("Tạo sản phẩm thành công")
+      // toast.success("Tạo sản phẩm thành công")
     } catch (error) {
       console.error("Error creating product", error);
       toast.error("Đã xảy ra lỗi khi tạo món ăn. Vui lòng thử lại!")
@@ -204,7 +204,7 @@ export default function CreateProduct({
               className={labelCssStyles}
               htmlFor="name"
             >
-              Product Name
+              Tên sản phẩm
             </label>
             <input
               type="text"
@@ -225,7 +225,7 @@ export default function CreateProduct({
               className={labelCssStyles}
               htmlFor="color"
             >
-              Color
+              Màu sắc
             </label>
             <input
               type="text"
@@ -245,7 +245,7 @@ export default function CreateProduct({
               className={labelCssStyles}
               htmlFor="quantity"
             >
-              Quantity
+              Số lượng
             </label>
             <input
               type="text"
@@ -284,7 +284,7 @@ export default function CreateProduct({
             className={labelCssStyles}
             htmlFor="category"
           >
-            Category
+            Danh mục
           </label>
           <select
             name="category"
@@ -298,7 +298,7 @@ export default function CreateProduct({
               value=""
               className="text-zinc-800 hidden"
             >
-              -- Select a category --
+              -- Chọn một danh mục --
             </option>
             <option
               value="Nguyên liệu"
@@ -335,7 +335,7 @@ export default function CreateProduct({
             onClick={() => fileInputRef.current?.click()}
             className="block w-full mb-2 p-2 border-gray-500 border-2 rounded-md"
           >
-            Choose Image...
+            Chọn ảnh
           </button>
         </div>
 
@@ -344,7 +344,7 @@ export default function CreateProduct({
             className={labelCssStyles}
             htmlFor="unit"
           >
-            Unit
+            Đơn vị
           </label>
           <input
             type="text"
@@ -365,7 +365,7 @@ export default function CreateProduct({
             className={labelCssStyles}
             htmlFor="customer_price"
           >
-            Customer Price
+            Giá
           </label>
           <input
             type="text"
@@ -389,7 +389,7 @@ export default function CreateProduct({
             className={labelCssStyles}
             htmlFor="description"
           >
-            Description
+            Mô tả
           </label>
           <textarea
             id="description"
@@ -410,7 +410,7 @@ export default function CreateProduct({
           type="button"
           className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 text-gray-100 font-bold py-2 px-4 rounded w-full h-14"
         >
-          {createProductMutation.isPending ? "Creating" : "Create Product"}
+          {createProductMutation.isPending ? "Đang tạo..." : "Tạo sản phẩm"}
         </button>
       </form>
     </div>

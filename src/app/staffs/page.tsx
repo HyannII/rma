@@ -204,7 +204,7 @@ export default function Staffs() {
                     sorting: {
                         sortModel: [
                             {
-                                field: "name",
+                                field: "staff_id",
                                 sort: "asc",
                             },
                         ]

@@ -8,7 +8,7 @@ import { getProductByCategoryApi } from "../../../api/product.api";
 import { ICreateDish_ProductsBody } from "../../../interfaces/dish-products.interface";
 import { ICreateDishBody } from "../../../interfaces/dish.interface";
 import { toast } from "react-toastify";
-import { error } from "console";
+// import { error } from "console";
 
 interface CreateDishProps {
   onDishCreated: () => void;
@@ -216,7 +216,7 @@ export default function CreateDish({
       );
       toast.success("Đã xóa nguyên liệu")
     }
-    catch {
+    catch(error) {
       console.error("Error removing ingredient", error)
       toast.error("Lỗi khi xóa nguyên liệu. Vui lòng thử lại!")
     }

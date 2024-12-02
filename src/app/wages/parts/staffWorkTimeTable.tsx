@@ -25,7 +25,7 @@ const StaffWorkTimeTable: React.FC<StaffWorkTimeTableProps> = ({
               Số lượng ca làm
             </th>
             <th className="border border-gray-300 px-4 py-2 text-center bg-gray-200">
-              Số lần điểm danh trong tháng
+              Số lần điểm danh trong tuần
             </th>
           </tr>
         </thead>

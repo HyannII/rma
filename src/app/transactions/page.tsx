@@ -233,6 +233,7 @@ export default function Transactions() {
                   },
                 },
                 "& .MuiInputBase-input": {
+                  padding: 0,
                   border: "none",
                 },
               },
